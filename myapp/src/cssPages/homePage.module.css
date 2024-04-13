@@ -1,0 +1,50 @@
+
+.homePageBody {
+    background-color: azure;
+}
+.homeTitle {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    margin-bottom: 0;
+}
+.homeText {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    padding: 50px;
+    padding-top: 20px;
+}
+.homeDescrip {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100vh; /* Set the height to the full viewport height */
+    padding: 50px; /* Adjust as needed */
+  }
+  
+  .homeDescripBox {
+    display: flex;
+    align-items: center;
+  }
+  
+  
+  .homeDescripLeft {
+    flex: 1;
+    text-align: center; /* Center the text horizontally */
+  }
+  
+  .proDescrip {
+    
+  }
+  
+  .imageRight {
+    flex: 1;
+    text-align: center; /* Center the image horizontally */
+  }
+  
+  
+  .imageRightA img {
+    max-width: 100%;
+    height: auto;
+  }
