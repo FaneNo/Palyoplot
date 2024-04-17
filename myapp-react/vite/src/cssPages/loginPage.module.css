@@ -1,0 +1,65 @@
+.loginContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100vw;
+    padding-top: var(--nav-height, 70px);
+    background-color: azure;
+}
+
+.loginTitle {
+    color: #120f0b;
+    margin-bottom: 1em;
+}
+
+.loginForm {
+    width: 100%;
+    max-width: 500px;
+    padding: 1em;
+    margin: 1em;
+    box-sizing: border-box;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-bottom: 2em;
+}
+
+.loginLabel {
+    color: #120f0b;
+    display: block;
+    margin-bottom: 0.5em;
+}
+
+.loginInput,
+select {
+    color: white;
+    background-color: black;
+    width: 100%;
+    padding: 0.5em;
+    margin-bottom: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.loginButton,
+.registerButton {
+    width: 49%; /* Adjusted width for side-by-side buttons */
+    padding: 0.6em;
+    background-color: #646cff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.25s;
+    margin-right: 2%; /* Space between the two buttons */
+}
+
+.loginButton:hover,
+.registerButton:hover {
+    background-color: #535bf2;
+}
+
+.registerButton {
+    margin-right: 0; /* Reset margin for the rightmost button */
+}
