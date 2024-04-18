@@ -31,7 +31,15 @@ function Navbar() {
                         <li onClick={removeActive}>
                             <a href='tutorial' className={`${styles.navLink}`}>Tutorial</a>
                         </li>
+                        <li onClick={removeActive}>
+                            <a href='registration' className={`${styles.navLink}`}>Register</a>
+                        </li>
+                        <li onClick={removeActive}>
+                            <a href='Login' className={`${styles.navLink}`}>Login</a>
+                        </li>
                     </ul>
+
+                    {/* <RegisterButton/> */}
 
                     {/* when click it will deactivate or active the hamburger icon button */}
                     <div className={`${styles.hamburger} ${isActive ? styles.active : ''}`}  onClick={toggleActiveClass}>
