@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from '../cssPages/homePage.module.css'
+import DashboardNav from '../components/dashboardNav';
 
 function Home() {
   const [message, setMessage] = useState('');
@@ -23,7 +24,9 @@ function Home() {
       <p>{message}</p> */}
 
     </div>
+    
     <div className={`${styles.homePageBody}`}>
+      
       <div className={`${styles.homeDescripBox}`}>
           <div className={`${styles.homeDescripLeft}`}>
             <h1 className={`${styles.homeTitle}`}>Title</h1>

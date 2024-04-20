@@ -1,0 +1,30 @@
+.dashboardBody {
+    background-color: azure;
+   
+}
+.dashboardTitle {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    margin-bottom: 0;
+}
+.dashboardText {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    padding: 50px;
+    padding-top: 20px;
+}
+    
+.dashboardNavBox {
+    display: flex;
+    align-items: center;
+}
+    
+    
+.dashboardNavLeft {
+    flex: 1;
+    text-align: center; 
+}
+    
+

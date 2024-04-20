@@ -1,4 +1,4 @@
-
+/* default styling */
 /* we name the file .module because it to prevent naming conflicts and make sure that the styles only apply to the intended components */
 * {
     padding: 0;
@@ -8,6 +8,7 @@
   
   ul {
     list-style: none;
+    
   }
   
   a {
@@ -15,10 +16,20 @@
     color: black;
     font-size: 18px;
   }
+
+  /*Change the color of the text */
+  .navLink {
+    color: black; 
+    font-weight: bold; 
+  }
   
+  .navLink:hover {
+    color: aliceblue; 
+    font-weight: bold; 
+  }
  
   .navbar {
-    background-color: aliceblue;
+    background-color: rgb(10, 68, 18);
     padding: 10px 20px;
     display: flex;
     justify-content: space-between;
@@ -43,7 +54,7 @@
     gap: 60px;
   }
   
-  /* media queries */
+
   
   /* when screen is reduce to certain condense it to a hamburger button */
   @media screen and (max-width: 780px){
@@ -76,11 +87,13 @@
     }
   
   
+    /* navMenu */
+  
     .navMenu{
       position: absolute;
       flex-direction: column;
       gap: 0;
-      top: 70px;
+      bottom: 0;
       left: -100%;
       text-align: start;
       width: 100%;
@@ -91,9 +104,12 @@
   
     .navMenu.active{
       left: 0;
+      bottom: -70px;
     }
   
     .navMenu li {
       margin: 16px 0;
     }
   }
+
+
