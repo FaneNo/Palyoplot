@@ -18,8 +18,9 @@ function Login() {
 
     return (
         <div className={styles.loginContainer}>
-            <h1 className={styles.loginTitle}>Login</h1>
+           
             <form onSubmit={handleSubmit} className={styles.loginForm}>
+                <h1 className={styles.loginTitle}>Login</h1>
                 <div className={styles.formGroup}>
                     <label className={styles.loginLabel}>Username:</label>
                     <input

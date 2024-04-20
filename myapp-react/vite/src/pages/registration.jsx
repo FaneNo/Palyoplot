@@ -22,8 +22,8 @@ function Registration() {
 
     return (
         <div className={styles.registrationContainer}>
-            <h1 className={styles.registrationTitle}>Registration Page</h1>
             <form onSubmit={handleSubmit} className={styles.registrationForm}>
+                <h1 className={styles.registrationTitle}>Registration</h1>
                 <div className={styles.formGroup}>
                     <label className={styles.registrationLabel}>Username:</label>
                     <input

@@ -1,29 +1,26 @@
-
-
-
 .homePageBody {
   background-color: azure;
  
 }
 .homeTitle {
     display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
+    justify-content: center; 
+    align-items: center; 
     margin-bottom: 0;
 }
 .homeText {
     display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
+    justify-content: center; 
+    align-items: center; 
     padding: 50px;
     padding-top: 20px;
 }
 .homeDescrip {
     display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    height: 100vh; /* Set the height to the full viewport height */
-    padding: 50px; /* Adjust as needed */
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh; 
+    padding: 50px; 
   }
   
   .homeDescripBox {
@@ -34,7 +31,7 @@
   
   .homeDescripLeft {
     flex: 1;
-    text-align: center; /* Center the text horizontally */
+    text-align: center; 
   }
   
   .proDescrip {
@@ -43,7 +40,7 @@
   
   .imageRight {
     flex: 1;
-    text-align: center; /* Center the image horizontally */
+    text-align: center; 
   }
   
   
