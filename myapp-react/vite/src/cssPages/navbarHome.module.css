@@ -23,26 +23,82 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 40px;
-    min-height: 70px;
+    /* gap: 40px;
+    min-height: 70px; */
+    
   }
   
-  
-
   .logo {
+    display: flex;
+    
+  }
+  
+  .logoText {
     font-size: 30px;
     font-family: Arial, Helvetica, sans-serif;
+    
   }
   
-  
-  /* ul  */
+
   .navMenu {
+    display: flex;
+    justify-content: flex-end;
+    
+    gap: 60px;
+  }
+  .navMenuList {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 60px;
   }
   
+  .loginNregisBox {
+    display: flex;
+    justify-content: flex-end;
+    gap: 30px;
+  
+  }
+
+  .login {
+    background-color: #008CBA; 
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 15px;
+    transition: .3s ease-in-out;
+  }
+
+  .login:hover {
+    background-color: rgb(2, 92, 122);
+    color: lightblue;
+  }
+
+  .register {
+    background-color: #008CBA; 
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 15px;
+    transition: .3s ease-in-out;
+    
+  }
+
+  .register:hover {
+    background-color: rgb(2, 92, 122);
+    color: lightblue;
+  }
+
+  
+
+
+
   /* media queries */
   
   /* when screen is reduce to certain condense it to a hamburger button */
