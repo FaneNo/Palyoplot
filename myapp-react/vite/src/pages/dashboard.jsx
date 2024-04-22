@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import DashboardNav from "../components/dashboardNav";
 import styles from "../cssPages/dashboardPage.module.css"
+import samplePlot from "../assets/samplePlot.png"
 
 function Dashboard() {
 
@@ -103,6 +104,15 @@ function Dashboard() {
                             </form>
                         </div>
 
+
+
+                         {/*<div>
+                            <button type="upload" className={styles.uploadButton}>Upload</button>
+                            <h1 className={`${styles.dashboardTitle}`}>Sample PLot</h1>
+                        </div>*/}
+                        <div className={`${styles.plotBox}`}>
+                            <img src={samplePlot} className={`${styles.imageSample}`} alt="Sample plot image"/>
+                        </div>
 
                     </div>
                 </div>
