@@ -31,6 +31,82 @@
     text-align: center; 
 }
 
+
+.dashboardUpload {
+    align-items: center;
+    background-color: #646cff;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.dashboardRecentText {
+    align-items: center;
+    font-size: 25px;
+    padding-top: 15px;
+}
+
+.dashboardGraphButtons {
+    background-color: #646cff;
+    color: white;
+    margin: 0 10px;
+}
+
+.dashboardGraphPrev {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none; 
+    cursor: pointer;
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+}
+
+.dashboardGraphPrev img {
+    width: 150px;
+    height: auto;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.dashboardGraphPrev span {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.dashboardAccContainer {
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.dashboardAccInfoTitle {
+    margin-bottom: 20px;
+}
+
+.dashboardAccForm {
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboardInput {
+    width: 100%;
+    padding: 10px;
+}
+
+.dashboardUpdate {
+    align-items: center;
+    background-color: #646cff;
+    color: white;
+    margin-top: 20px;
+}
+    
+
 .imageSample {
     height: auto;
     max-width: 100%;
@@ -52,5 +128,6 @@
 .uploadButton:hover {
     background-color: #535bf2;
 }
+
 
 
