@@ -36,6 +36,7 @@
     max-width: 100%;
 }
 
+
 .uploadButton {
     width: 35%; /* Adjusted width for side-by-side buttons */
     padding: 0.6em;
@@ -51,4 +52,5 @@
 .uploadButton:hover {
     background-color: #535bf2;
 }
+
 
