@@ -1,6 +1,7 @@
 
 import DashboardNav from "../components/dashboardNav";
 import styles from "../cssPages/dashboardPage.module.css"
+import samplePlot from "../assets/samplePlot.png"
 
 function Dashboard() {
     return(

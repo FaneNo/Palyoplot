@@ -20,13 +20,21 @@
     display: flex;
     align-items: center;
 }
-    
+
+.plotBox {
+    display: flex;
+    justify-content: center;
+}    
     
 .dashboardNavLeft {
     flex: 1;
     text-align: center; 
 }
-    
+
+.imageSample {
+    height: auto;
+    max-width: 100%;
+}
 
 .uploadButton {
     width: 35%; /* Adjusted width for side-by-side buttons */
