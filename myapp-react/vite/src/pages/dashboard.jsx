@@ -12,7 +12,11 @@ function Dashboard() {
                     <div className={`${styles.dashboardNavLeft}`}>
                         <div>
                             <button type="upload" className={styles.uploadButton}>Upload</button>
+<<<<<<< HEAD
                             <h1 className={`${styles.dashboardTitle}`}>Sample Plot</h1>
+=======
+                            <h1 className={`${styles.dashboardTitle}`}>Sample PLot</h1>
+>>>>>>> ecf6822 (upload button and remove text)
                         </div>
                         <div className={`${styles.plotBox}`}>
                             <img src={samplePlot} className={`${styles.imageSample}`} alt="Sample plot image"/>

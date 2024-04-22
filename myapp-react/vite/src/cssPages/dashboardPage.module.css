@@ -37,7 +37,11 @@
 }
 
 .uploadButton {
+<<<<<<< HEAD
     width: 35%; /* Adjusted width for side-by-side buttons */
+=======
+    width: 35%; 
+>>>>>>> ecf6822 (upload button and remove text)
     padding: 0.6em;
     background-color: #646cff;
     color: white;
@@ -45,10 +49,18 @@
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.25s;
+<<<<<<< HEAD
     margin-right: 1%; /* Space between the two buttons */
+=======
+    margin-right: 0%;
+>>>>>>> ecf6822 (upload button and remove text)
 }
 
 .uploadButton:hover {
     background-color: #535bf2;
+<<<<<<< HEAD
 }
 
+=======
+}
+>>>>>>> ecf6822 (upload button and remove text)
