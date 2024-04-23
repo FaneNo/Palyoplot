@@ -1,155 +1,145 @@
-
 /* we name the file .module because it to prevent naming conflicts and make sure that the styles only apply to the intended components */
 * {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-  }
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+ul {
+  list-style: none;
   
-  ul {
-    list-style: none;
-  }
+}
+
+a {
+  text-decoration: none;
+  color: black;
+  font-size: 18px;
+}
+li {
   
-  a {
-    text-decoration: none;
-    color: black;
-    font-size: 18px;
+}
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #182c25	;
+}
+
+.centerContainer {
+  display: flex;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.logo {
+  margin-right: 20px; 
+}
+
+.navMenu {
+  display: flex;
+  gap: 60px;
+}
+
+.loginNregisBox {
+  display: flex;
+  gap: 15px;
+}
+
+.logoText {
+  font-size: 30px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.navMenuList {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 60px;
+}
+
+.login {
+  background-color: #008cba;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 15px;
+  transition: 0.3s ease-in-out;
+}
+
+.login:hover {
+  background-color: rgb(2, 92, 122);
+  color: lightblue;
+}
+
+.register {
+  background-color: #008cba;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 15px;
+  transition: 0.3s ease-in-out;
+}
+
+.register:hover {
+  background-color: rgb(2, 92, 122);
+  color: lightblue;
+}
+
+/* media queries */
+
+/* when screen is reduce to certain condense it to a hamburger button */
+@media screen and (max-width: 780px) {
+  .hamburger {
+    display: block;
+    cursor: pointer;
   }
-  
- 
-  .navbar {
-    background-color: aliceblue;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    /* gap: 40px;
-    min-height: 70px; */
-    
+
+  .bar {
+    background-color: #120f0b;
+    width: 20px;
+    height: 3px;
+    display: block;
+    margin: 5px;
+    -webkit-transition: 0.3s ease-in-out;
+    transition: 0.3s ease-in-out;
   }
-  
-  .logo {
-    display: flex;
-    
+
+  /* adding active class to the bars  */
+  .hamburger.active .bar:nth-child(2) {
+    opacity: 0;
   }
-  
-  .logoText {
-    font-size: 30px;
-    font-family: Arial, Helvetica, sans-serif;
-    
+  .hamburger.active .bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
   }
-  
+  .hamburger.active .bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
 
   .navMenu {
-    display: flex;
-    justify-content: flex-end;
-    
-    gap: 60px;
-  }
-  .navMenuList {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 60px;
-  }
-  
-  .loginNregisBox {
-    display: flex;
-    justify-content: flex-end;
-    gap: 30px;
-  
+    position: absolute;
+    flex-direction: column;
+    gap: 0;
+    top: 70px;
+    left: -100%;
+    text-align: start;
+    width: 100%;
+    transition: 0.7s ease-in-out;
+    background-color: aliceblue;
+    padding: 10px;
   }
 
-  .login {
-    background-color: #008CBA; 
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 15px;
-    transition: .3s ease-in-out;
+  .navMenu.active {
+    left: 0;
   }
 
-  .login:hover {
-    background-color: rgb(2, 92, 122);
-    color: lightblue;
+  .navMenu li {
+    margin: 16px 0;
   }
-
-  .register {
-    background-color: #008CBA; 
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 15px;
-    transition: .3s ease-in-out;
-    
-  }
-
-  .register:hover {
-    background-color: rgb(2, 92, 122);
-    color: lightblue;
-  }
-
-  
-
-
-
-  /* media queries */
-  
-  /* when screen is reduce to certain condense it to a hamburger button */
-  @media screen and (max-width: 780px){
-    
-    
-    .hamburger {
-      display: block;
-      cursor: pointer;
-    }
-  
-    .bar {
-          background-color: #120f0b;
-          width: 20px;
-          height: 3px;
-          display: block;
-          margin: 5px;
-          -webkit-transition: 0.3s ease-in-out;
-          transition: 0.3s ease-in-out;
-      }
-  
-    /* adding active class to the bars  */
-    .hamburger.active .bar:nth-child(2){
-      opacity: 0;
-    }
-    .hamburger.active .bar:nth-child(1){
-      transform: translateY(8px) rotate(45deg);
-    }
-    .hamburger.active .bar:nth-child(3){
-      transform: translateY(-8px) rotate(-45deg);
-    }
-  
-  
-    .navMenu{
-      position: absolute;
-      flex-direction: column;
-      gap: 0;
-      top: 70px;
-      left: -100%;
-      text-align: start;
-      width: 100%;
-      transition: 0.7s ease-in-out;
-      background-color: aliceblue;
-      padding: 10px;
-    }
-  
-    .navMenu.active{
-      left: 0;
-    }
-  
-    .navMenu li {
-      margin: 16px 0;
-    }
-  }
+}

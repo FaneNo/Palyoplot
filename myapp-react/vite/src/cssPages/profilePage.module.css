@@ -1,0 +1,46 @@
+.profileBody {
+    background-color: azure;
+    width: 100vw;
+}
+
+.profileNavBox {
+    display: flex;
+    align-items: center;
+
+}
+.profileNavLeft {
+    flex: 1;
+    text-align: center; 
+    
+}
+
+.dashboardAccContainer {
+    max-width: 50%;
+    margin: auto;
+    padding: 20px;
+    text-align: center;
+    background-color: aliceblue;
+    border-radius: 20px;
+}
+
+.dashboardAccInfoTitle {
+    margin-bottom: 15px;
+}
+
+.dashboardAccForm {
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboardInput {
+    width: 100%;
+    padding: 10px;
+}
+
+.dashboardUpdate {
+    align-items: center;
+    background-color: #646cff;
+    color: white;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
