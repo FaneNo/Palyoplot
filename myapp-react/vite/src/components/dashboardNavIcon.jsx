@@ -1,20 +1,15 @@
-import graphIcon from "../assets/graphIcon.svg"
+import graphIcon from "../assets/graphIcon.svg";
+import accountManage from "../assets/accountManage.svg";
 
-export const dashboardNavIcon = [ 
-
-    {
-        title: "Dashboard",
-        icon: graphIcon,
-        link: "/dashboard"
-    },
-    {
-        title: "Test 1",
-        icon: graphIcon,
-        link: "/"
-    },
-    {
-        title: "Test 2",
-        icon: graphIcon,
-        link: "/"
-    },
-]
+export const dashboardNavIcon = [
+  {
+    title: "Dashboard",
+    icon: graphIcon,
+    link: "/dashboard",
+  },
+  {
+    title: "Profile",
+    icon: accountManage,
+    link: "/profile",
+  },
+];

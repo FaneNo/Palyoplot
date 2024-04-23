@@ -19,17 +19,18 @@
 
   /*Change the color of the text */
   .navLink {
-    color: black; 
+    color: #008080; 
     font-weight: bold; 
   }
   
   .navLink:hover {
     color: aliceblue; 
     font-weight: bold; 
+    transition: ease-in 0.3s;
   }
  
   .navbar {
-    background-color: rgb(10, 68, 18);
+    background-color: #182c25;
     padding: 10px 20px;
     display: flex;
     justify-content: space-between;

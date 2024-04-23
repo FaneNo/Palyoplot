@@ -1,6 +1,7 @@
+
 .dashboardBody {
     background-color: azure;
-   
+    width: 100vw;
 }
 .dashboardTitle {
     display: flex;
@@ -19,16 +20,20 @@
 .dashboardNavBox {
     display: flex;
     align-items: center;
+
 }
 
 .plotBox {
     display: flex;
     justify-content: center;
+    margin: 20px;
+    padding: 20px;
 }    
     
 .dashboardNavLeft {
     flex: 1;
     text-align: center; 
+    
 }
 
 
@@ -78,7 +83,7 @@
     border-radius: 4px;
 }
 
-.dashboardAccContainer {
+/* .dashboardAccContainer {
     max-width: 400px;
     margin: auto;
     padding: 20px;
@@ -105,7 +110,7 @@
     color: white;
     margin-top: 20px;
 }
-    
+     */
 
 .imageSample {
     height: auto;
@@ -114,7 +119,7 @@
 
 
 .uploadButton {
-    width: 35%; /* Adjusted width for side-by-side buttons */
+    width: 35%; /*Adjusted width for side-by-side buttons*/
     padding: 0.6em;
     background-color: #646cff;
     color: white;

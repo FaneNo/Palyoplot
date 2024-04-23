@@ -26,6 +26,7 @@
   .homeDescripBox {
     display: flex;
     align-items: center;
+    height: 100vh;
   }
   
   
@@ -39,12 +40,22 @@
   }
   
   .imageRight {
-    flex: 1;
-    text-align: center; 
+    /* flex: 1;
+    text-align: center;  */
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+    padding: 20px;
+
+    
+  }
+  .imageSample {
+    height: auto;
+    max-width: 100%;
   }
   
-  
-  .imageRightA img {
+  /* .imageRightA img {
     max-width: 100%;
     height: auto;
   }
+   */
