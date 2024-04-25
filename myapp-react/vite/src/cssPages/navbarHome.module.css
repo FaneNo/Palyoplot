@@ -7,7 +7,6 @@
 
 ul {
   list-style: none;
-  
 }
 
 a {
@@ -16,14 +15,13 @@ a {
   font-size: 18px;
 }
 li {
-  
 }
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background-color: #182c25	;
+  background-color: #182c25;
 }
 
 .centerContainer {
@@ -33,7 +31,7 @@ li {
 }
 
 .logo {
-  margin-right: 20px; 
+  margin-right: 20px;
 }
 
 .navMenu {

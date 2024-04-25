@@ -1,116 +1,105 @@
 /* default styling */
 /* we name the file .module because it to prevent naming conflicts and make sure that the styles only apply to the intended components */
 * {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-  }
-  
-  ul {
-    list-style: none;
-    
-  }
-  
-  a {
-    text-decoration: none;
-    color: black;
-    font-size: 18px;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+  font-size: 18px;
+}
+
+/*Change the color of the text */
+.navLink {
+  color: #008080;
+  font-weight: bold;
+}
+
+.navLink:hover {
+  color: aliceblue;
+  font-weight: bold;
+  transition: ease-in 0.3s;
+}
+
+.navbar {
+  background-color: #182c25;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+  min-height: 70px;
+}
+
+.logo {
+  font-size: 30px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ul  */
+.navMenu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 60px;
+}
+
+/* when screen is reduce to certain condense it to a hamburger button */
+@media screen and (max-width: 780px) {
+  .hamburger {
+    display: block;
+    cursor: pointer;
   }
 
-  /*Change the color of the text */
-  .navLink {
-    color: #008080; 
-    font-weight: bold; 
+  .bar {
+    background-color: #120f0b;
+    width: 20px;
+    height: 3px;
+    display: block;
+    margin: 5px;
+    -webkit-transition: 0.3s ease-in-out;
+    transition: 0.3s ease-in-out;
   }
-  
-  .navLink:hover {
-    color: aliceblue; 
-    font-weight: bold; 
-    transition: ease-in 0.3s;
-  }
- 
-  .navbar {
-    background-color: #182c25;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 40px;
-    min-height: 70px;
-  }
-  
-  
 
-  .logo {
-    font-size: 30px;
-    font-family: Arial, Helvetica, sans-serif;
+  /* adding active class to the bars  */
+  .hamburger.active .bar:nth-child(2) {
+    opacity: 0;
   }
-  
-  
-  /* ul  */
+  .hamburger.active .bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+  .hamburger.active .bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
+  /* navMenu */
+
   .navMenu {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 60px;
-  }
-  
-
-  
-  /* when screen is reduce to certain condense it to a hamburger button */
-  @media screen and (max-width: 780px){
-    
-    
-    .hamburger {
-      display: block;
-      cursor: pointer;
-    }
-  
-    .bar {
-          background-color: #120f0b;
-          width: 20px;
-          height: 3px;
-          display: block;
-          margin: 5px;
-          -webkit-transition: 0.3s ease-in-out;
-          transition: 0.3s ease-in-out;
-      }
-  
-    /* adding active class to the bars  */
-    .hamburger.active .bar:nth-child(2){
-      opacity: 0;
-    }
-    .hamburger.active .bar:nth-child(1){
-      transform: translateY(8px) rotate(45deg);
-    }
-    .hamburger.active .bar:nth-child(3){
-      transform: translateY(-8px) rotate(-45deg);
-    }
-  
-  
-    /* navMenu */
-  
-    .navMenu{
-      position: absolute;
-      flex-direction: column;
-      gap: 0;
-      bottom: 0;
-      left: -100%;
-      text-align: start;
-      width: 100%;
-      transition: 0.7s ease-in-out;
-      background-color: aliceblue;
-      padding: 10px;
-    }
-  
-    .navMenu.active{
-      left: 0;
-      bottom: -70px;
-    }
-  
-    .navMenu li {
-      margin: 16px 0;
-    }
+    position: absolute;
+    flex-direction: column;
+    gap: 0;
+    bottom: 0;
+    left: -100%;
+    text-align: start;
+    width: 100%;
+    transition: 0.7s ease-in-out;
+    background-color: aliceblue;
+    padding: 10px;
   }
 
+  .navMenu.active {
+    left: 0;
+    bottom: -70px;
+  }
 
+  .navMenu li {
+    margin: 16px 0;
+  }
+}

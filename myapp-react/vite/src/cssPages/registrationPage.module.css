@@ -1,58 +1,61 @@
 .registrationContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center; /* Center content vertically */
-    min-height: 100vh; /* Make sure it takes up at least the full viewport height */
-    width: 100vw; /* Full viewport width */
-    padding-top: var(--nav-height, 70px); /* Space for the navbar, if it's absolutely positioned */
-    background-color: azure; /* Match the Home page's background color */
-  }
-  
-  .registrationTitle {
-    color: #120f0b; /* Updated text color to dark */
-    margin-bottom: 1em; /* Space below the title */
-  }
-  
-  .registrationForm {
-    width: 100%; /* Use the full width of the container */
-    max-width: 500px; /* Or the maximum width you desire for your form */
-    padding: 1em; /* Padding inside the form */
-    margin: 1em; /* Margin around the form */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: add a subtle shadow */
-    border-radius: 8px; /* Optional: round the corners */
-    margin-bottom: 2em; /* Space at the bottom */
-  }
-  
-  .registrationLabel {
-    color: #120f0b; /* Updated label text color to dark */
-    display: block;
-    margin-bottom: 0.5em; /* Spacing between label and input */
-  }
-  
-  input,
-  select {
-    color: white; /* Set the text color inside the input boxes to white */
-    background-color: black; /* Set the background color of the input boxes to black */
-    width: 100%; /* Full width of the form */
-    padding: 0.5em;
-    margin-bottom: 1em; /* Spacing between each input/select */
-    border: 1px solid #ccc; /* You might want to change this to a lighter color to see the border on a black background */
-    border-radius: 4px;
-  }
-  
-  .registrationButton {
-    width: 100%;
-    padding: 0.6em;
-    background-color: #646cff; /* Button color */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.25s;
-  }
-  
-  .registrationButton:hover {
-    background-color: #535bf2; /* Button hover state */
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Center content vertically */
+  min-height: 100vh; /* Make sure it takes up at least the full viewport height */
+  width: 100vw; /* Full viewport width */
+  padding-top: var(
+    --nav-height,
+    70px
+  ); /* Space for the navbar, if it's absolutely positioned */
+  background-color: azure; /* Match the Home page's background color */
+}
+
+.registrationTitle {
+  color: #120f0b; /* Updated text color to dark */
+  margin-bottom: 1em; /* Space below the title */
+}
+
+.registrationForm {
+  width: 100%; /* Use the full width of the container */
+  max-width: 500px; /* Or the maximum width you desire for your form */
+  padding: 1em; /* Padding inside the form */
+  margin: 1em; /* Margin around the form */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: add a subtle shadow */
+  border-radius: 8px; /* Optional: round the corners */
+  margin-bottom: 2em; /* Space at the bottom */
+}
+
+.registrationLabel {
+  color: #120f0b; /* Updated label text color to dark */
+  display: block;
+  margin-bottom: 0.5em; /* Spacing between label and input */
+}
+
+input,
+select {
+  color: white; /* Set the text color inside the input boxes to white */
+  background-color: black; /* Set the background color of the input boxes to black */
+  width: 100%; /* Full width of the form */
+  padding: 0.5em;
+  margin-bottom: 1em; /* Spacing between each input/select */
+  border: 1px solid #ccc; /* You might want to change this to a lighter color to see the border on a black background */
+  border-radius: 4px;
+}
+
+.registrationButton {
+  width: 100%;
+  padding: 0.6em;
+  background-color: #646cff; /* Button color */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.25s;
+}
+
+.registrationButton:hover {
+  background-color: #535bf2; /* Button hover state */
+}

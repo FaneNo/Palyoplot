@@ -1,0 +1,44 @@
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: darkcyan;
+  /* rest of your .table styles */
+}
+
+
+.table th, .table td {
+  border: 1px solid black;
+  padding: 4px; 
+}
+
+.table th {
+  padding-top: 6px; 
+  padding-bottom: 6px; 
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+
+.table .download-btn {
+  background-color: #4CAF50; 
+  border: none; 
+  color: white; 
+  padding: 4px 8px; 
+  text-align: center; 
+  text-decoration: none; 
+  display: inline-block;
+  font-size: 14px; 
+  margin: 2px 1px; 
+  transition-duration: 0.4s; 
+  cursor: pointer; 
+}
+
+.table .download-btn:hover {
+  background-color: white; 
+  color: black; 
+}
+.table .download-column {
+  width: 175px; 
+}
+

@@ -1,9 +1,11 @@
 #root {
+  /* height: 100%; */
   max-width: auto;
   margin: 0 auto;
   padding: 0 auto;
   text-align: center;
 }
+
 
 .logo {
   height: 6em;
