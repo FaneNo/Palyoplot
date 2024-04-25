@@ -1,60 +1,55 @@
 .homePageBody {
   background-color: azure;
- 
 }
 .homeTitle {
-    display: flex;
-    justify-content: center; 
-    align-items: center; 
-    margin-bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0;
 }
 .homeText {
-    display: flex;
-    justify-content: center; 
-    align-items: center; 
-    padding: 50px;
-    padding-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 50px;
+  padding-top: 20px;
 }
 .homeDescrip {
-    display: flex;
-    justify-content: center; 
-    align-items: center; 
-    height: 100vh; 
-    padding: 50px; 
-  }
-  
-  .homeDescripBox {
-    display: flex;
-    align-items: center;
-    height: 100vh;
-  }
-  
-  
-  .homeDescripLeft {
-    flex: 1;
-    text-align: center; 
-  }
-  
-  .proDescrip {
-    
-  }
-  
-  .imageRight {
-    /* flex: 1;
-    text-align: center;  */
-    display: flex;
-    justify-content: center;
-    margin: 20px;
-    padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 50px;
+}
 
-    
-  }
-  .imageSample {
-    height: auto;
-    max-width: 100%;
-  }
-  
-  /* .imageRightA img {
+.homeDescripBox {
+  display: flex;
+  align-items: center;
+  height: 100vh;
+}
+
+.homeDescripLeft {
+  flex: 1;
+  text-align: center;
+}
+
+.proDescrip {
+}
+
+.imageRight {
+  /* flex: 1;
+    text-align: center;  */
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+  padding: 20px;
+}
+.imageSample {
+  height: auto;
+  max-width: 100%;
+}
+
+/* .imageRightA img {
     max-width: 100%;
     height: auto;
   }

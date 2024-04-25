@@ -1,0 +1,20 @@
+.hisotryBody {
+  background-color: azure;
+  width: 100vw;
+}
+
+.historyNavBox {
+  display: flex;
+  align-items: center;
+}
+.hisotryNavLeft {
+  flex: 1;
+  text-align: center;
+}
+
+.historyBox {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+  padding: 20px;
+}
