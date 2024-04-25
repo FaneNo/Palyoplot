@@ -1,31 +1,24 @@
+/* dashboardPage.module.css */
+
 .dashboardBody {
-  background-color: azure;
+  background-color: #f7f0ea;
   width: 100vw;
 }
-.dashboardTitle {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 0;
-}
-.dashboardText {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 50px;
-  padding-top: 20px;
-}
+
 
 .dashboardNavBox {
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* Align items to the top */
+  justify-content: flex-start; /* Align items to the left */
+  width: 100%; /* Make the nav bar full width */
 }
+
 
 .plotBox {
   display: flex;
   justify-content: center;
+  align-items: center; /* Centered vertically */
   margin: 20px;
-  padding: 20px;
 }
 
 .dashboardNavLeft {
@@ -33,23 +26,30 @@
   text-align: center;
 }
 
-.dashboardUpload {
+.dashboardContent {
+  width: 100%;
+}
+
+.dashboardText {
+  display: flex;
+  justify-content: center;
   align-items: center;
-  background-color: #646cff;
+  padding: 20px; /* Adjusted padding for better spacing */
+}
+
+.dashboardUpload {
+  background-color: #2c6fbb;
   color: white;
-  margin-bottom: 20px;
+  padding: 10px 20px; /* Adjusted padding for better button size */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 20px; /* Adjusted margin for spacing */
 }
 
 .dashboardRecentText {
-  align-items: center;
   font-size: 25px;
   padding-top: 15px;
-}
-
-.dashboardGraphButtons {
-  background-color: #646cff;
-  color: white;
-  margin: 0 10px;
 }
 
 .dashboardGraphPrev {
@@ -73,30 +73,34 @@
 }
 
 .dashboardGraphPrev span {
-  background-color: #007bff;
+  background-color: #3A5A40;
   color: white;
   padding: 5px 10px;
   border-radius: 4px;
 }
 
-
 .imageSample {
-  height: auto;
   max-width: 100%;
+  height: auto;
 }
 
 .uploadButton {
-  width: 35%; /*Adjusted width for side-by-side buttons*/
-  padding: 0.6em;
-  background-color: #646cff;
-  color: white;
+  width: 100%; /* Adjusted width to fill container */
+  padding: 10px; /* Adjusted padding for better button size */
+  background-color: #2c6fbb;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.25s;
-  margin-right: 0%;
+  margin-right: 10px; /* Added margin to the right side */
 }
 
 .uploadButton:hover {
-  background-color: #535bf2;
+  background-color: #2c6fbb;
+}
+
+.uploadButtonWrapper {
+  display: flex;
+  justify-content: flex-end; /* Align items to the right */
+  margin-right: 100px; /* Added margin to the right side */
 }

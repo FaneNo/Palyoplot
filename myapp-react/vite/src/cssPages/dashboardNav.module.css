@@ -8,7 +8,7 @@
 .sidebar {
   height: 100%;
   width: 250px;
-  background-color: lightblue;
+  background-color: #ececec;
 }
 
 .sidebarList {
@@ -42,10 +42,10 @@
 
 .sidebarList .sidebarRow:hover {
   cursor: pointer;
-  background-color: cyan;
+  background-color: #A8D38D;
 }
 
 .sidebarList .active {
   cursor: pointer;
-  background-color: rgb(76, 190, 190);
+  background-color: #A8D38D;
 }

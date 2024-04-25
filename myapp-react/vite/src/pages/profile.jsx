@@ -32,7 +32,7 @@ function Profile() {
               <h2 className={styles.dashboardAccInfoTitle}>Account Info</h2>
               <form onSubmit={infoUpdate} className={styles.dashboardAccForm}>
                 <div className={styles.dashboardInput}>
-                  <label htmlFor="username">Username:</label>
+                  <label htmlFor="username">Username</label>
                   <input
                     id="username"
                     type="text"
@@ -42,7 +42,7 @@ function Profile() {
                   />
                 </div>
                 <div className={styles.dashboardInput}>
-                  <label htmlFor="email">Email:</label>
+                  <label htmlFor="email">Email</label>
                   <input
                     id="email"
                     type="email"
@@ -52,7 +52,7 @@ function Profile() {
                   />
                 </div>
                 <div className={styles.dashboardInput}>
-                  <label htmlFor="password">Password:</label>
+                  <label htmlFor="password">Password</label>
                   <input
                     id="password"
                     type="password"
@@ -62,7 +62,7 @@ function Profile() {
                   />
                 </div>
                 <div className={styles.dashboardInput}>
-                  <label htmlFor="password">Comfirm Password:</label>
+                  <label htmlFor="password">Comfirm Password</label>
                   <input
                     id="password"
                     type="password"

@@ -24,12 +24,20 @@ function Dashboard() {
         <div className={`${styles.dashboardNavBox}`}>
           <DashboardNav />
           <div className={`${styles.dashboardNavLeft}`}>
-            {/* Just for testing purpose if anyone want to delete you can */}
+            <div className={`${styles.plotBox}`}>
+              <img
+                src={samplePlot}
+                className={`${styles.imageSample}`}
+                alt="Sample plot image"
+              />
+            </div>
 
-            <div>
-              <button type="Upload" className={styles.dashboardUpload}>
-                Upload CSV File
-              </button>
+            <div className={`${styles.dashboardContent}`}>
+              <div className={`${styles.uploadButtonWrapper}`}>
+                <button type="Upload" className={styles.dashboardUpload}>
+                  Upload CSV File
+                </button>
+              </div>
               <h1 className={styles.dashboardRecentText}>Recent Graphs</h1>
               <div className={styles.dashboardText}>
                 {graphData.map((graph) => (
@@ -48,14 +56,6 @@ function Dashboard() {
                   </button>
                 ))}
               </div>
-            </div>
-
-            <div className={`${styles.plotBox}`}>
-              <img
-                src={samplePlot}
-                className={`${styles.imageSample}`}
-                alt="Sample plot image"
-              />
             </div>
           </div>
         </div>

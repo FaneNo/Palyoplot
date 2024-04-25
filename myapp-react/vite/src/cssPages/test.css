@@ -2,7 +2,7 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  background-color: darkcyan;
+  background-color: #f7f0ea;
   /* rest of your .table styles */
 }
 
@@ -16,12 +16,12 @@
   padding-top: 6px; 
   padding-bottom: 6px; 
   text-align: left;
-  background-color: #4CAF50;
+  background-color: #3A5A40;
   color: white;
 }
 
 .table .download-btn {
-  background-color: #4CAF50; 
+  background-color: #2c6fbb;
   border: none; 
   color: white; 
   padding: 4px 8px; 
@@ -35,7 +35,7 @@
 }
 
 .table .download-btn:hover {
-  background-color: white; 
+  background-color: #ececec;
   color: black; 
 }
 .table .download-column {
