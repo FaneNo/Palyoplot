@@ -25,7 +25,7 @@ function Registration() {
       <form onSubmit={handleSubmit} className={styles.registrationForm}>
         <h1 className={styles.registrationTitle}>Registration</h1>
         <div className={styles.formGroup}>
-          <label className={styles.registrationLabel}>Username:</label>
+          <label className={styles.registrationLabel}>Username</label>
           <input
             type="text"
             className={styles.registrationInput}
@@ -35,7 +35,7 @@ function Registration() {
           />
         </div>
         <div className={styles.formGroup}>
-          <label className={styles.registrationLabel}>Email:</label>
+          <label className={styles.registrationLabel}>Email</label>
           <input
             type="email"
             className={styles.registrationInput}
@@ -45,7 +45,7 @@ function Registration() {
           />
         </div>
         <div className={styles.formGroup}>
-          <label className={styles.registrationLabel}>Password:</label>
+          <label className={styles.registrationLabel}>Password</label>
           <input
             type="password"
             className={styles.registrationInput}
@@ -55,7 +55,7 @@ function Registration() {
           />
         </div>
         <div className={styles.formGroup}>
-          <label className={styles.registrationLabel}>Confirm Password:</label>
+          <label className={styles.registrationLabel}>Confirm Password</label>
           <input
             type="password"
             className={styles.registrationInput}
@@ -65,7 +65,7 @@ function Registration() {
           />
         </div>
         <div className={styles.formGroup}>
-          <label className={styles.registrationLabel}>Field of Science:</label>
+          <label className={styles.registrationLabel}>Field of Science</label>
           <input
             type="text"
             className={styles.registrationInput}

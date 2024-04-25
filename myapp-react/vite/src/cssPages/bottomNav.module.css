@@ -18,18 +18,18 @@ a {
 
 /*Change the color of the text */
 .navLink {
-  color: #008080;
+  color: #8b6c5c;
   font-weight: bold;
 }
 
 .navLink:hover {
-  color: aliceblue;
+  color: #e3ccb4;
   font-weight: bold;
   transition: ease-in 0.3s;
 }
 
 .navbar {
-  background-color: #182c25;
+  background-color: #1D2E28;
   padding: 10px 20px;
   display: flex;
   justify-content: space-between;
@@ -90,7 +90,7 @@ a {
     text-align: start;
     width: 100%;
     transition: 0.7s ease-in-out;
-    background-color: aliceblue;
+    background-color: #e3ccb4;
     padding: 10px;
   }
 

@@ -1,5 +1,5 @@
 .hisotryBody {
-  background-color: azure;
+  background-color: #f7f0ea;
   width: 100vw;
 }
 
@@ -17,4 +17,5 @@
   justify-content: center;
   margin: 20px;
   padding: 20px;
+  
 }

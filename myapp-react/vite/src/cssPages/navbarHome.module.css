@@ -1,4 +1,5 @@
-/* we name the file .module because it to prevent naming conflicts and make sure that the styles only apply to the intended components */
+/* navbarHome.module.css */
+
 * {
   padding: 0;
   margin: 0;
@@ -11,17 +12,17 @@ ul {
 
 a {
   text-decoration: none;
-  color: black;
+  color: white; /* Changed default link color to white */
   font-size: 18px;
 }
-li {
-}
+
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background-color: #182c25;
+  background-color: #3A5A40;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Added box shadow for shading */
 }
 
 .centerContainer {
@@ -36,7 +37,7 @@ li {
 
 .navMenu {
   display: flex;
-  gap: 60px;
+  gap: 30px; /* Adjusted the gap between menu items */
 }
 
 .loginNregisBox {
@@ -47,52 +48,48 @@ li {
 .logoText {
   font-size: 30px;
   font-family: Arial, Helvetica, sans-serif;
+  color: white; /* Changed logo text color to white */
 }
 
-.navMenuList {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 60px;
-}
-
-.login {
-  background-color: #008cba;
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-  border-radius: 15px;
-  transition: 0.3s ease-in-out;
-}
-
-.login:hover {
-  background-color: rgb(2, 92, 122);
-  color: lightblue;
-}
-
+.login,
 .register {
-  background-color: #008cba;
+  background-color: #8b6c5c; /* Changed button background color to #1D2951 */
+  color: white; /* Changed button text color to white */
   border: none;
-  color: white;
   padding: 15px 32px;
   font-size: 16px;
   margin: 4px 2px;
   cursor: pointer;
   border-radius: 15px;
   transition: 0.3s ease-in-out;
+  width: 120px; /* Set fixed width for buttons */
+  text-align: center; /* Center text horizontally */
 }
 
+.login:hover,
 .register:hover {
-  background-color: rgb(2, 92, 122);
-  color: lightblue;
+  background-color: #e3ccb4; /* Changed button hover background color to #1E90FF */
+  color: white; /* Changed button hover text color to white */
+}
+
+/* Change specific elements to white */
+.navLink {
+  color: white; /* Changed navLink text color to white */
+  padding: 10px 15px; /* Adjusted padding for better spacing */
+}
+
+.navLink:hover {
+  color: #e3ccb4; /* Changed navLink hover text color to #1E90FF */
+}
+
+/* Change hover color for logo text */
+.logoText:hover {
+  color: #e3ccb4; /* Changed logo text hover color to #1E90FF */
 }
 
 /* media queries */
 
-/* when screen is reduce to certain condense it to a hamburger button */
+/* when screen is reduced to a certain size, condense it to a hamburger button */
 @media screen and (max-width: 780px) {
   .hamburger {
     display: block;
