@@ -1,0 +1,67 @@
+.imageRight {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 20px;
+    padding: 20px;
+}
+
+.imageSample {
+    height: auto;
+    max-width: 50%;
+    margin-bottom: 20px;
+  }
+
+.leftColumn {
+    flex: 70;
+    text-align: left;
+    margin-left: 50px;
+}
+
+.leftColumn p {
+    margin-bottom: 20px;
+    margin-right: 100px;
+}
+
+ul {
+    margin-bottom: 20px;
+}
+
+.rightColumn {
+    flex: 30;
+    text-align: left;
+    margin-right: 50px;
+    padding: 20px;
+}
+
+.aboutPageBody {
+    background-color: #f7f0ea;
+}
+
+.aboutDescripBox {
+    display: flex;
+    align-items: flex-start;
+}
+
+.aboutDescripLeft {
+    flex: 1;
+    text-align: center;
+}
+
+.aboutText {
+    text-align: left;
+    margin-left: 50px;
+}
+
+.underImageText {
+    text-align: left;
+    margin-bottom: 20px;
+    margin-right: 50px;
+}
+
+.aboutTitle {
+    text-align: left;
+    margin-top: 20px;
+    margin-left: 50px;
+    margin-bottom: 20px;
+}
