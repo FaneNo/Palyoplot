@@ -22,7 +22,10 @@ function App() {
           <Route path="/login" element={<Login />} />{" "}
           <Route path="/profile" element={<Profile />} />
           <Route path="/history" element={<History />} />
+
           <Route path="/about" element={<About />} />
+         
+
         </Routes>
       </Router>
       <BottomNav />

@@ -24,19 +24,29 @@ function Dashboard() {
         <div className={`${styles.dashboardNavBox}`}>
           <DashboardNav />
           <div className={`${styles.dashboardNavLeft}`}>
-            <div className={`${styles.plotBox}`}>
-              <img
-                src={samplePlot}
-                className={`${styles.imageSample}`}
-                alt="Sample plot image"
-              />
-            </div>
-
             <div className={`${styles.dashboardContent}`}>
-              <div className={`${styles.uploadButtonWrapper}`}>
-                <button type="Upload" className={styles.dashboardUpload}>
-                  Upload CSV File
-                </button>
+              <div className={`${styles.plotBox}`}>
+                <img
+                  src={samplePlot}
+                  className={`${styles.imageSample}`}
+                  alt="Sample plot image"
+                />
+                <div className={styles.uploadButtonWrapper}>
+                  <button type="Upload" className={styles.uploadButton}>
+                    Upload CSV File
+                  </button>
+                  <button type="button" className={styles.uploadButton}>
+                    Save Results
+                  </button>
+                </div>
+                <div className={styles.dropdownWrapper}>
+                  <label htmlFor="graphType">Choose Your Graph Type:</label>
+                  <select id="graphType" className={styles.graphTypeDropdown}>
+                    <option value="line">Line</option>
+                    <option value="bar">Bar</option>
+                    <option value="area">Area</option>
+                  </select>
+                </div>
               </div>
               <h1 className={styles.dashboardRecentText}>Recent Graphs</h1>
               <div className={styles.dashboardText}>
