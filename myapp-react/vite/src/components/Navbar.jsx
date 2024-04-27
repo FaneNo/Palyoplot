@@ -42,6 +42,11 @@ function Navbar() {
                 Tutorial
               </a>
             </li>
+            <li onClick={removeActive}>
+              <a href="about" className={`${styles.navLink}`}>
+                About
+              </a>
+            </li>
           </ul>
         </div>
         <div className={`${styles.loginNregisBox}`}>
