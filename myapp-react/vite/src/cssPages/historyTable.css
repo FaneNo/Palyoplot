@@ -24,7 +24,7 @@
   background-color: #2c6fbb;
   border: none; 
   color: white; 
-  padding: 4px 8px; 
+  padding: 5px 20px; 
   text-align: center; 
   text-decoration: none; 
   display: inline-block;
@@ -32,13 +32,14 @@
   margin: 2px 1px; 
   transition-duration: 0.4s; 
   cursor: pointer; 
+
 }
 
 .table .download-btn:hover {
-  background-color: #ececec;
+  background-color: #3A5A40;
   color: black; 
 }
 .table .download-column {
-  width: 175px; 
+  width: 350px;
 }
 

@@ -1,7 +1,7 @@
 import styles from "../cssPages/historyPage.module.css";
 import React, { useState } from "react";
 import DashboardNav from "../components/dashboardNav";
-import DataTable from "../components/test";
+import DataTable from "../components/historyTable";
 
 function History() {
   return (
