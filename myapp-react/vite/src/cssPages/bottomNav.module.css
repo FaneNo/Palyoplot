@@ -1,5 +1,5 @@
-/* default styling */
-/* we name the file .module because it to prevent naming conflicts and make sure that the styles only apply to the intended components */
+/* bottomNav.module.css */
+
 * {
   padding: 0;
   margin: 0;
@@ -16,7 +16,6 @@ a {
   font-size: 18px;
 }
 
-/*Change the color of the text */
 .navLink {
   color: #8b6c5c;
   font-weight: bold;
@@ -30,20 +29,26 @@ a {
 
 .navbar {
   background-color: #1D2E28;
-  padding: 10px 20px;
+  padding: 0px 20px; /* Separate padding for home and github text */
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: center; /* Center vertically */
   gap: 40px;
   min-height: 70px;
 }
 
 .logo {
-  font-size: 30px;
-  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  padding-right: 200px; /* Adjusted padding for the logo */
 }
 
-/* ul  */
+.logo img {
+  width: 55px; /* Adjust the width of the logo image */
+  height: auto; /* Maintain aspect ratio */
+}
+
 .navMenu {
   display: flex;
   justify-content: space-between;
@@ -51,7 +56,6 @@ a {
   gap: 60px;
 }
 
-/* when screen is reduce to certain condense it to a hamburger button */
 @media screen and (max-width: 780px) {
   .hamburger {
     display: block;
@@ -68,7 +72,6 @@ a {
     transition: 0.3s ease-in-out;
   }
 
-  /* adding active class to the bars  */
   .hamburger.active .bar:nth-child(2) {
     opacity: 0;
   }
@@ -78,8 +81,6 @@ a {
   .hamburger.active .bar:nth-child(3) {
     transform: translateY(-8px) rotate(-45deg);
   }
-
-  /* navMenu */
 
   .navMenu {
     position: absolute;
