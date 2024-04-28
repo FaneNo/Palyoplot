@@ -34,11 +34,6 @@ function Navbar() {
               </a>
             </li>
             <li onClick={removeActive}>
-              <a href="documentation" className={`${styles.navLink}`}>
-                Documentation
-              </a>
-            </li>
-            <li onClick={removeActive}>
               <a href="tutorial" className={`${styles.navLink}`}>
                 Tutorial
               </a>
