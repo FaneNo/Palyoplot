@@ -20,7 +20,7 @@ a {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
+  padding: 0px 20px;
   background-color: #3A5A40;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Added box shadow for shading */
 }
@@ -76,6 +76,11 @@ a {
 .navLink {
   color: white; /* Changed navLink text color to white */
   padding: 10px 15px; /* Adjusted padding for better spacing */
+}
+
+.logoImage {
+  width: 70px; /* Adjust the width to make the logo smaller */
+  height: auto; /* Maintain aspect ratio */
 }
 
 .navLink:hover {

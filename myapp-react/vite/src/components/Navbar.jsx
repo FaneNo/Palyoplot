@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styles from "../cssPages/navbarHome.module.css";
+import PalyoplotLogo from "../assets/PalyoplotLogo.png"; // Import the logo image
 
 function Navbar() {
   const [isActive, setIsActive] = useState(false);
@@ -16,8 +17,8 @@ function Navbar() {
     <header className={styles.header}>
       <nav className={`${styles.navbar}`}>
         <div className={`${styles.logo}`}>
-          <a href="/" className={`${styles.logoText}`}>
-            Palyoplot.
+          <a href="/" className={styles.logoLink}>
+            <img src={PalyoplotLogo} alt="Palyoplot Logo" className={`${styles.logoImage}`} />
           </a>
         </div>
         <div className={`${styles.centerContainer}`}>
@@ -75,3 +76,4 @@ function Navbar() {
 }
 
 export default Navbar;
+
