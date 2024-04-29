@@ -1,56 +1,57 @@
 .homePageBody {
   background-color: #f7f0ea;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  min-width: 100vw;
+  padding: 50px 0;
 }
 .homeTitle {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   margin-bottom: 0;
+  padding-bottom: 50px;
 }
 .homeText {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 50px;
-  padding-top: 20px;
+  padding: 20px;
 }
 .homeDescrip {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  width: 100vw;
   padding: 50px;
 }
-
-.homeDescripBox {
+.columnsContainer {
   display: flex;
-  align-items: center;
-  height: 100vh;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 100px;
 }
-
-.homeDescripLeft {
+.textColumn {
   flex: 1;
-  text-align: center;
+  padding-right: 20px;
 }
-
-.proDescrip {
-}
-
-.imageRight {
-  /* flex: 1;
-    text-align: center;  */
+.imageColumn {
   display: flex;
-  justify-content: center;
-  margin: 20px;
+  justify-content: flex-end;
+  flex: 1;
+  padding-left: 20px;
+}
+.BulletHeading {
   padding: 20px;
+}
+.bulletPoints {
+  list-style-type: disc;
+  padding-left: 20px;
+  text-align: left;
+}
+.bulletPoints li {
+  margin-bottom: 10px;
 }
 .imageSample {
   height: auto;
   max-width: 100%;
 }
-
-/* .imageRightA img {
-    max-width: 100%;
-    height: auto;
-  }
-   */
+.BottomHeading{
+  text-align: center;
+  width: 100%;
+  font-size: 32px;
+}

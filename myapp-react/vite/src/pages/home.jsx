@@ -21,31 +21,43 @@ function Home() {
 
   return (
     <>
-      <div></div>
-
-      <div className={`${styles.homePageBody}`}>
-        <div className={`${styles.homeDescripBox}`}>
-          <div className={`${styles.homeDescripLeft}`}>
-            <h1 className={`${styles.homeTitle}`}>Palyoplot</h1>
-            <p className={`${styles.homeText}`}>
-              {" "}
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-              sunt in culpa qui officia deserunt mollit anim id est laborum.{" "}
-            </p>
+      <div className={styles.homePageBody}>
+        <div className={styles.homeDescrip}>
+          <h1 className={styles.homeTitle}>Data at Your Fingertips - Welcome to Palyoplot</h1>
+          <p className={styles.homeText}>
+            Aimed at geospatial scientists, Palyoplot was created to help simplify 
+            the visualization and creation of multi-axis stratigraphic plotting of 
+            Quaternary Science Data. 
+          </p>
+          <p className={styles.homeText}>
+            With the goal of simplifying how scientists are able to visualize
+            specific data trends, Palyoplot was designed as the bridge from the 
+            coding world to the creation of publication quality plots.
+          </p>
+          {/*2 column layout beneath text */}
+          <div className={styles.columnsContainer}>
+            {/*left column for text and bullet points */}
+            <div className={styles.textColumn}>
+              <h2 className={styles.BulletHeading}>Why Choose Palyoplot?</h2>
+              <ul className={styles.bulletPoints}>
+                <li>Customizable stratigraphic diagrams of proxy records 
+                  (including point, line, bar, and stacked graphs)</li>
+                <li>Reusable configuration files simplify processing 
+                  and standardize your lab’s look-and-feel</li>
+                <li>User-defined groups and ordered taxa</li>
+                <li>Customizable y and x-axis intervals</li>
+              </ul>
+            </div>
+            {/*Right column for image */}
+            <div className={styles.imageColumn}>
+              <img
+                src={samplePlot}
+                className={styles.imageSample}
+                alt="Sample plot image"
+              />
+            </div>
           </div>
-
-          <div className={`${styles.imageRight}`}>
-            <img
-              src={samplePlot}
-              className={`${styles.imageSample}`}
-              alt="Sample plot image"
-            />
-          </div>
+          <h2 className={styles.BottomHeading}>Click Login or Register to Get Started</h2>
         </div>
       </div>
     </>
