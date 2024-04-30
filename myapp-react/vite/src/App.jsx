@@ -8,6 +8,7 @@ import History from "./pages/history";
 import Navbar from "./components/Navbar";
 import BottomNav from "./components/bottomNav";
 import About from "./pages/about";
+import Tutorial from "./pages/tutorial";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 function App() {
@@ -22,7 +23,7 @@ function App() {
           <Route path="/login" element={<Login />} />{" "}
           <Route path="/profile" element={<Profile />} />
           <Route path="/history" element={<History />} />
-
+          <Route path="/tutorial" element={<Tutorial />} />
           <Route path="/about" element={<About />} />
          
 
