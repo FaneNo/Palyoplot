@@ -91,16 +91,34 @@
   height: auto;
 }
 
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.horizontalButtons {
+  display: flex;
+  justify-content: center; /* Center these buttons horizontally */
+  width: 100%; /* Take full width to spread out if needed */
+}
+
+.verticalControls {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center align to match horizontal buttons */
+  width: 100%; /* Ensures it aligns directly under the horizontal buttons */
+  margin-top: 10px; /* Space above the input field */
+}
+
 .uploadButton {
   background-color: #2c6fbb;
   color: white;
-  padding: 10px 20px; /* Adjusted padding for better button size */
+  padding: 10px 20px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  margin-bottom: 670px; /* Reduced margin for spacing */
-  margin-right: 10px; /* Added margin to the right side */
-  margin-left: 10px;
+  margin-right: 10px; /* Ensures space between "Upload CSV File" and "Save Results" */
 }
 
 .uploadButton:hover {
@@ -109,19 +127,40 @@
 
 .uploadButtonWrapper {
   display: flex;
-  justify-content: flex-end; /* Align items to the right */
-  margin-right: 100px; /* Added margin to the right side */
+  flex-direction: column; /* Stacks children vertically */
+  align-items: center; /* Aligns items horizontally to the center */
+  width: 100%; /* Ensures it takes the full width of its container */
+  margin-top: 20px; /* Adds some space between the image and the buttons */
 }
 
 .graphTypeDropdown {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  margin-top: 10px; /* Adjusted margin for spacing */
   width: 100%; /* Set the width to fill the available space */
+  margin-top: 10px; /* Space above dropdown */
 }
 
 .dropdownWrapper {
-  text-align: left; /* Align the label and dropdown to the left */
-  margin-top: 10px; /* Adjusted margin for spacing */
+  text-align: left;
+  width: 100%; /* Full width to align with button group above */
+}
+
+.inputWrapper {
+  text-align: left;
+  width: 100%; /* Full width to align with other form elements */
+  margin-top: 10px; /* Space above the input field */
+}
+
+.graphInput {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 80%; /* Match dropdown width for consistency */
+  margin-top: 10px; /* Space above dropdown */
+}
+
+.contentWrapper {
+  width: 100%;
+  margin-top: 30px; /* Space from the top navbar, only applied to the main content excluding the side navbar */
 }
