@@ -6,7 +6,6 @@ function Registration() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [fieldOfScience, setFieldOfScience] = useState("");
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -15,7 +14,6 @@ function Registration() {
       email,
       password,
       confirmPassword,
-      fieldOfScience,
     });
     // Implement what should happen on form submission
   };
@@ -61,16 +59,6 @@ function Registration() {
             className={styles.registrationInput}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-        </div>
-        <div className={styles.formGroup}>
-          <label className={styles.registrationLabel}>Field of Science</label>
-          <input
-            type="text"
-            className={styles.registrationInput}
-            value={fieldOfScience}
-            onChange={(e) => setFieldOfScience(e.target.value)}
             required
           />
         </div>

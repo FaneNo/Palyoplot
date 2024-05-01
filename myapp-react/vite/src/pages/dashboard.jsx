@@ -6,13 +6,11 @@ import samplePlot from "../assets/samplePlot.png";
 function Dashboard() {
   const FileUpload = (event) => {
     const file = event.target.files[0];
-
     //handles file upload process
     //will add on to later
   };
 
   const graphData = [
-    //placeholder for graph data
     { id: 1, title: "Graph 1" },
     { id: 2, title: "Graph 2" },
     { id: 3, title: "Graph 3" },
@@ -22,49 +20,66 @@ function Dashboard() {
     <>
       <div className={`${styles.dashboardBody}`}>
         <div className={`${styles.dashboardNavBox}`}>
-          <DashboardNav />
-          <div className={`${styles.dashboardNavLeft}`}>
-            <div className={`${styles.dashboardContent}`}>
-              <div className={`${styles.plotBox}`}>
-                <img
-                  src={samplePlot}
-                  className={`${styles.imageSample}`}
-                  alt="Sample plot image"
-                />
-                <div className={styles.uploadButtonWrapper}>
-                  <button type="Upload" className={styles.uploadButton}>
-                    Upload CSV File
-                  </button>
-                  <button type="button" className={styles.uploadButton}>
-                    Save Results
-                  </button>
-                </div>
-                <div className={styles.dropdownWrapper}>
-                  <label htmlFor="graphType">Choose Your Graph Type:</label>
-                  <select id="graphType" className={styles.graphTypeDropdown}>
-                    <option value="line">Line</option>
-                    <option value="bar">Bar</option>
-                    <option value="area">Area</option>
-                  </select>
+          <DashboardNav /> {/* This remains directly under the top navbar */}
+          <div className={styles.contentWrapper}> {/* New wrapper for the rest of the content */}
+            <div className={`${styles.dashboardNavLeft}`}>
+              <div className={`${styles.dashboardContent}`}>
+                <div className={`${styles.plotBox}`}>
+                  <img src={samplePlot} className={`${styles.imageSample}`} alt="Sample plot image" />
+                  <div className={styles.uploadButtonWrapper}>
+                  <div className={styles.horizontalButtons}>
+                    <button type="Upload" className={styles.uploadButton}>
+                      Upload CSV File
+                    </button>
+                    <button type="button" className={styles.uploadButton}>
+                      Save Results
+                    </button>
+                  </div>
+                  <div className={styles.verticalControls}>
+                    <div className={styles.dropdownWrapper}>
+                      <label htmlFor="graphType">Choose Your Graph Type:</label>
+                      <select id="graphType" className={styles.graphTypeDropdown}>
+                        <option value="line">Line</option>
+                        <option value="bar">Bar</option>
+                        <option value="area">Filled Area</option>
+                      </select>
+                    </div>
+                    <div className={styles.dropdownWrapper}>
+                      <label htmlFor="xAxis">Choose Your X Axis:</label>
+                      <select id="xAxis" className={styles.graphTypeDropdown}>
+                        <option value="">(Choose X Axis Value)</option>
+                      </select>
+                    </div>
+                    <div className={styles.dropdownWrapper}>
+                      <label htmlFor="yAxis">Choose Your Y Axis:</label>
+                      <select id="yAxis" className={styles.graphTypeDropdown}>
+                        <option value="">(Choose Y Axis Value)</option>
+                      </select>
+                    </div>
+                    <div className={styles.inputWrapper}>
+                      <label htmlFor="graphName">Input Name of Graph:</label>
+                      <input
+                        type="text"
+                        id="graphName"
+                        className={styles.graphInput}
+                        placeholder="Graph name goes here"
+                      />
+                    </div>
+                    <button type="button" className={styles.uploadButton}>
+                      Download Graph
+                    </button>
+                  </div>
                 </div>
               </div>
               <h1 className={styles.dashboardRecentText}>Recent Graphs</h1>
-              <div className={styles.dashboardText}>
-                {graphData.map((graph) => (
-                  <button
-                    key={graph.id}
-                    className={styles.dashboardGraphPrev}
-                    onClick={() => handleGraphClick(graph.id)}
-                  >
-                    <img
-                      src={
-                        "https://user-images.githubusercontent.com/6562690/54934415-b4d25b80-4edb-11e9-8758-fb29ada50499.png"
-                      }
-                      alt={`Preview of ${graph.title}`}
-                    />
-                    <span>{graph.title}</span>
-                  </button>
-                ))}
+                <div className={styles.dashboardText}>
+                  {graphData.map((graph) => (
+                    <button key={graph.id} className={styles.dashboardGraphPrev} onClick={() => handleGraphClick(graph.id)}>
+                      <img src={"https://user-images.githubusercontent.com/6562690/54934415-b4d25b80-4edb-11e9-8758-fb29ada50499.png"} alt={`Preview of ${graph.title}`} />
+                      <span>{graph.title}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -73,5 +88,11 @@ function Dashboard() {
     </>
   );
 }
+
+
+
+
+
+
 
 export default Dashboard;
