@@ -1,0 +1,146 @@
+/* navbarHome.module.css */
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+  
+  ul {
+    list-style: none;
+  }
+  
+  a {
+    text-decoration: none;
+    color: white; /* Changed default link color to white */
+    font-size: 18px;
+  }
+  
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 20px;
+    background-color: #3A5A40;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Added box shadow for shading */
+  }
+  
+  .centerContainer {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+  }
+  
+  .logo {
+    margin-right: 20px;
+  }
+  
+  .navMenu {
+    display: flex;
+    gap: 30px; /* Adjusted the gap between menu items */
+  }
+  
+  .loginNregisBox {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .logoText {
+    font-size: 30px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: white; /* Changed logo text color to white */
+  }
+  
+  
+  .logout {
+    background-color: #8b6c5c; /* Changed button background color to #1D2951 */
+    color: white; /* Changed button text color to white */
+    border: none;
+    padding: 15px 32px;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 15px;
+    transition: 0.3s ease-in-out;
+    width: 120px; /* Set fixed width for buttons */
+    text-align: center; /* Center text horizontally */
+  }
+  
+ 
+  .logout:hover {
+    background-color: #e3ccb4; /* Changed button hover background color to #1E90FF */
+    color: white; /* Changed button hover text color to white */
+  }
+  
+  /* Change specific elements to white */
+  .navLink {
+    color: white; /* Changed navLink text color to white */
+    padding: 10px 15px; /* Adjusted padding for better spacing */
+  }
+  
+  .logoImage {
+    width: 70px; /* Adjust the width to make the logo smaller */
+    height: auto; /* Maintain aspect ratio */
+  }
+  
+  .navLink:hover {
+    color: #e3ccb4; /* Changed navLink hover text color to #1E90FF */
+  }
+  
+  /* Change hover color for logo text */
+  .logoText:hover {
+    color: #e3ccb4; /* Changed logo text hover color to #1E90FF */
+  }
+  
+  /* media queries */
+  
+  /* when screen is reduced to a certain size, condense it to a hamburger button */
+  @media screen and (max-width: 780px) {
+    .hamburger {
+      display: block;
+      cursor: pointer;
+    }
+  
+    .bar {
+      background-color: #120f0b;
+      width: 20px;
+      height: 3px;
+      display: block;
+      margin: 5px;
+      -webkit-transition: 0.3s ease-in-out;
+      transition: 0.3s ease-in-out;
+    }
+  
+    /* adding active class to the bars  */
+    .hamburger.active .bar:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.active .bar:nth-child(1) {
+      transform: translateY(8px) rotate(45deg);
+    }
+    .hamburger.active .bar:nth-child(3) {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+  
+    .navMenu {
+      position: absolute;
+      flex-direction: column;
+      gap: 0;
+      top: 70px;
+      left: -100%;
+      text-align: start;
+      width: 100%;
+      transition: 0.7s ease-in-out;
+      background-color: aliceblue;
+      padding: 10px;
+    }
+  
+    .navMenu.active {
+      left: 0;
+    }
+  
+    .navMenu li {
+      margin: 16px 0;
+    }
+  }
+  

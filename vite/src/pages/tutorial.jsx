@@ -7,6 +7,7 @@ import step3Image from "../assets/compatibleFile.png";
 import step4Image from "../assets/chooseGraph.png";
 import step5Image from "../assets/sampleResult.png";
 
+
 const Step = ({ title, description, image }) => (
   <div className={styles.columnsContainer}>
     <div className={styles.textColumn}>
@@ -49,6 +50,8 @@ const steps = [
 
 function Tutorial() {
   return (
+    <>
+    
     <div className={styles.homePageBody}>
       <div className={styles.homeDescrip}>
         <h1 className={styles.homeTitle}>Tutorial: Getting Started with Palyoplot</h1>
@@ -62,6 +65,8 @@ function Tutorial() {
         <h2 className={styles.BottomHeading}>Ready to Plot?</h2>
       </div>
     </div>
+  
+    </>
   );
 }
 
