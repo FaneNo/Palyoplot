@@ -1,9 +1,11 @@
 import styles from "../cssPages/aboutPage.module.css";
 import ProfKP from "../assets/ProfKP.jpg"
 
+
 function About() {
     return (
         <>
+        
             <div className={`${styles.aboutPageBody}`}>
                 <div className={`${styles.aboutDescripBox}`}>
                     <div className={`${styles.leftColumn}`}>
@@ -113,6 +115,7 @@ function About() {
 
                 </div>
             </div>
+          
         </>
     );
 }

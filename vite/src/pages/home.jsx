@@ -4,23 +4,25 @@ import styles from "../cssPages/homePage.module.css";
 import DashboardNav from "../components/dashboardNav";
 import samplePlot from "../assets/samplePlot.png";
 
+
 function Home() {
   const [message, setMessage] = useState("");
 
   //this is calling the Django API and puting the message into the message variable
-  useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/hello-world/")
-      .then((response) => {
-        setMessage(response.data.message);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get("http://localhost:8000/api/hello-world/")
+  //     .then((response) => {
+  //       setMessage(response.data.message);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }, []);
 
   return (
     <>
+    
       <div className={styles.homePageBody}>
         <div className={styles.homeDescrip}>
           <h1 className={styles.homeTitle}>Data at Your Fingertips - Welcome to Palyoplot</h1>
@@ -60,6 +62,7 @@ function Home() {
           <h2 className={styles.BottomHeading}>Click Login or Register to Get Started</h2>
         </div>
       </div>
+    
     </>
   );
 }

@@ -18,6 +18,7 @@ function Dashboard() {
 
   return (
     <>
+  
       <div className={`${styles.dashboardBody}`}>
         <div className={`${styles.dashboardNavBox}`}>
           <DashboardNav /> {/* This remains directly under the top navbar */}
@@ -85,6 +86,7 @@ function Dashboard() {
           </div>
         </div>
       </div>
+
     </>
   );
 }
