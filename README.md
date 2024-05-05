@@ -28,6 +28,9 @@
 ## About the Project 
 ### Images
 ### ERD
+<p align="center">
+<img src="images/ERD.png" alt="ERD Diagram" width="400" height="400">
+</p>
 ## Getting Started
 ### Dependencies
 ### Deployment
