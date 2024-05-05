@@ -1,6 +1,7 @@
 <h1 align="center">Palyoplot - Team Techies</h1>
 <p align="center">
 <img src="images/PalyoplotLogo_NoBackground.png" alt="Product Logo" width="150" height="150">
+<img src="images/TeamTechiesLogo_Transparent.png" alt="Team Techies Logo" width="150" height="150">
 </p>
 
 ### Contributors
