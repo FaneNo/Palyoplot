@@ -28,19 +28,19 @@
 ## About the Project 
 ### Images
 ### ERD
+<p align="center">
+<img src="images/ERD.png" alt="ERD Diagram" width="400" height="400">
+</p>
+
 ## Getting Started
 ### Dependencies
 ### Deployment
 ### Testing
 ### Developer Instructions
 ## Sprint Timeline
-### Sprint 5 (//24 - //24)
-
-### Sprint 6 (//24 - //24)
-
-### Sprint 7 (//24 - //24)
-
-### Sprint 8 (//24 - //24)
 
 ### Sprint 9 (//24 - //24)
+1. add completed tasks here
+2. ...
+3. 
 ## Acknowledgements & Resources
