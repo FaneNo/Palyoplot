@@ -39,18 +39,6 @@
 ### Developer Instructions
 ## Sprint Timeline
 
-### Sprint 5 (//24 - //24)
-1. add completed tasks here
-2. ...
-### Sprint 6 (//24 - //24)
-1. add completed tasks here
-2. ...
-### Sprint 7 (//24 - //24)
-1. add completed tasks here
-2. ...
-### Sprint 8 (//24 - //24)
-1. add completed tasks here
-2. ...
 ### Sprint 9 (//24 - //24)
 1. add completed tasks here
 2. ...
