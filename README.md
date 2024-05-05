@@ -31,39 +31,28 @@
 <p align="center">
 <img src="images/ERD.png" alt="ERD Diagram" width="400" height="400">
 </p>
+
 ## Getting Started
 ### Dependencies
 ### Deployment
 ### Testing
 ### Developer Instructions
 ## Sprint Timeline
-### Sprint 0 (2/6/24 - 2/18/24)
-1. add completed tasks here
-2. ...
-
-### Sprint 1 (2/19/24 - 3/4/24)
-1. add completed tasks here
-2. ...
-
-### Sprint 2 (3/4/24 - 3/18/24)
-1. add completed tasks here
-2. ...
-
-### Sprint 3 (3/18/24 - 4/8/24)
-1. add completed tasks here
-2. ...
-
-### Sprint 4 (4/8/24 - 4/21/24)
-1. add completed tasks here
-2. ...
 
 ### Sprint 5 (//24 - //24)
-
+1. add completed tasks here
+2. ...
 ### Sprint 6 (//24 - //24)
-
+1. add completed tasks here
+2. ...
 ### Sprint 7 (//24 - //24)
-
+1. add completed tasks here
+2. ...
 ### Sprint 8 (//24 - //24)
-
+1. add completed tasks here
+2. ...
 ### Sprint 9 (//24 - //24)
+1. add completed tasks here
+2. ...
+3. 
 ## Acknowledgements & Resources
