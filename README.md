@@ -48,29 +48,39 @@ Palyoplot is a web-based application originally developed as an R package by Dr.
 ### Testing
 ### Developer Instructions
 
-## Sprint Timeline
-### Sprint 5 (//24 - //24)
-1. add completed tasks here
-2. ...
-3. 
+### Sprint 5 (08/26/24 - 9/9/24)
 
-### Sprint 6 (//24 - //24)
-1. add completed tasks here
-2. ...
-3. 
+1. map logic of R-package to draft back-end graph tool
+2. confirm minimum viable feature set, generated assets file type
+3. design DB for account management
+4. Confirm speed/data limits with IRT
 
-### Sprint 7 (//24 - //24)
-1. add completed tasks here
-2. ...
-3. 
+### Sprint 6 (9/9/24 - 9/23/24)
 
-### Sprint 8 (//24 - //24)
-1. add completed tasks here
-2. ...
-3. 
+1. Implement DB design for account management, authentication
+2. develop style-sheet/parameter setting back-end for tool
+3. add style-sheet/parameter interface to UI
+4. Workable back-end graph tool using example data, style-sheet not necessary (aka default mode)
 
-### Sprint 9 (//24 - //24)
-1. add completed tasks here
-2. ...
-3. 
+### Sprint 7 (9/23/24 - 10/7/24)
+
+1. Full confirmed feature set added to UI
+2. Connect graph-tool to UI, default mode
+3. associate account management features to style-sheet/parameter settings
+4. Graph tool using style sheets completed
+5. outline remote test server capabilities and limitations
+
+### Sprint 8 (10/7/24 - 10/21/24)
+
+1. Team has access to remote testing environment
+2. Test migration of user login/authentication/management
+3. style-sheet adjustable through UI
+4. tool fully implements style sheet
+
+### Sprint 9 (10/21/24 - 11/4/24)
+
+1. Test upload/download capabilities and data caps
+2. Web-tool remote deployment complete
+3. Bug testing
+
 ## Acknowledgements & Resources
