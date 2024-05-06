@@ -27,6 +27,13 @@
 
 ## About the Project 
 ### Images
+<p align="center">
+<img src="images/home.png" alt="Website Home" width="500" height="500">
+</p>
+<p align="center">
+<img src="images/Dashboard_Graph.png" alt="Website Dash" width="750" height="450">
+</p>
+
 ### ERD
 <p align="center">
 <img src="images/ERD.png" alt="ERD Diagram" width="400" height="400">
