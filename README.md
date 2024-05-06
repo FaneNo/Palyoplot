@@ -30,6 +30,13 @@
 ### Synopsis
 Palyoplot is a web-based application originally developed as an R package by Dr. Anna Klimaszewski-Patterson, an Associate Professor and the Geospatial Centroid Director at CSU Sacramento. Palyoplot facilitates the creation of high-quality stratigraphic diagrams for publications. This tool leverages a modern LAMP tech stack, with a front-end powered by React Vite, and employ data management features to facilitate privacy and reusability. By simplifying the visualization process, Palyoplot aims to lower barriers to entry, enhance research capabilities, and foster community collaboration by making complex data sets accessible and understandable without the need for advanced skills in programming or graphics.
 ### Images
+<p align="center">
+<img src="images/home.png" alt="Website Home" width="500" height="500">
+</p>
+<p align="center">
+<img src="images/Dashboard_Graph.png" alt="Website Dash" width="750" height="450">
+</p>
+
 ### ERD
 <p align="center">
 <img src="images/ERD.png" alt="ERD Diagram" width="400" height="400">
