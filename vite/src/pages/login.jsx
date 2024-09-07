@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate,Navigate } from "react-router-dom"; // Import useNavigate
 import styles from "../cssPages/loginPage.module.css";
 import { ACCESS_TOKEN,REFRESH_TOKEN } from "../token";
 import api from "../api";
@@ -18,7 +18,7 @@ function Login() {
       username,
       password,
     });
-    // Authentication logic here
+   
     try {
       const res = await api.post("/api/token/", {username, password})
       localStorage.setItem(ACCESS_TOKEN, res.data.access);
