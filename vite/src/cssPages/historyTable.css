@@ -43,3 +43,11 @@
   width: 350px;
 }
 
+.csv-link {
+  color: #2c6fbb;
+  text-decoration: underline;
+}
+
+.csv-link:hover {
+  color: #1a4b72;
+}
