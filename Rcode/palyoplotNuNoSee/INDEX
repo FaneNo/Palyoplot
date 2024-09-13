@@ -1,0 +1,49 @@
+hello                   Hello, World!
+palyoplot_appendGraphs
+                        Append Palyoplot graphs together.
+palyoplot_assignAges    interpolate ages from age model and assign to
+                        depths
+palyoplot_convertPercentages
+                        Convert taxa count values to percentages
+palyoplot_get2ndAxis    Create 2nd y-axis for plotted data
+palyoplot_getColorsGroups
+                        Get colors based on taxa groups
+palyoplot_getFontStyles
+                        Get font styles based on taxa
+palyoplot_getTaxaGroups
+                        Organize taxa groups. For use with
+                        palyoplot_plotData()
+palyoplot_getTaxaNamesByGroup
+                        Grab taxa names based on their taxa group
+palyoplot_mergeDataUnder
+                        Merge data based on a common code
+palyoplot_plotIndex     Plot taxa using an index graph (-1 to 1)
+palyoplot_plotOverlaidIndices
+                        Plot overlaid index values using an index graph
+                        (-1 to 1)
+palyoplot_plotStackedTaxa
+                        Plot stacked taxa data
+palyoplot_plotTaxa      Plot taxa
+palyoplot_setPanelSize
+                        Sets plotting panel size
+palyoplot_setTaxaOrder
+                        Set the order of taxa
+pp_agemodel             Palyoplot sample age model (data type: list)
+pp_colors               Palyoplot sample color sequence (data type:
+                        list of characters)
+pp_data                 Palyoplot sample list of taxa and counts (data
+                        type: list)
+pp_dataPlot             Palyoplot sample list of taxa counts including
+                        age model (data type: list)
+pp_fontStyles           Palyoplot sample font style sequence (data
+                        type: list of characters)
+pp_lifeForms            Palyoplot sample of taxa groups and colors for
+                        plotting (data type: list)
+pp_taxaGroups           Palyoplot sample of taxa groups and the number
+                        of taxa in each group (data type: list)
+pp_taxaList             Palyoplot sample of a list of taxa (data type:
+                        list)
+pp_xdata                Palyoplot sample list of taxa counts (in
+                        percentages) only (data type: list)
+pp_ydata                Palyoplot sample list of taxa counts (in
+                        percentages) only (data type: list)

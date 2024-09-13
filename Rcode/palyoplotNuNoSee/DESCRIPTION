@@ -1,0 +1,23 @@
+Package: palyoplot
+Type: Package
+Title: Visualization and Multi-Axis Stratigraphic Plotting of
+        Quaternary Science Data
+Version: 0.0.17
+Authors@R: person("Anna", "Klimaszewski-Patterson", email = "anna.kp@csus.edu",
+  role = c("aut", "cre"))
+Maintainer: Anna Klimaszewski-Patterson <anna.kp@csus.edu>
+Description: Palyoplot adds publication-quality Quaternary science data visualization 
+    functions to the statistical program R. Palyoplot implements customizable stratigraphical 
+    diagramming of proxy records such as pollen, sedimentary charcoal, and diatoms. It allows 
+    for user-defined groups and ordered taxa, custom color application by group/taxa, multiple 
+    y-axes (ex: depth and age), and customizable y and x-axis intervals leveraging the R 
+    language's extensive graphics libraries. Palyoplot creates presentation-ready graphics in 
+    a variety of graphical formats (.jpg, .png, .pdf, etc), and is appropriate for routine and 
+    scientific research use.
+Imports: data.table, ggplot2, gridExtra, tidyr, scales
+Depends: R (>= 4.3), gtable, grid, dplyr
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Author: Anna Klimaszewski-Patterson [aut, cre]
+Built: R 4.3.3; ; 2024-04-22 12:48:00 UTC; unix
