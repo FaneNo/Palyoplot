@@ -61,7 +61,8 @@ function DataTable() {
             <td>{row.id}</td>
             <td>{row.date}</td>
             <td>{row.modified}</td>
-            <td>{row.csv}</td> 
+            <td>
+              <span className="csv-link">{row.csv}</span></td>
             <td className="download-column">
               <button
                 className="download-btn"
