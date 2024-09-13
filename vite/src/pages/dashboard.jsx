@@ -32,9 +32,6 @@ function Dashboard() {
                     <button type="Upload" className={styles.uploadButton}>
                       Upload CSV File
                     </button>
-                    <button type="button" className={styles.uploadButton}>
-                      Save Results
-                    </button>
                   </div>
                   <div className={styles.verticalControls}>
                     <div className={styles.dropdownWrapper}>
@@ -72,15 +69,6 @@ function Dashboard() {
                   </div>
                 </div>
               </div>
-              <h1 className={styles.dashboardRecentText}>Recent Graphs</h1>
-                <div className={styles.dashboardText}>
-                  {graphData.map((graph) => (
-                    <button key={graph.id} className={styles.dashboardGraphPrev} onClick={() => handleGraphClick(graph.id)}>
-                      <img src={"https://user-images.githubusercontent.com/6562690/54934415-b4d25b80-4edb-11e9-8758-fb29ada50499.png"} alt={`Preview of ${graph.title}`} />
-                      <span>{graph.title}</span>
-                    </button>
-                  ))}
-                </div>
               </div>
             </div>
           </div>
