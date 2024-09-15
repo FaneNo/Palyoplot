@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import DashboardNav from "../components/dashboardNav";
+import CSVUploadDialog from "../components/CSVUploadDialog";
 import styles from "../cssPages/dashboardPage.module.css";
 import samplePlot from "../assets/samplePlot.png";
 
@@ -29,9 +30,10 @@ function Dashboard() {
                   <img src={samplePlot} className={`${styles.imageSample}`} alt="Sample plot image" />
                   <div className={styles.uploadButtonWrapper}>
                   <div className={styles.horizontalButtons}>
-                    <button type="Upload" className={styles.uploadButton}>
+                    {/* <button type="Upload" className={styles.uploadButton}>
                       Upload CSV File
-                    </button>
+                    </button> */}
+                    <CSVUploadDialog />
                   </div>
                   <div className={styles.verticalControls}>
                     <div className={styles.dropdownWrapper}>
