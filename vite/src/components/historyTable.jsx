@@ -39,10 +39,15 @@ function DataTable() {
   const handleDownload = (id) => {
     console.log(`Download data for id: ${id}`);
   };
+
   // Function to handle download
-  const handleGraph = (id) => {
-    console.log(`Download data for id: ${id}`);
-  };
+  // Could possibly be deleted, don't know if this was data for old download button or 
+  // data for current 'Graph' download button
+  //const handleGraph = (id) => {
+  //  console.log(`Download data for id: ${id}`);
+  //};
+
+  // Possibly need to include function to download .csv files, don't see that here yet
 
   return (
     <table className="table">
@@ -51,8 +56,8 @@ function DataTable() {
           <th>ID</th>
           <th>Date Created</th>
           <th>Last Modified</th>
-          <th>CSV</th>
-          <th>Download</th>
+          <th className="csv-column">CSV</th>
+          <th className="graph-column">Download</th>
         </tr>
       </thead>
       <tbody>
@@ -61,20 +66,12 @@ function DataTable() {
             <td>{row.id}</td>
             <td>{row.date}</td>
             <td>{row.modified}</td>
-            <td>
+            <td className="csv-column">
               <span className="csv-link">{row.csv}</span></td>
-            <td className="download-column">
+            <td className="graph-column">
               <button
-                className="download-btn"
-                onClick={() => handleGraph(row.id)}
-              >
+                className="graph-btn" onClick={() => handleGraph(row.id)}>
                 Graph
-              </button>
-              <button
-                className="download-btn"
-                onClick={() => handleDownload(row.id)}
-              >
-                Download
               </button>
             </td>
           </tr>
