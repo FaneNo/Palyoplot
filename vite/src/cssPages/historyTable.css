@@ -1,51 +1,48 @@
-
 .table {
-  width: 100%;
+  width: 60%;
   border-collapse: collapse;
-  background-color: #f7f0ea;
-  /* rest of your .table styles */
 }
-
 
 .table th, .table td {
   border: 1px solid black;
-  padding: 4px; 
+  padding: 2px 8px; /* Reduced padding for more compact table */
+  text-align: center; /* Centers all content */
 }
 
 .table th {
-  padding-top: 6px; 
-  padding-bottom: 6px; 
-  text-align: center;
   background-color: #3A5A40;
   color: white;
+}
+
+/* Compact Date Created and ID columns */
+.table .id-column {
+  width: 5px; 
+}
+
+.table .date-column {
+  width: 40px; 
+
+}
+
+.table .csv-column {
+  width: 40px; 
+}
+
+.table .graph-column {
+  width: 10px; 
 }
 
 .table .graph-btn {
   background-color: #2c6fbb;
   border: none; 
   color: white; 
-  padding: 5px 20px; 
-  text-align: center; 
-  text-decoration: none; 
-  display: inline-block;
-  font-size: 14px; 
-  margin: 2px 1px; 
-  transition-duration: 0.4s; 
+  font-size: 15px; /* Smaller font for compactness */
   cursor: pointer; 
-
 }
 
 .table .graph-btn:hover {
   background-color: #3A5A40;
   color: black; 
-}
-
-.table .csv-column {
-  width: 200px;
-}
-
-.table .graph-column {
-  width: 200px;
 }
 
 .csv-link {
