@@ -44,6 +44,18 @@ function DataTable() {
     navigate('/dashboard'); // Navigate to the Dashboard page
   };
 
+  // Function to handle deleting a specific entry
+  const handleDelete = (id) => {
+    const confirmed = window.confirm("Are you sure you want to delete this file?");
+    if (confirmed) {
+      const updatedData = data.filter((item) => item.id !== id);
+      setData(updatedData);
+      console.log('Deleted entry with id: ${id}');
+    } else {
+      console.log("File deletion canceled.");
+    }
+  };
+
   return (
     <table className="table">
       <thead>
@@ -51,7 +63,8 @@ function DataTable() {
           <th className="id-column">ID</th>
           <th className="date-column">Date Created</th>
           <th className="csv-column">File</th>
-          <th className="graph-column"></th>
+          <th className="graph-column">Graph</th>
+          <th className="delete-column">Delete</th>
         </tr>
       </thead>
       <tbody>
@@ -68,6 +81,13 @@ function DataTable() {
                 onClick={() => handleDownload(row.id)}
               >
                 Graph Now
+              </button>
+            </td>
+            <td className="delete-column">
+              <button
+                className="delete-btn" onClick={() => handleDelete(row.id)}
+              >
+                ❌
               </button>
             </td>
           </tr>
