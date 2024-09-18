@@ -1,0 +1,78 @@
+id	life_id	taxa_id	taxa_name	common_name	merge_under	order	fontstyle
+1	t	pp	Pinus	Pine	pp	1	italic
+2	t	pd	Pinus Dip	"Pine, yellow"	pp	1	italic
+3	t	ph	Pinus Hap	"Pine, white"	pp	1	italic
+4	t	ab	Abies	Fir	ab	8	plain
+5	t	ts	Tsuga	Mountain hemlock	ts	2	italic
+6	t	cu	Cupressaceae	Juniper	cu	3	plain
+7	t	sg	Sequoia giganteum	Giant sequoia	cu	3	italic
+8	s	ca	Chrysolepis	Bush chinquapin	ca	2	italic
+9	t	fx	Fraxinus	Ash	fx	4	italic
+10	t	q	Quercus	"Oak, white"	q	9	italic
+11	t	qr	Quercus (red)	"Oak, red"	q	9	italic
+12	s	ro	Rosaceae	Roses	ro	1	plain
+13	h	pn	Potentilla	Cinquefoil	ro	1	italic
+14	s	ho	Holodiscus	Ocean spray	ro	1	italic
+15	h	li	Liliaceae	Lilies	li	NULL	plain
+16	s	ce	Cercocarpus	Mountain mahogany	ro	1	italic
+17	s	cn	Ceanothus	Ceanothus	cn	6	italic
+18	s	sh	Shepherdia	Buffaloberry	sh	7	italic
+19	s	sx	Salix	Willow	sx	8	italic
+20	t	be	Betula	Birch	be	7	italic
+21	t	co	Corylus	Hazelnut	co	6	italic
+22	t	al	Alnus	Alder	al	5	italic
+23	s	ar	Artemisia	Sagebrush	ar	3	italic
+24	h	am	Ambrosia	Ragweed	am	NULL	italic
+25	h	hs	Asteracea	Aster	hs	NULL	plain
+26	h	wy	Wyethia	Mule's ear	hs	NULL	italic
+27	h	cr	Chrysothamnus	Rabbitbrush	hs	NULL	italic
+28	h	br	Brassicaceae	Mustards	br	NULL	plain
+29	h	fa	Fabaceae	Legume	fa	NULL	plain
+30	h	sa	Salvia	Mint	la	NULL	italic
+31	h	la	Lamiaceae	Mint	la	NULL	plain
+32	h	er	Eriogonum	Wild buckwheat	py	NULL	italic
+33	h	pg	Polygonum	Knotweed	py	NULL	italic
+34	h	rx	Rumex	Dock or sorrel	py	NULL	italic
+35	h	pe	Polemoniaceae	Phlox	pe	NULL	plain
+36	h	ap	Apiaceae	Carrot or parsely	ap	NULL	plain
+37	h	ac	Arceuthobium	Mistletoe	ac	NULL	italic
+38	h	po	Poaceae	Grass	po	NULL	plain
+39	h	ae	Amaranthaceae	Amaranth	ae	NULL	plain
+40	s	s	Sarcobatus	Greasewood	s	5	italic
+41	h	pt	Pteridium	Brakenfern	pt	NULL	italic
+42	s	at	Atriplex	Saltbush	ae	4	italic
+43	h	cp	Caryophyllaceae	Pink or carnation	cp	NULL	plain
+44	s	en	Ephedra nevadenses	Nevada ephedra	en	NULL	italic
+45	p	tr	Trilete	Moss	tr	NULL	italic
+46	p	mo	Monolete	Fern	mo	NULL	italic
+47	x	uk	Unknown	Unknown	uk	NULL	plain
+48	x	in	Indeterminate	Indeterminate	in	NULL	plain
+49	x	u1	unknown 1	Unknown	uk	NULL	plain
+50	x	u2	unknown 2	Unknown	uk	NULL	plain
+51	x	u3	unknown 3	Unknown	uk	NULL	plain
+52	x	u4	unknown 4	Unknown	uk	NULL	plain
+53	x	u5	unknown 5	Unknown	uk	NULL	plain
+54	x	u6	unknown 6	Unknown	uk	NULL	plain
+55	x	u7	unknown 7	Unknown	uk	NULL	plain
+56	x	u8	unknown 8	Unknown	uk	NULL	plain
+57	x	u9	unknown 9	Unknown	uk	NULL	plain
+58	m	cy	Cyperaceae	Sedge	cy	NULL	plain
+59	a	ty	Typha angustifolia	Narrow-leaf cattail	ty	NULL	italic
+60	a	tl	Typha latifolia	Common cattail	tl	NULL	italic
+61	a	pb	Pediastrum boryanum	Green algae	ppd	NULL	italic
+62	a	ps	Pediastrum simplex	Green algae	ppd	NULL	italic
+63	a	pc	Pediastrum cornutum	Green algae	ppd	NULL	italic
+64	a	pi	Pediastrum integrum	Green algae	ppd	NULL	italic
+65	a	px	Pediastrum duplex	Green algae	ppd	NULL	italic
+66	a	pa	Pediastrum angulosum	Green algae	ppd	NULL	italic
+67	a	pu	Pediastrum (unk)	Green algae	ppd	NULL	italic
+68	c	l	Lycopodium	Control	l	NULL	italic
+69	o	st	Stomates	Stomate	st	NULL	plain
+70	m	is	Isoetes	Quillworts	is	NULL	italic
+71	t	p	Pinus (unknown)	Pine	pp	1	italic
+72	t	qs	Quercus (white)	Oak	q	9	italic
+73	h	py	Polygonaceae	Buckwheat	py	NULL	plain
+74	h	ch	Chenopodiaceae	Goosefoot	ae	NULL	plain
+75	a	ppd	Pediastrum	Pediastrum	ppd	NULL	italic
+77	z	sp	Sporomiella	misclassed	sp	NULL	italic
+78	z	pl	Plantago	misclassed	pl	NULL	italic
