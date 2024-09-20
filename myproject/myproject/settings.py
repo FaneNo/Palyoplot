@@ -148,3 +148,64 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWS_CREDENTIALS = True
+
+
+# Module Import
+import mariadb
+import sys
+
+# Instantiate Connection
+try:
+    conn = mariadb.connect(
+        host="localhost",
+        port=3306,
+        user="csc190191",
+        password="123"
+    )
+    conn.auto_reconnect = True
+    print("Connection to MariaDB Platform successful")
+    
+    cur = conn.cursor()
+    test_user = "test_user"
+    test_password = "test_password"
+    
+    # Drop the test user if it already exists
+    try:
+        cur.execute(f"DROP USER IF EXISTS '{test_user}'@'localhost'")
+        print(f"Test user '{test_user}' dropped successfully (if it existed)")
+    except mariadb.Error as e:
+        print(f"Error dropping test user: {e}")
+
+    # Create the test user
+    try:
+        cur.execute(f"CREATE USER '{test_user}'@'localhost' IDENTIFIED BY '{test_password}'")
+        cur.execute(f"GRANT ALL PRIVILEGES ON *.* TO '{test_user}'@'localhost' WITH GRANT OPTION")
+        cur.execute("FLUSH PRIVILEGES")
+        print(f"Test user '{test_user}' created successfully")
+    except mariadb.Error as e:
+        print(f"Error creating test user: {e}")
+
+    try:
+        cur.execute("CREATE DATABASE IF NOT EXISTS test_db")
+        print("Database 'test_db' created successfully")
+    except mariadb.Error as e:
+        print(f"Error creating database: {e}")
+    # Show databases
+    cur.execute("SHOW DATABASES")
+    print("Databases available:")
+    for (database,) in cur:
+        print(database)
+    try:
+        cur.execute("DROP DATABASE test_db")
+        print("Database 'test_db' dropped successfully")
+    except mariadb.Error as e:
+        print(f"Error dropping database: {e}")
+except mariadb.Error as e:
+    print(f"Error connecting to the database: {e}")
+    sys.exit(1)
+
+# Close Connection
+
+conn.close()
+
+
