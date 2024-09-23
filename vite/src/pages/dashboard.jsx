@@ -13,6 +13,7 @@ function Dashboard() {
   const [graphTitle, setGraphTitle] = useState("Sample Graph Title"); // State for graph title
   const [xAxisLabel, setXAxisLabel] = useState("Categories"); // State for X-axis label
   const [yAxisLabel, setYAxisLabel] = useState("Values"); // State for Y-axis label
+  const [graphType, setGraphType] = useState('bar');  // State to store the selected graph type
 
     // Function to handle CSV upload
     const handleFileUpload = (event) => {
@@ -36,6 +37,10 @@ function Dashboard() {
       });
     };
 
+    const handleGraphTypeChange = (event) => {
+      setGraphType(event.target.value);  // Update the graph type when the dropdown value changes
+    };
+
   return (
     <>
   
@@ -53,7 +58,9 @@ function Dashboard() {
                       {
                         x: csvData.x.length > 0 ? csvData.x : ['Category A', 'Category B', 'Category C'], // Default if no CSV data
                         y: csvData.y.length > 0 ? csvData.y : [20, 14, 23], // Default if no CSV data
-                        type: 'bar',
+                        type: graphType,  // Dynamically set the graph type here
+                        mode: graphType === 'line' ? 'lines' : undefined,  // Mode for line graph
+                        fill: graphType === 'area' ? 'tozeroy' : undefined,  // Fill for area graph
                         marker: { color: 'blue' },
                       },
                     ]}
@@ -81,12 +88,14 @@ function Dashboard() {
                     </div>
                   <div className={styles.verticalControls}>
                     <div className={styles.dropdownWrapper}>
-                      <div className={styles.uploadText}>
+                    <div className={styles.uploadText}>
                       Choose Your Graph Type:
                       </div>
                         <select
                           id="graphType"
                           className={styles.graphTypeDropdown}
+                          value={graphType}  // Bind the selected value to state
+                          onChange={handleGraphTypeChange}  // Update state when the dropdown changes
                         >
                           <option value="bar">Bar</option>
                           <option value="line">Line</option>
