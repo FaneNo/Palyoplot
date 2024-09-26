@@ -153,9 +153,7 @@ function Dashboard() {
                         <option value="">(Choose Y Axis Value)</option>
                       </select>
                     </div>
-                    <button type="button" className={styles.uploadButton}>
-                      Download JPEG
-                    </button>
+                    
                   </div>
                 </div>
               </div>
