@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import styles from "../cssPages/dialogStyles.module.css";
 import dashboardStyles from "../cssPages/dashboardPage.module.css";
 
+
 const CSVUploadDialog = () => {
     const [open, setOpen] = useState(false);
     const dialogRef = useRef(null);
@@ -15,6 +16,7 @@ const CSVUploadDialog = () => {
         setOpen(false);
         dialogRef.current.close();
     };
+    
 
     return (
         <div>
@@ -30,6 +32,7 @@ const CSVUploadDialog = () => {
                     <li>The file size should not exceed 5 MB.</li>
                     <li>The CSV must contain at least X and Y columns for plotting.</li>
                 </ul>
+               
                 <button onClick={closeDialog} className={styles.closeButton}>
                     Close
                 </button>
