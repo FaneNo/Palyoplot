@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from .models import GraphImage
 
 
 
@@ -16,3 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 #create the method for graphing here
 #make sure to create model, view
+
+
+
+ 
