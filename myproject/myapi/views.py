@@ -6,7 +6,6 @@ from rest_framework import generics
 from .serializers import UserSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from .image_database import save_graph_image, get_user_images
 import mariadb
 
 # Create your views here.
