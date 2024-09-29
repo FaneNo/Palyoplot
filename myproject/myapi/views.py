@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from rest_framework import generics
 from .serializers import UserSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+import mariadb
 
 # Create your views here.
 @api_view(['GET'])
@@ -22,4 +24,4 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer #tell this view what kind of data that need to be accept to create a new user
     permission_classes = [AllowAny] #who can call this function
     
-    
+
