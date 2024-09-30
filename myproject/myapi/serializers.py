@@ -16,3 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 #create the method for graphing here
 #make sure to create model, view
+
+
+
+ 

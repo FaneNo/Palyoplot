@@ -1,71 +1,83 @@
-import React, { useState, useRef} from "react";
+import React, { useState } from "react";
 import Plot from 'react-plotly.js';
-import Plotly from 'plotly.js-dist-min';
 import Papa from "papaparse";
 import DashboardNav from "../components/dashboardNav";
-import CSVUploadDialog from "../components/CSVUploadDialog";
 import styles from "../cssPages/dashboardPage.module.css";
-import samplePlot from "../assets/samplePlot.png";
 
 function Dashboard() {
+  // State to store multiple CSV datasets
+  const [csvDataSets, setCsvDataSets] = useState([]); 
+  const [graphTitle, setGraphTitle] = useState("Sample Graph Title");
+  const [xAxisLabel, setXAxisLabel] = useState("Categories");
+  const [yAxisLabel, setYAxisLabel] = useState("Values");
+  const [graphType, setGraphType] = useState('bar');
 
-  const [csvData, setCsvData] = useState({ x: [], y: [] }); // State to store CSV data
-  const [graphTitle, setGraphTitle] = useState("Sample Graph Title"); // State for graph title
-  const [xAxisLabel, setXAxisLabel] = useState("Categories"); // State for X-axis label
-  const [yAxisLabel, setYAxisLabel] = useState("Values"); // State for Y-axis label
+  // Function to handle CSV upload
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
 
-    // Function to handle CSV upload
-    const handleFileUpload = (event) => {
-      const file = event.target.files[0];
-      if (!file) return;
-  
-      // Parse the CSV file using PapaParse
-      Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        complete: function (results) {
-          const data = results.data;
-  
-          // Extract categories (x-axis) and values (y-axis) from CSV
-          const x = data.map(row => row.Category);
-          const y = data.map(row => parseFloat(row.Value)); // Convert string to number for y-axis
-  
-          // Update the state with parsed data
-          setCsvData({ x, y });
-        },
-      });
-    };
+    // Parse the CSV file using PapaParse
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: function (results) {
+        const data = results.data;
+
+        // Extract categories (x-axis) and values (y-axis) from CSV
+        const x = data.map(row => row.Category);
+        const y = data.map(row => parseFloat(row.Value));
+
+        // Append new dataset to the existing state
+        setCsvDataSets(prevDataSets => [...prevDataSets, { x, y }]);
+      },
+    });
+  };
+
+  const handleGraphTypeChange = (event) => {
+    setGraphType(event.target.value);
+  };
 
   return (
     <>
-  
       <div className={`${styles.dashboardBody}`}>
         <div className={`${styles.dashboardNavBox}`}>
-          <DashboardNav /> {/* This remains directly under the top navbar */}
-          <div className={styles.contentWrapper}> {/* New wrapper for the rest of the content */}
+          <DashboardNav />
+          <div className={styles.contentWrapper}>
             <div className={`${styles.dashboardNavLeft}`}>
               <div className={`${styles.dashboardContent}`}>
-              <div className={`${styles.plotBox}`}>
-                  {/* Plotly Graph that dynamically changes based on graphType and CSV data */}
+                <div className={`${styles.plotBox}`}>
+                  {/* Plotly Graph dynamically changes based on graphType and CSV data */}
                   <Plot
-                  
-                    data={[
-                      {
-                        x: csvData.x.length > 0 ? csvData.x : ['Category A', 'Category B', 'Category C'], // Default if no CSV data
-                        y: csvData.y.length > 0 ? csvData.y : [20, 14, 23], // Default if no CSV data
-                        type: 'bar',
-                        marker: { color: 'blue' },
-                      },
-                    ]}
+                    data={csvDataSets.length > 0
+                      ? csvDataSets.map((dataset, index) => ({
+                          x: dataset.x,
+                          y: dataset.y,
+                          type: graphType,
+                          mode: graphType === 'line' ? 'lines' : undefined,
+                          fill: graphType === 'area' ? 'tozeroy' : undefined,
+                          marker: { color: `hsl(${index * 60}, 100%, 50%)` },  // Different colors for each dataset
+                        }))
+                      : [
+                          {
+                            x: ['Category A', 'Category B', 'Category C'],
+                            y: [20, 14, 23],
+                            type: graphType,
+                            mode: graphType === 'line' ? 'lines' : undefined,
+                            fill: graphType === 'area' ? 'tozeroy' : undefined,
+                            marker: { color: 'blue' },
+                          },
+                        ]
+                    }
                     layout={{
                       width: 900,
                       height: 600,
-                      title: graphTitle,  // Dynamically set the graph title
-                      xaxis: { title: xAxisLabel },  // Dynamically set the X-axis label
-                      yaxis: { title: yAxisLabel },  // Dynamically set the Y-axis label
+                      title: graphTitle,
+                      xaxis: { title: xAxisLabel },
+                      yaxis: { title: yAxisLabel },
                     }}
                   />
-                   <div className={styles.uploadButtonWrapper}>
+                  <div className={styles.uploadButtonWrapper}>
                     <div className={styles.horizontalButtons}>
                       {/* Hide the default file input and use a custom button to trigger file upload */}
                       <input
@@ -79,14 +91,16 @@ function Dashboard() {
                         Upload CSV File
                       </label>
                     </div>
-                  <div className={styles.verticalControls}>
-                    <div className={styles.dropdownWrapper}>
-                      <div className={styles.uploadText}>
-                      Choose Your Graph Type:
-                      </div>
+                    <div className={styles.verticalControls}>
+                      <div className={styles.dropdownWrapper}>
+                        <div className={styles.uploadText}>
+                          Choose Your Graph Type:
+                        </div>
                         <select
                           id="graphType"
                           className={styles.graphTypeDropdown}
+                          value={graphType}
+                          onChange={handleGraphTypeChange}
                         >
                           <option value="bar">Bar</option>
                           <option value="line">Line</option>
@@ -94,7 +108,7 @@ function Dashboard() {
                         </select>
                       </div>
                       {/* Input for Graph Title */}
-                      <div className={styles.labelext}>Graph Title:</div>
+                      <div className={styles.labelText}>Graph Title:</div>
                       <div className={styles.inputWrapper}>
                         <input
                           type="text"
@@ -128,42 +142,16 @@ function Dashboard() {
                           placeholder="Enter Y-axis label"
                         />
                       </div>
-                    <div className={styles.dropdownWrapper}>
-                    <div className={styles.labelText}>
-                      Choose Your X Axis:
-                      </div>
-                      <select id="xAxis" className={styles.graphTypeDropdown}>
-                        <option value="">(Choose X Axis Value)</option>
-                      </select>
                     </div>
-                    <div className={styles.dropdownWrapper}>
-                    <div className={styles.labelText}>
-                      Choose Your Y Axis:
-                      </div>
-                      <select id="yAxis" className={styles.graphTypeDropdown}>
-                        <option value="">(Choose Y Axis Value)</option>
-                      </select>
-                    </div>
-                    <button type="button" className={styles.uploadButton}>
-                      Download JPEG
-                    </button>
                   </div>
                 </div>
-              </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
     </>
   );
 }
-
-
-
-
-
-
 
 export default Dashboard;
