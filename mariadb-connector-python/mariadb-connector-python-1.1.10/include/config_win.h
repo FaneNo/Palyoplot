@@ -1,1 +1,0 @@
-#define DEFAULT_PLUGINS_SUBDIR "c:\\Program Files (x86)\\MariaDB\\MariaDB Connector C\\lib\\plugin"
