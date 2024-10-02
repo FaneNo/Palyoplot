@@ -417,9 +417,12 @@ CREATE TABLE `site` (
   `latitude` decimal(10,8) DEFAULT NULL,
   `altitude` int(11) DEFAULT NULL,
   `notes` text DEFAULT NULL,
+  `usr_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`site_id`),
   KEY `dataset_id` (`dataset_id`),
-  CONSTRAINT `dataset_id` FOREIGN KEY (`dataset_id`) REFERENCES `dataset` (`dataset_id`)
+  KEY `site_auth_user_FK` (`usr_id`),
+  CONSTRAINT `dataset_id` FOREIGN KEY (`dataset_id`) REFERENCES `dataset` (`dataset_id`),
+  CONSTRAINT `site_auth_user_FK` FOREIGN KEY (`usr_id`) REFERENCES `auth_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -445,4 +448,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-01 21:00:08
+-- Dump completed on 2024-10-01 23:09:03
