@@ -23,7 +23,7 @@ function Dashboard() {
       skipEmptyLines: true,
       complete: function (results) {
         const data = results.data;
-
+        
         // Extract categories (x-axis) and values (y-axis) from CSV
         const x = data.map(row => row.Category);
         const y = data.map(row => parseFloat(row.Value));
@@ -37,6 +37,8 @@ function Dashboard() {
   const handleGraphTypeChange = (event) => {
     setGraphType(event.target.value);
   };
+
+  
 
   return (
     <>

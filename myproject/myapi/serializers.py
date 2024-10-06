@@ -14,8 +14,11 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         return user
 
-#create the method for graphing here
-#make sure to create model, view
+# class CSVfile(serializers.ModelSerializer):
+#     class Meta:
+#         model = CSVfile
+#         fields = ["id", "file_name", "file_data", "visualization_prefs"]
+
 
 
 
