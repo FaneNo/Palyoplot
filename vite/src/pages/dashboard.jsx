@@ -11,6 +11,7 @@ function Dashboard() {
   const [xAxisLabel, setXAxisLabel] = useState("Categories");
   const [yAxisLabel, setYAxisLabel] = useState("Values");
   const [graphType, setGraphType] = useState('bar');
+  const [graphOrientation, setGraphOrientation] = useState('vertical'); // New state for orientation
 
   // Function to handle CSV upload
   const handleFileUpload = (event) => {
@@ -38,7 +39,10 @@ function Dashboard() {
     setGraphType(event.target.value);
   };
 
-  
+
+  const handleOrientationChange = (event) => {
+    setGraphOrientation(event.target.value); // Update orientation
+  };
 
   return (
     <>
@@ -53,8 +57,8 @@ function Dashboard() {
                   <Plot
                     data={csvDataSets.length > 0
                       ? csvDataSets.map((dataset, index) => ({
-                          x: dataset.x,
-                          y: dataset.y,
+                          x: graphOrientation === 'vertical' ? dataset.x : dataset.y,
+                          y: graphOrientation === 'vertical' ? dataset.y : dataset.x,
                           type: graphType,
                           mode: graphType === 'line' ? 'lines' : undefined,
                           fill: graphType === 'area' ? 'tozeroy' : undefined,
@@ -75,8 +79,8 @@ function Dashboard() {
                       width: 900,
                       height: 600,
                       title: graphTitle,
-                      xaxis: { title: xAxisLabel },
-                      yaxis: { title: yAxisLabel },
+                      xaxis: { title: graphOrientation === 'vertical' ? xAxisLabel : yAxisLabel },
+                      yaxis: { title: graphOrientation === 'vertical' ? yAxisLabel : xAxisLabel },
                     }}
                   />
                   <div className={styles.uploadButtonWrapper}>
@@ -109,6 +113,23 @@ function Dashboard() {
                           <option value="area">Filled Area</option>
                         </select>
                       </div>
+
+                      {/* New Dropdown for Graph Orientation */}
+                      <div className={styles.dropdownWrapper}>
+                        <div className={styles.uploadText}>
+                          Choose Your Graph Orientation:
+                        </div>
+                        <select
+                          id="graphOrientation"
+                          className={styles.graphTypeDropdown}
+                          value={graphOrientation}
+                          onChange={handleOrientationChange}
+                        >
+                          <option value="vertical">Vertical</option>
+                          <option value="horizontal">Horizontal</option>
+                        </select>
+                      </div>
+
                       {/* Input for Graph Title */}
                       <div className={styles.labelText}>Graph Title:</div>
                       <div className={styles.inputWrapper}>
@@ -157,3 +178,4 @@ function Dashboard() {
 }
 
 export default Dashboard;
+
