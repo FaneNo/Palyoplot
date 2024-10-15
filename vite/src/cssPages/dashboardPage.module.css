@@ -1,201 +1,342 @@
 /* Styles for the main dashboard body */
 .dashboardBody {
   background-color: #f7f0ea;
-  width: 100vw; /* Full viewport width */
+  width: 100vw;
   display: flex;
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
+  justify-content: center;
+  align-items: center;
 }
 
 /* Container for the dashboard navigation box */
 .dashboardNavBox {
   display: flex;
-  align-items: flex-start; /* Align items to the top */
-  justify-content: center; /* Center items horizontally */
-  width: 100%; /* Full width */
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
 }
 
 /* Box containing the plot elements */
 .plotBox {
   display: flex;
+  flex-direction: column; /* Stack elements vertically */
   align-items: center;
-  justify-content: space-between; /* Space out the children evenly */
+  justify-content: flex-start;
+  width: 100%;
+  overflow-x: auto;
 }
 
-/* Left side of the navigation, takes full space */
+/* Left side of the navigation */
 .dashboardNavLeft {
-  flex: 1; /* Take up all available space */
-  text-align: center; /* Center text */
+  flex: 1;
+  text-align: center;
 }
 
 /* Main content area of the dashboard */
 .dashboardContent {
   display: flex;
-  flex-direction: column; /* Stack children vertically */
-  align-items: center; /* Center items horizontally */
-  width: 100%; /* Full width */
-}
-
-/* Text section styling */
-.dashboardText {
-  display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  padding: 20px; /* Adjusted padding for better spacing */
+  width: 100%;
 }
 
-/* Styling for recent text */
-.dashboardRecentText {
-  font-size: 25px; /* Larger text size for emphasis */
-  padding-top: 15px; /* Space above the recent text */
-}
-
-/* Styling for previous graph previews */
-.dashboardGraphPrev {
+/* Wrapper for the upload buttons and controls */
+.uploadButtonWrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  background-color: transparent; /* No background */
-  border: none; /* No border */
-  cursor: pointer; /* Pointer cursor on hover */
-  padding: 10px;
-  margin: 10px;
-  text-align: center;
+  width: 100%;
+  margin-top: 20px;
 }
 
-/* Image styles for graph previews */
-.dashboardGraphPrev img {
-  width: 150px; /* Fixed width */
-  height: auto; /* Adjust height based on aspect ratio */
-  border-radius: 4px; /* Rounded corners */
-  margin-bottom: 5px; /* Space below the image */
-  transition: transform 0.3s ease-in-out; /* Smooth transition for the transformation */
-}
-
-/* Hover effect for images */
-.dashboardGraphPrev img:hover {
-  animation: zoomIn 0.3s forwards; /* Apply the zoomIn animation on hover */
-}
-
-/* Keyframes for zoomIn animation */
-@keyframes zoomIn {
-  from {
-    transform: scale(1); /* Start at original size */
-  }
-  to {
-    transform: scale(1.05); /* Grow slightly */
-  }
-}
-
-/* Label text below the image preview */
-.dashboardGraphPrev span {
-  background-color: #3A5A40; /* Dark green background */
-  color: white; /* White text */
-  padding: 5px 10px; /* Padding inside the label */
-  border-radius: 4px; /* Rounded corners */
-}
-
-/* Styling for sample images */
-.imageSample {
-  max-width: 100%; /* Ensure it doesn't exceed the container width */
-  height: auto; /* Maintain aspect ratio */
-}
-
-/* Button group container styling */
-.buttonGroup {
-  display: flex;
-  flex-direction: column; /* Stack buttons vertically */
-  align-items: flex-start; /* Align buttons to the left */
-}
-
-/* Horizontal button alignment */
+/* Horizontal buttons */
 .horizontalButtons {
   display: flex;
-  justify-content: center; /* Center these buttons horizontally */
-  width: 100%; /* Take full width to spread out if needed */
+  flex-wrap: wrap; /* Allow buttons to wrap to next line if necessary */
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 20px;
 }
 
-/* Vertical control container */
-.verticalControls {
-  display: flex;
-  flex-direction: column; /* Stack controls vertically */
-  align-items: center; /* Center align to match horizontal buttons */
-  width: 100%; /* Ensures it aligns directly under the horizontal buttons */
-  margin-top: 10px; /* Space above the input field */
+/* Styling for custom file buttons */
+.customFileButton {
+  background-color: #2c6fbb;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 5px;
 }
 
-/* Styling for upload button */
-.uploadButton, .customFileButton {
-  background-color: #2c6fbb; /* Blue background */
-  color: white; /* White text */
-  padding: 10px 20px; /* Padding inside the button */
-  border: none; /* No border */
-  border-radius: 4px; /* Rounded corners */
-  cursor: pointer; /* Pointer cursor on hover */
-  margin-right: 10px; /* Ensures space between "Upload CSV File" and "Save Results" */
+.customFileButton:hover {
+  background-color: #1c4f8b;
 }
 
-/* Hover effect for upload button */
-.uploadButton:hover, .customFileButton:hover {
-  background-color: #1c4f8b; /* Darker blue on hover */
+/* Disabled button style */
+.disabledButton {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 /* Hide default file input */
 .fileInput {
-  display: none;  /* Hide the default file input */
+  display: none;
 }
 
-/* Wrapper for the upload button, aligns and spaces it */
-.uploadButtonWrapper {
+/* Vertical controls */
+.verticalControls {
   display: flex;
-  flex-direction: column; /* Stacks children vertically */
-  align-items: center; /* Aligns items horizontally to the center */
-  width: 100%; /* Ensures it takes the full width of its container */
-  margin-top: 20px; /* Adds some space between the image and the buttons */
+  flex-direction: column;
+  align-items: center;
+  width: 80%;
 }
 
-/* Dropdown for selecting graph type */
-.graphTypeDropdown {
-  padding: 10px; /* Padding inside the dropdown */
-  border: 1px solid #ccc; /* Light border */
-  border-radius: 4px; /* Rounded corners */
-  width: 100%; /* Set the width to fill the available space */
-  margin-top: 10px; /* Space above dropdown */
-}
-
-/* Wrapper for dropdown */
-.dropdownWrapper {
-  text-align: left; /* Align text to the left */
-  width: 100%; /* Full width to align with button group above */
-}
-
-/* Wrapper for input fields */
-.inputWrapper {
-  text-align: left; /* Align text to the left */
-  width: 100%; /* Full width to align with other form elements */
-  margin-top: 10px; /* Space above the input field */
-}
-
-/* Styling for text inputs */
-.graphInput {
-  padding: 10px; /* Padding inside the input */
-  border: 1px solid #ccc; /* Light border */
-  border-radius: 4px; /* Rounded corners */
-  width: 80%; /* Match dropdown width for consistency */
-  margin-top: 10px; /* Space above input */
-}
-
-/* Main content wrapper */
-.contentWrapper {
-  width: 100%; /* Full width */
-  margin-top: 30px; /* Space from the top navbar, only applied to the main content excluding the side navbar */
-}
-
-/* Label text styling for all label texts like Choose X Axis", etc. */
+/* Label text */
 .labelText {
   font-size: 18px;
-  color: #333; /* Darker color for readability */
-  margin-bottom: 10px; /* Space below the text */
+  color: #333;
+  margin-bottom: 5px;
   text-align: center;
+}
+
+/* Input wrapper */
+.inputWrapper {
+  width: 100%;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Graph input fields */
+.graphInput {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 80%;
+}
+
+/* Alert message */
+.alertMessage {
+  background-color: #ffcccc;
+  color: #a94442;
+  padding: 10px 20px;
+  border-radius: 4px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Content wrapper */
+.contentWrapper {
+  width: 100%;
+  margin-top: 30px;
+}
+
+/* Modal styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.modalDownloadButton,
+.modalCloseButton {
+  background-color: #2c6fbb;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin: 5px;
+}
+
+.modalDownloadButton:hover,
+.modalCloseButton:hover {
+  background-color: #1c4f8b;
+}
+
+.downloadButtonWrapper {
+  margin-top: 15px;
+}
+
+/* Download button */
+.downloadButton {
+  background-color: #3A5A40;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.downloadButton:hover {
+  background-color: #2c6fbb;
+}
+
+/* Dropdown for graph type and resolution */
+.graphTypeDropdown {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 80%;
+}
+
+/* Warning Modal */
+.warningModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.warningModalContent {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.warningCloseButton {
+  background-color: #2c6fbb;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.warningCloseButton:hover {
+  background-color: #1c4f8b;
+}
+
+/* Styles for LifeFormColorAssignment component */
+.lifeFormColorAssignment {
+  margin-top: 20px;
+  width: 80%;
+}
+
+.lifeFormAssignmentRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.lifeFormInput {
+  padding: 5px;
+  margin-right: 10px;
+  flex-grow: 1;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.colorPicker {
+  width: 40px;
+  height: 30px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.lifeFormButtons {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+}
+
+.moveButton {
+  background-color: #2c6fbb;
+  color: white;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+  margin-bottom: 5px;
+  border-radius: 4px;
+}
+
+.moveButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.moveButton:hover:not(:disabled) {
+  background-color: #1c4f8b;
+}
+
+/* Styles for TaxaLifeFormAssignment component */
+.taxaLifeFormAssignment {
+  margin-top: 20px;
+  width: 80%;
+}
+
+.assignmentTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.assignmentTable th,
+.assignmentTable td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.assignmentTable th {
+  background-color: #f2f2f2;
+}
+
+.lifeFormDropdown {
+  padding: 5px;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.assignmentButtons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.assignmentButtons .customFileButton {
+  margin: 0 10px;
+}
+
+/* Additional styles for better responsiveness */
+@media (max-width: 768px) {
+  .horizontalButtons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .verticalControls {
+    width: 100%;
+  }
+
+  .graphInput {
+    width: 90%;
+  }
+
+  .assignmentTable th,
+  .assignmentTable td {
+    font-size: 14px;
+  }
 }
