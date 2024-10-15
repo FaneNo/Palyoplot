@@ -68,6 +68,10 @@
   margin: 5px;
 }
 
+.customFileButton:hover {
+  background-color: #1c4f8b;
+}
+
 /* Disabled button style */
 .disabledButton {
   background-color: #ccc;
@@ -182,11 +186,6 @@
   background-color: #2c6fbb;
 }
 
-.resolutionWrapper,
-.imageFormatWrapper {
-  margin-bottom: 15px;
-}
-
 /* Dropdown for graph type and resolution */
 .graphTypeDropdown {
   padding: 10px;
@@ -227,4 +226,117 @@
 
 .warningCloseButton:hover {
   background-color: #1c4f8b;
+}
+
+/* Styles for LifeFormColorAssignment component */
+.lifeFormColorAssignment {
+  margin-top: 20px;
+  width: 80%;
+}
+
+.lifeFormAssignmentRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.lifeFormInput {
+  padding: 5px;
+  margin-right: 10px;
+  flex-grow: 1;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.colorPicker {
+  width: 40px;
+  height: 30px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.lifeFormButtons {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+}
+
+.moveButton {
+  background-color: #2c6fbb;
+  color: white;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+  margin-bottom: 5px;
+  border-radius: 4px;
+}
+
+.moveButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.moveButton:hover:not(:disabled) {
+  background-color: #1c4f8b;
+}
+
+/* Styles for TaxaLifeFormAssignment component */
+.taxaLifeFormAssignment {
+  margin-top: 20px;
+  width: 80%;
+}
+
+.assignmentTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.assignmentTable th,
+.assignmentTable td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.assignmentTable th {
+  background-color: #f2f2f2;
+}
+
+.lifeFormDropdown {
+  padding: 5px;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.assignmentButtons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.assignmentButtons .customFileButton {
+  margin: 0 10px;
+}
+
+/* Additional styles for better responsiveness */
+@media (max-width: 768px) {
+  .horizontalButtons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .verticalControls {
+    width: 100%;
+  }
+
+  .graphInput {
+    width: 90%;
+  }
+
+  .assignmentTable th,
+  .assignmentTable td {
+    font-size: 14px;
+  }
 }

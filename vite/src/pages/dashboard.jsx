@@ -1,16 +1,145 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Papa from 'papaparse';
 import DashboardNav from '../components/dashboardNav';
 import styles from '../cssPages/dashboardPage.module.css';
 import Plot from 'react-plotly.js';
 import Plotly from 'plotly.js-dist';
 
+// Component for assigning taxa to life forms
+function TaxaLifeFormAssignment({
+  taxaData,
+  lifeFormGroups,
+  taxaLifeFormAssignments,
+  setTaxaLifeFormAssignments,
+}) {
+  const handleLifeFormChange = (taxaId, lifeFormId) => {
+    setTaxaLifeFormAssignments((prevAssignments) => ({
+      ...prevAssignments,
+      [taxaId]: lifeFormId,
+    }));
+  };
+
+  return (
+    <div className={styles.taxaLifeFormAssignment}>
+      <h3>Assign Taxa to Life Forms</h3>
+      <table className={styles.assignmentTable}>
+        <thead>
+          <tr>
+            <th>Taxa Name</th>
+            <th>Life Form</th>
+          </tr>
+        </thead>
+        <tbody>
+          {taxaData.map((taxa) => (
+            <tr key={taxa.taxa_id}>
+              <td>{taxa.taxa_name}</td>
+              <td>
+                <select
+                  value={taxaLifeFormAssignments[taxa.taxa_id] || taxa.life_id}
+                  onChange={(e) => handleLifeFormChange(taxa.taxa_id, e.target.value)}
+                  className={styles.lifeFormDropdown}
+                >
+                  {lifeFormGroups.map((lifeForm) => (
+                    <option key={lifeForm.life_id} value={lifeForm.life_id}>
+                      {lifeForm.life_name}
+                    </option>
+                  ))}
+                </select>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// Component for assigning colors and names to life forms, and rearranging them
+function LifeFormColorAssignment({ lifeFormGroups, setLifeFormGroups }) {
+  // Handle color change for a life form
+  const handleColorChange = (lifeFormId, color) => {
+    setLifeFormGroups((prevGroups) =>
+      prevGroups.map((lifeForm) =>
+        lifeForm.life_id === lifeFormId ? { ...lifeForm, color } : lifeForm
+      )
+    );
+  };
+
+  // Handle name change for a life form
+  const handleNameChange = (lifeFormId, newName) => {
+    setLifeFormGroups((prevGroups) =>
+      prevGroups.map((lifeForm) =>
+        lifeForm.life_id === lifeFormId ? { ...lifeForm, life_name: newName } : lifeForm
+      )
+    );
+  };
+
+  // Handle rearrangement of life forms
+  const moveLifeForm = (index, direction) => {
+    setLifeFormGroups((prevGroups) => {
+      const newGroups = [...prevGroups];
+      const targetIndex = index + direction;
+
+      // Check boundaries
+      if (targetIndex < 0 || targetIndex >= newGroups.length) return newGroups;
+
+      // Swap positions
+      [newGroups[index], newGroups[targetIndex]] = [newGroups[targetIndex], newGroups[index]];
+      return newGroups;
+    });
+  };
+
+  return (
+    <div className={styles.lifeFormColorAssignment}>
+      <h3>Edit Life Forms</h3>
+      {lifeFormGroups.map((lifeForm, index) => {
+        const color = lifeForm.color || '#808080'; // Default color gray
+
+        return (
+          <div key={lifeForm.life_id} className={styles.lifeFormAssignmentRow}>
+            <input
+              type="text"
+              value={lifeForm.life_name}
+              onChange={(e) => handleNameChange(lifeForm.life_id, e.target.value)}
+              className={styles.lifeFormInput}
+            />
+            <input
+              type="color"
+              value={color}
+              onChange={(e) => handleColorChange(lifeForm.life_id, e.target.value)}
+              className={styles.colorPicker}
+            />
+            <div className={styles.lifeFormButtons}>
+              <button
+                onClick={() => moveLifeForm(index, -1)}
+                disabled={index === 0}
+                className={styles.moveButton}
+              >
+                ▲
+              </button>
+              <button
+                onClick={() => moveLifeForm(index, 1)}
+                disabled={index === lifeFormGroups.length - 1}
+                className={styles.moveButton}
+              >
+                ▼
+              </button>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function Dashboard() {
   // State variables
   const [csvDataSets, setCsvDataSets] = useState([]);
+  const [rawData, setRawData] = useState([]);
   const [ageModelData, setAgeModelData] = useState([]);
   const [taxaData, setTaxaData] = useState([]);
   const [lifeFormGroups, setLifeFormGroups] = useState([]);
+  const [taxaLifeFormAssignments, setTaxaLifeFormAssignments] = useState({});
   const [graphTitle, setGraphTitle] = useState('Pollen Percentage Diagram');
   const [yAxisLabel, setYAxisLabel] = useState('Cal yr BP');
   const [plotType, setPlotType] = useState('area');
@@ -56,19 +185,9 @@ function Dashboard() {
     'uk': 'Unknown',
   };
 
-  // Mapping from life_id to group names
-  const groupNameMapping = {
-    t: 'Tree',
-    s: 'Shrub',
-    h: 'Herb',
-    x: 'Unknown',
-    p: 'Spore',
-    m: 'Meadow',
-    a: 'Aquatic',
-    c: 'Control',
-    o: 'Stomate',
-    // Add other mappings as needed
-  };
+  // State variable to control the visibility of the LifeFormColorAssignment component
+  const [showLifeFormAssignment, setShowLifeFormAssignment] = useState(false);
+  const [showTaxaAssignment, setShowTaxaAssignment] = useState(false);
 
   // Interpolation function using the age model data
   const interpolateAge = (coreDepth) => {
@@ -145,7 +264,7 @@ function Dashboard() {
         const data = results.data.map((row) => ({
           life_id: row['life_id'].toLowerCase().trim(),
           life_name: row['life_name'],
-          color: row['color'].trim(),
+          color: row['color'] ? row['color'].trim() : '#808080',
         }));
         setLifeFormGroups(data);
       },
@@ -170,6 +289,13 @@ function Dashboard() {
           order: row['order'],
         }));
         setTaxaData(data);
+
+        // Initialize taxaLifeFormAssignments
+        const assignments = {};
+        data.forEach((taxa) => {
+          assignments[taxa.taxa_id] = taxa.life_id;
+        });
+        setTaxaLifeFormAssignments(assignments);
       },
     });
   };
@@ -184,114 +310,124 @@ function Dashboard() {
       skipEmptyLines: true,
       complete: function (results) {
         const data = results.data;
-
-        // Build a mapping from merge_under to taxa IDs and other attributes
-        const taxaMapping = {};
-        taxaData.forEach((taxa) => {
-          const mergeUnder = (taxa.merge_under || taxa.taxa_name || taxa.taxa_id).toLowerCase().trim();
-          const taxaName = mergeUnderNameMapping[mergeUnder] || taxa.taxa_name;
-
-          if (!taxaMapping[mergeUnder]) {
-            taxaMapping[mergeUnder] = {
-              taxa_name: taxaName,
-              merge_under: mergeUnder,
-              taxa_ids: [],
-              taxa_names: [],
-              life_id: taxa.life_id.toLowerCase().trim(),
-              order: taxa.order ? parseInt(taxa.order) : 9999,
-              fontstyle: taxa.fontstyle || 'plain',
-            };
-          }
-          taxaMapping[mergeUnder].taxa_ids.push(taxa.taxa_id);
-          taxaMapping[mergeUnder].taxa_names.push(taxa.taxa_name);
-        });
-
-        // Convert taxaMapping to array and sort based on 'order'
-        const taxaGroups = Object.keys(taxaMapping).map((key) => taxaMapping[key]);
-        taxaGroups.sort((a, b) => a.order - b.order);
-
-        // Filter taxaGroups to include only specified taxa using merge_under
-        const filteredTaxaGroups = taxaGroups.filter((group) =>
-          taxaToInclude.includes(group.merge_under.toLowerCase())
-        );
-
-        // For each data row
-        const dataRows = data.map((row) => {
-          const depth = parseFloat(row['core_depth']); // Use core_depth as is
-
-          const age = interpolateAge(depth);
-
-          if (age === null) {
-            return null; // Skip rows where age cannot be determined
-          }
-
-          // Get counts for each group
-          const groupedCounts = {};
-          filteredTaxaGroups.forEach((group) => {
-            const taxaNames = group.taxa_names;
-            const totalCount = taxaNames.reduce((sum, taxaName) => {
-              const count = parseFloat(row[taxaName]);
-              if (isNaN(count)) {
-                return sum;
-              }
-              return sum + count;
-            }, 0);
-            groupedCounts[group.merge_under] = totalCount;
-          });
-
-          // Calculate total counts
-          const totalCounts = Object.values(groupedCounts).reduce(
-            (sum, count) => sum + count,
-            0
-          );
-
-          if (totalCounts === 0) {
-            return null; // Skip rows with zero total counts
-          }
-
-          // Calculate percentages for each group
-          const groupPercentages = {};
-          Object.keys(groupedCounts).forEach((groupName) => {
-            groupPercentages[groupName] =
-              (groupedCounts[groupName] / totalCounts) * 100;
-          });
-
-          return {
-            age: age, // Use raw age here
-            depth: depth, // Include depth here
-            percentages: groupPercentages,
-          };
-        });
-
-        // Filter out null rows
-        const validDataRows = dataRows.filter((row) => row !== null);
-
-        // Prepare data for plotting
-        const newSpeciesData = filteredTaxaGroups.map((group) => {
-          const groupName = group.taxa_name;
-          const mergeUnder = group.merge_under;
-          const x = validDataRows.map((row) => row.percentages[mergeUnder] || 0);
-          const y = validDataRows.map((row) => row.age); // Use actual age
-          const depths = validDataRows.map((row) => row.depth); // Collect depths
-          const lifeId = group.life_id.toLowerCase().trim();
-          const fontstyle = group.fontstyle;
-
-          return {
-            speciesName: groupName,
-            mergeUnder: mergeUnder,
-            lifeId: lifeId,
-            order: group.order,
-            fontstyle: fontstyle,
-            x: x,
-            y: y,
-            depths: depths, // Include depths here
-          };
-        });
-
-        setCsvDataSets(newSpeciesData);
+        setRawData(data);
       },
     });
   };
+
+  // useEffect to regenerate csvDataSets whenever rawData, taxaLifeFormAssignments, or taxaData change
+  useEffect(() => {
+    if (rawData.length === 0 || taxaData.length === 0) return;
+
+    // Build a mapping from merge_under to taxa IDs and other attributes
+    const taxaMapping = {};
+    taxaData.forEach((taxa) => {
+      const mergeUnder = (taxa.merge_under || taxa.taxa_name || taxa.taxa_id)
+        .toLowerCase()
+        .trim();
+      const taxaName = mergeUnderNameMapping[mergeUnder] || taxa.taxa_name;
+
+      const assignedLifeId = taxaLifeFormAssignments[taxa.taxa_id] || taxa.life_id;
+
+      if (!taxaMapping[mergeUnder]) {
+        taxaMapping[mergeUnder] = {
+          taxa_name: taxaName,
+          merge_under: mergeUnder,
+          taxa_ids: [],
+          taxa_names: [],
+          life_id: assignedLifeId.toLowerCase().trim(),
+          order: taxa.order ? parseInt(taxa.order) : 9999,
+          fontstyle: taxa.fontstyle || 'plain',
+        };
+      }
+      taxaMapping[mergeUnder].taxa_ids.push(taxa.taxa_id);
+      taxaMapping[mergeUnder].taxa_names.push(taxa.taxa_name);
+    });
+
+    // Convert taxaMapping to array and sort based on 'order'
+    const taxaGroups = Object.keys(taxaMapping).map((key) => taxaMapping[key]);
+    taxaGroups.sort((a, b) => a.order - b.order);
+
+    // Filter taxaGroups to include only specified taxa using merge_under
+    const filteredTaxaGroups = taxaGroups.filter((group) =>
+      taxaToInclude.includes(group.merge_under.toLowerCase())
+    );
+
+    // For each data row
+    const dataRows = rawData.map((row) => {
+      const depth = parseFloat(row['core_depth']); // Use core_depth as is
+
+      const age = interpolateAge(depth);
+
+      if (age === null) {
+        return null; // Skip rows where age cannot be determined
+      }
+
+      // Get counts for each group
+      const groupedCounts = {};
+      filteredTaxaGroups.forEach((group) => {
+        const taxaNames = group.taxa_names;
+        const totalCount = taxaNames.reduce((sum, taxaName) => {
+          const count = parseFloat(row[taxaName]);
+          if (isNaN(count)) {
+            return sum;
+          }
+          return sum + count;
+        }, 0);
+        groupedCounts[group.merge_under] = totalCount;
+      });
+
+      // Calculate total counts
+      const totalCounts = Object.values(groupedCounts).reduce(
+        (sum, count) => sum + count,
+        0
+      );
+
+      if (totalCounts === 0) {
+        return null; // Skip rows with zero total counts
+      }
+
+      // Calculate percentages for each group
+      const groupPercentages = {};
+      Object.keys(groupedCounts).forEach((groupName) => {
+        groupPercentages[groupName] =
+          (groupedCounts[groupName] / totalCounts) * 100;
+      });
+
+      return {
+        age: age, // Use raw age here
+        depth: depth, // Include depth here
+        percentages: groupPercentages,
+      };
+    });
+
+    // Filter out null rows
+    const validDataRows = dataRows.filter((row) => row !== null);
+
+    // Prepare data for plotting
+    const newSpeciesData = filteredTaxaGroups.map((group) => {
+      const groupName = group.taxa_name;
+      const mergeUnder = group.merge_under;
+      const x = validDataRows.map((row) => row.percentages[mergeUnder] || 0);
+      const y = validDataRows.map((row) => row.age); // Use actual age
+      const depths = validDataRows.map((row) => row.depth); // Collect depths
+      const lifeId = group.life_id.toLowerCase().trim();
+      const fontstyle = group.fontstyle;
+
+      return {
+        speciesName: groupName,
+        mergeUnder: mergeUnder,
+        lifeId: lifeId,
+        order: group.order,
+        fontstyle: fontstyle,
+        x: x,
+        y: y,
+        depths: depths, // Include depths here
+      };
+    });
+
+    setCsvDataSets(newSpeciesData);
+  }, [rawData, taxaLifeFormAssignments, taxaData]);
 
   // Prepare plot data and layout
   const preparePlotData = () => {
@@ -301,7 +437,7 @@ function Dashboard() {
     const annotations = [];
 
     // Use filtered taxa groups
-    const lifeformOrder = ['t', 's', 'h', 'm', 'p', 'a', 'c', 'o', 'x']; // Define desired life form order
+    const lifeformOrder = lifeFormGroups.map((group) => group.life_id); // Use user-defined order
 
     // Minimum percentage threshold
     const minPercentage = 1; // Set to 1%
@@ -336,10 +472,12 @@ function Dashboard() {
 
     const numTaxa = filteredDataSets.length;
 
-    // Create mapping from life_id to color
+    // Create mapping from life_id to color and name
     const lifeFormColorMap = {};
+    const lifeFormNameMap = {};
     lifeFormGroups.forEach((group) => {
       lifeFormColorMap[group.life_id.toLowerCase().trim()] = group.color.trim();
+      lifeFormNameMap[group.life_id.toLowerCase().trim()] = group.life_name;
     });
 
     const threshold = 5; // Threshold below which exaggeration is applied
@@ -483,7 +621,7 @@ function Dashboard() {
 
       // Add life form group name annotation
       annotations.push({
-        text: groupNameMapping[lifeId] || lifeId,
+        text: lifeFormNameMap[lifeId] || lifeId,
         xref: 'paper',
         yref: 'paper',
         x: xCenterPaper,
@@ -681,6 +819,44 @@ function Dashboard() {
                         Upload Data CSV File
                       </label>
                     </div>
+
+                    {/* Buttons to Show/Hide Assignments */}
+                    <div className={styles.assignmentButtons}>
+                      {taxaData.length > 0 && lifeFormGroups.length > 0 && (
+                        <button
+                          onClick={() => setShowTaxaAssignment(!showTaxaAssignment)}
+                          className={styles.customFileButton}
+                        >
+                          {showTaxaAssignment ? 'Hide Taxa Assignments' : 'Assign Taxa to Life Forms'}
+                        </button>
+                      )}
+                      {lifeFormGroups.length > 0 && (
+                        <button
+                          onClick={() => setShowLifeFormAssignment(!showLifeFormAssignment)}
+                          className={styles.customFileButton}
+                        >
+                          {showLifeFormAssignment ? 'Hide Life Forms' : 'Edit Life Forms'}
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Taxa Life Form Assignment Component */}
+                    {showTaxaAssignment && taxaData.length > 0 && lifeFormGroups.length > 0 && (
+                      <TaxaLifeFormAssignment
+                        taxaData={taxaData}
+                        lifeFormGroups={lifeFormGroups}
+                        taxaLifeFormAssignments={taxaLifeFormAssignments} // Added this line
+                        setTaxaLifeFormAssignments={setTaxaLifeFormAssignments}
+                      />
+                    )}
+
+                    {/* Life Form Color and Name Assignment Component */}
+                    {showLifeFormAssignment && lifeFormGroups.length > 0 && (
+                      <LifeFormColorAssignment
+                        lifeFormGroups={lifeFormGroups}
+                        setLifeFormGroups={setLifeFormGroups}
+                      />
+                    )}
 
                     {/* Controls */}
                     <div className={styles.verticalControls}>
