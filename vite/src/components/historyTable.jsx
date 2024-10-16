@@ -31,7 +31,8 @@ function DataTable() {
   const handleDelete = (id) => {
     const confirmed = window.confirm("Are you sure you want to delete this file?");
     if (confirmed) {
-      setData(data.filter((item) => item.id !== id));
+      const updatedData = data.filter((item) => item.id !== id);
+      setData(updatedData);
       console.log(`Deleted entry with id: ${id}`);
     } else {
       console.log("File deletion canceled.");
@@ -53,9 +54,9 @@ function DataTable() {
         {data.map((row) => (
           <tr key={row.id}>
             <td className="id-column">{row.id}</td>
-            <td className="date-column">{row.csv_data}</td>
+            <td className="date-column">{new Date(row.upload_date).toLocaleString()}</td>
             <td className="csv-column">
-              <span className="csv-link">{row.filename}</span>
+              <span className="csv-link">{row.file_name}</span>
             </td>
             <td className="graph-column">
               <button

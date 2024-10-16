@@ -13,4 +13,15 @@ class Note(models.Model):
     def __str__(self):
         return self.title
 
+class CSVFile(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    file_name = models.CharField(max_length=255)
+    upload_date = models.DateTimeField()
+    row_count = models.IntegerField()
+
+    class Meta:
+        db_table = 'csv_files'
+
+    def __str__(self):
+        return self.file_name
 
