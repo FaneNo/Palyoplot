@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import CSVFile 
+from .models import CSVFile, Dataset 
 
 
 
@@ -25,7 +25,7 @@ class CSVFileSer(serializers.ModelSerializer):
         model = CSVFile
         fields = ["id", "file_name", "upload_date", "row_count"]
 
-
-
-
- 
+class DatasetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Dataset
+        fields = ["id", "filename", "dataset_type", "csv_data", "visualization_pref", "created_at", "updated_at"]
