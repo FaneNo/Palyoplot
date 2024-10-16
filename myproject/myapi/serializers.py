@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from .models import CSVFile 
 
 
 
@@ -13,11 +14,16 @@ class UserSerializer(serializers.ModelSerializer):
         print(validated_data)
         user = User.objects.create_user(**validated_data)
         return user
-
-# class CSVfile(serializers.ModelSerializer):
+    
+# class NoteSerializer(serializers.ModelSerializer):
 #     class Meta:
-#         model = CSVfile
-#         fields = ["id", "file_name", "file_data", "visualization_prefs"]
+#         model = Note
+#         fields = ["id", "filename", "csv_data", "visualization_pref"]
+
+class CSVFileSer(serializers.ModelSerializer):
+    class Meta:
+        model = CSVFile
+        fields = ["id", "file_name", "upload_date", "row_count"]
 
 
 
