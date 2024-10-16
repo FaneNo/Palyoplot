@@ -4,6 +4,7 @@ import DashboardNav from '../components/dashboardNav';
 import styles from '../cssPages/dashboardPage.module.css';
 import Plot from 'react-plotly.js';
 import Plotly from 'plotly.js-dist';
+import Select from 'react-select';
 
 // Component for assigning taxa to life forms
 function TaxaLifeFormAssignment({
@@ -145,6 +146,10 @@ function Dashboard() {
   const [plotType, setPlotType] = useState('area');
   const [orientation, setOrientation] = useState('h');
 
+  // Plot data and layout state variables
+  const [plotData, setPlotData] = useState([]);
+  const [layout, setLayout] = useState({});
+
   // Download functionality state variables
   const [modalOpen, setModalOpen] = useState(false);
   const [resolution, setResolution] = useState('1080p');
@@ -152,6 +157,10 @@ function Dashboard() {
   const graphRef = useRef();
   const [isDownloading, setIsDownloading] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
+
+  // Taxa selection state variables
+  const [availableTaxa, setAvailableTaxa] = useState([]);
+  const [selectedTaxa, setSelectedTaxa] = useState([]);
 
   // List of taxa to include using merge_under codes (all in lowercase)
   const taxaToInclude = [
@@ -300,20 +309,31 @@ function Dashboard() {
     });
   };
 
-  // Function to handle the main data CSV upload
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file || taxaData.length === 0) return;
-
+  
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
       complete: function (results) {
         const data = results.data;
+        const headers = results.meta.fields;
+  
+        // Exclude 'core_depth' and 'adj_depth' and any non-taxa columns
+        const nonTaxaColumns = ['core_depth', 'adj_depth', 'sample_id'];
+        const taxaNames = headers.filter((header) => !nonTaxaColumns.includes(header));
+
+  
+        // Update available and selected taxa
+        setAvailableTaxa(taxaNames);
+        setSelectedTaxa(taxaNames); // Initially select all taxa
+  
         setRawData(data);
       },
     });
   };
+  
 
   // useEffect to regenerate csvDataSets whenever rawData, taxaLifeFormAssignments, or taxaData change
   useEffect(() => {
@@ -348,9 +368,9 @@ function Dashboard() {
     const taxaGroups = Object.keys(taxaMapping).map((key) => taxaMapping[key]);
     taxaGroups.sort((a, b) => a.order - b.order);
 
-    // Filter taxaGroups to include only specified taxa using merge_under
+    // Filter taxaGroups based on selected taxa
     const filteredTaxaGroups = taxaGroups.filter((group) =>
-      taxaToInclude.includes(group.merge_under.toLowerCase())
+      selectedTaxa.includes(group.taxa_name)
     );
 
     // For each data row
@@ -427,7 +447,14 @@ function Dashboard() {
     });
 
     setCsvDataSets(newSpeciesData);
-  }, [rawData, taxaLifeFormAssignments, taxaData]);
+  }, [rawData, taxaLifeFormAssignments, taxaData, selectedTaxa]);
+
+  useEffect(() => {
+    const { plotData, layout } = preparePlotData();
+    setPlotData(plotData);
+    setLayout(layout);
+  }, [csvDataSets, graphTitle, yAxisLabel, plotType, orientation]);
+  
 
   // Prepare plot data and layout
   const preparePlotData = () => {
@@ -672,7 +699,7 @@ function Dashboard() {
   };
 
   // Generate plot data and layout
-  const { plotData, layout } = preparePlotData();
+  // const { plotData, layout } = preparePlotData();
 
   // Download graph function
   const downloadGraph = () => {
@@ -909,6 +936,20 @@ function Dashboard() {
                           <option value="h">Horizontal</option>
                           <option value="v">Vertical</option>
                         </select>
+                      </div>
+
+                      {/* Taxa Selection Dropdown */}
+                      <div className={styles.labelText}>Select Taxa:</div>
+                      <div className={styles.inputWrapper}>
+                        <Select
+                          isMulti
+                          options={availableTaxa.map((taxa) => ({ label: taxa, value: taxa }))}
+                          value={selectedTaxa.map((taxa) => ({ label: taxa, value: taxa }))}
+                          onChange={(selectedOptions) => {
+                            setSelectedTaxa(selectedOptions ? selectedOptions.map((option) => option.value) : []);
+                          }}
+                          closeMenuOnSelect={false}
+                        />
                       </div>
 
                       {/* Download Button */}
