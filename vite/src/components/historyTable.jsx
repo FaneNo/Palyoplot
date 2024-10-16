@@ -10,7 +10,7 @@ function DataTable() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get("/user-csv-files/");
+        const response = await api.get("/api/user-csv-files/");
         setData(response.data);
       } catch (error) {
         console.error("Error fetching data", error);
