@@ -42,7 +42,7 @@ def upload_csv(request):
 
     file_name = csv_file.name
 
-    # Read the CSV data directly from the uploaded file
+    
     csv_data = csv_file.read().decode('utf-8')
     
     # Default visualization preferences 
@@ -67,7 +67,7 @@ def delete_csv_file(request, file_id):
         # First, check if the file exists and belongs to the user
         csv_file = CSVFile.objects.get(id=file_id, user=request.user)
         
-        # If the file exists and belongs to the user, use the delete_csv function
+       
         delete_csv(file_id)
         
         return Response({'message': 'File deleted successfully and display IDs resequenced'}, 
