@@ -2,7 +2,7 @@ import axios from "axios";
 import { ACCESS_TOKEN } from "./token";
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL
+    baseURL: import.meta.env.VITE_API_URL,
 })
 
 // look at local storage to see if you access token

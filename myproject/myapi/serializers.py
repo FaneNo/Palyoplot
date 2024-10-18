@@ -23,9 +23,9 @@ class UserSerializer(serializers.ModelSerializer):
 class CSVFileSer(serializers.ModelSerializer):
     class Meta:
         model = CSVFile
-        fields = ["id", "file_name", "upload_date", "row_count"]
+        fields = ["id","display_id", "file_name", "upload_date", "row_count"]
 
 class DatasetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dataset
-        fields = ["id", "filename", "dataset_type", "csv_data", "visualization_pref", "created_at", "updated_at"]
+        fields = ["id","display_id", "filename", "dataset_type", "csv_data", "visualization_pref", "created_at", "updated_at"]

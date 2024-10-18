@@ -31,6 +31,7 @@ class CSVFile(models.Model):
     file_name = models.CharField(max_length=255)
     upload_date = models.DateTimeField()
     row_count = models.IntegerField()
+    display_id = models.IntegerField() 
 
     class Meta:
         db_table = 'csv_files'
