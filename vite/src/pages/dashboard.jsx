@@ -1,10 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
-import Papa from 'papaparse';
-import DashboardNav from '../components/dashboardNav';
-import styles from '../cssPages/dashboardPage.module.css';
-import Plot from 'react-plotly.js';
-import Plotly from 'plotly.js-dist';
-import Select from 'react-select';
+import React, { useState, useRef, useEffect } from "react";
+import Papa from "papaparse";
+import DashboardNav from "../components/dashboardNav";
+import styles from "../cssPages/dashboardPage.module.css";
+import Plot from "react-plotly.js";
+import Plotly from "plotly.js-dist";
+import Select from "react-select";
+import api from "../api";
 
 // Component for assigning taxa to life forms
 function TaxaLifeFormAssignment({
@@ -37,7 +38,9 @@ function TaxaLifeFormAssignment({
               <td>
                 <select
                   value={taxaLifeFormAssignments[taxa.taxa_id] || taxa.life_id}
-                  onChange={(e) => handleLifeFormChange(taxa.taxa_id, e.target.value)}
+                  onChange={(e) =>
+                    handleLifeFormChange(taxa.taxa_id, e.target.value)
+                  }
                   className={styles.lifeFormDropdown}
                 >
                   {lifeFormGroups.map((lifeForm) => (
@@ -70,7 +73,9 @@ function LifeFormColorAssignment({ lifeFormGroups, setLifeFormGroups }) {
   const handleNameChange = (lifeFormId, newName) => {
     setLifeFormGroups((prevGroups) =>
       prevGroups.map((lifeForm) =>
-        lifeForm.life_id === lifeFormId ? { ...lifeForm, life_name: newName } : lifeForm
+        lifeForm.life_id === lifeFormId
+          ? { ...lifeForm, life_name: newName }
+          : lifeForm
       )
     );
   };
@@ -85,7 +90,10 @@ function LifeFormColorAssignment({ lifeFormGroups, setLifeFormGroups }) {
       if (targetIndex < 0 || targetIndex >= newGroups.length) return newGroups;
 
       // Swap positions
-      [newGroups[index], newGroups[targetIndex]] = [newGroups[targetIndex], newGroups[index]];
+      [newGroups[index], newGroups[targetIndex]] = [
+        newGroups[targetIndex],
+        newGroups[index],
+      ];
       return newGroups;
     });
   };
@@ -94,20 +102,24 @@ function LifeFormColorAssignment({ lifeFormGroups, setLifeFormGroups }) {
     <div className={styles.lifeFormColorAssignment}>
       <h3>Edit Life Forms</h3>
       {lifeFormGroups.map((lifeForm, index) => {
-        const color = lifeForm.color || '#808080'; // Default color gray
+        const color = lifeForm.color || "#808080"; // Default color gray
 
         return (
           <div key={lifeForm.life_id} className={styles.lifeFormAssignmentRow}>
             <input
               type="text"
               value={lifeForm.life_name}
-              onChange={(e) => handleNameChange(lifeForm.life_id, e.target.value)}
+              onChange={(e) =>
+                handleNameChange(lifeForm.life_id, e.target.value)
+              }
               className={styles.lifeFormInput}
             />
             <input
               type="color"
               value={color}
-              onChange={(e) => handleColorChange(lifeForm.life_id, e.target.value)}
+              onChange={(e) =>
+                handleColorChange(lifeForm.life_id, e.target.value)
+              }
               className={styles.colorPicker}
             />
             <div className={styles.lifeFormButtons}>
@@ -134,6 +146,9 @@ function LifeFormColorAssignment({ lifeFormGroups, setLifeFormGroups }) {
 }
 
 function Dashboard() {
+  // for file upload
+  const [file, setFile] = useState(null);
+
   // State variables
   const [csvDataSets, setCsvDataSets] = useState([]);
   const [rawData, setRawData] = useState([]);
@@ -141,10 +156,10 @@ function Dashboard() {
   const [taxaData, setTaxaData] = useState([]);
   const [lifeFormGroups, setLifeFormGroups] = useState([]);
   const [taxaLifeFormAssignments, setTaxaLifeFormAssignments] = useState({});
-  const [graphTitle, setGraphTitle] = useState('Pollen Percentage Diagram');
-  const [yAxisLabel, setYAxisLabel] = useState('Cal yr BP');
-  const [plotType, setPlotType] = useState('area');
-  const [orientation, setOrientation] = useState('h');
+  const [graphTitle, setGraphTitle] = useState("Pollen Percentage Diagram");
+  const [yAxisLabel, setYAxisLabel] = useState("Cal yr BP");
+  const [plotType, setPlotType] = useState("area");
+  const [orientation, setOrientation] = useState("h");
 
   // Plot data and layout state variables
   const [plotData, setPlotData] = useState([]);
@@ -152,8 +167,8 @@ function Dashboard() {
 
   // Download functionality state variables
   const [modalOpen, setModalOpen] = useState(false);
-  const [resolution, setResolution] = useState('1080p');
-  const [imageFormat, setImageFormat] = useState('png');
+  const [resolution, setResolution] = useState("1080p");
+  const [imageFormat, setImageFormat] = useState("png");
   const graphRef = useRef();
   const [isDownloading, setIsDownloading] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
@@ -164,34 +179,34 @@ function Dashboard() {
 
   // List of taxa to include using merge_under codes (all in lowercase)
   const taxaToInclude = [
-    'pp', // Pinus
-    'cu', // Cupressaceae
-    'fx', // Fraxinus
-    'ab', // Abies
-    'q',  // Quercus
-    'ro', // Rosaceae
-    'sx', // Salix
-    'hs', // Asteraceae
-    'po', // Poaceae
-    'py', // Polygonaceae
-    'in', // Indeterminate
-    'uk', // Unknown
+    "pp", // Pinus
+    "cu", // Cupressaceae
+    "fx", // Fraxinus
+    "ab", // Abies
+    "q", // Quercus
+    "ro", // Rosaceae
+    "sx", // Salix
+    "hs", // Asteraceae
+    "po", // Poaceae
+    "py", // Polygonaceae
+    "in", // Indeterminate
+    "uk", // Unknown
   ];
 
   // Mapping from merge_under codes to full taxa names
   const mergeUnderNameMapping = {
-    'pp': 'Pinus',
-    'cu': 'Cupressaceae',
-    'fx': 'Fraxinus',
-    'ab': 'Abies',
-    'q': 'Quercus',
-    'ro': 'Rosaceae',
-    'sx': 'Salix',
-    'hs': 'Asteraceae',
-    'po': 'Poaceae',
-    'py': 'Polygonaceae',
-    'in': 'Indeterminate',
-    'uk': 'Unknown',
+    pp: "Pinus",
+    cu: "Cupressaceae",
+    fx: "Fraxinus",
+    ab: "Abies",
+    q: "Quercus",
+    ro: "Rosaceae",
+    sx: "Salix",
+    hs: "Asteraceae",
+    po: "Poaceae",
+    py: "Polygonaceae",
+    in: "Indeterminate",
+    uk: "Unknown",
   };
 
   // State variable to control the visibility of the LifeFormColorAssignment component
@@ -201,7 +216,7 @@ function Dashboard() {
   // Interpolation function using the age model data
   const interpolateAge = (coreDepth) => {
     if (ageModelData.length === 0) {
-      console.warn('Age model data is empty.');
+      console.warn("Age model data is empty.");
       return null;
     }
 
@@ -230,9 +245,7 @@ function Dashboard() {
       }
     }
 
-    console.warn(
-      `No matching depth range found for core depth ${coreDepth}.`
-    );
+    console.warn(`No matching depth range found for core depth ${coreDepth}.`);
     return null;
   };
 
@@ -246,8 +259,8 @@ function Dashboard() {
       skipEmptyLines: true,
       complete: function (results) {
         let data = results.data.map((row) => ({
-          depth: parseFloat(row['depth']), // Use depth as is
-          age: parseFloat(row['median']), // Using 'median' age
+          depth: parseFloat(row["depth"]), // Use depth as is
+          age: parseFloat(row["median"]), // Using 'median' age
         }));
 
         // Remove NaN values
@@ -271,9 +284,9 @@ function Dashboard() {
       skipEmptyLines: true,
       complete: function (results) {
         const data = results.data.map((row) => ({
-          life_id: row['life_id'].toLowerCase().trim(),
-          life_name: row['life_name'],
-          color: row['color'] ? row['color'].trim() : '#808080',
+          life_id: row["life_id"].toLowerCase().trim(),
+          life_name: row["life_name"],
+          color: row["color"] ? row["color"].trim() : "#808080",
         }));
         setLifeFormGroups(data);
       },
@@ -290,12 +303,12 @@ function Dashboard() {
       skipEmptyLines: true,
       complete: function (results) {
         const data = results.data.map((row) => ({
-          taxa_id: row['taxa_id'],
-          taxa_name: row['taxa_name'],
-          merge_under: row['merge_under'],
-          life_id: row['life_id'],
-          fontstyle: row['fontstyle'],
-          order: row['order'],
+          taxa_id: row["taxa_id"],
+          taxa_name: row["taxa_name"],
+          merge_under: row["merge_under"],
+          life_id: row["life_id"],
+          fontstyle: row["fontstyle"],
+          order: row["order"],
         }));
         setTaxaData(data);
 
@@ -309,31 +322,56 @@ function Dashboard() {
     });
   };
 
+  // Function to handle the main data CSV upload
+  const handleFileChangeCSV = (event) => {
+    setFile(event.target.files[0]);
+  };
+
+  const handleFileUploadCSV = async () => {
+    if (!file) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("csv_file", file);
+
+    try {
+      const response = await api.post("/api/upload-csv/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("File uploaded successfully", response.data);
+    } catch (error) {
+      console.error("Error uploading file", error);
+    }
+  };
+
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file || taxaData.length === 0) return;
-  
+
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
       complete: function (results) {
         const data = results.data;
         const headers = results.meta.fields;
-  
-        // Exclude 'core_depth' and 'adj_depth' and any non-taxa columns
-        const nonTaxaColumns = ['core_depth', 'adj_depth', 'sample_id'];
-        const taxaNames = headers.filter((header) => !nonTaxaColumns.includes(header));
 
-  
+        // Exclude 'core_depth' and 'adj_depth' and any non-taxa columns
+        const nonTaxaColumns = ["core_depth", "adj_depth", "sample_id"];
+        const taxaNames = headers.filter(
+          (header) => !nonTaxaColumns.includes(header)
+        );
+
         // Update available and selected taxa
         setAvailableTaxa(taxaNames);
         setSelectedTaxa(taxaNames); // Initially select all taxa
-  
+
         setRawData(data);
       },
     });
   };
-  
 
   // useEffect to regenerate csvDataSets whenever rawData, taxaLifeFormAssignments, or taxaData change
   useEffect(() => {
@@ -347,7 +385,8 @@ function Dashboard() {
         .trim();
       const taxaName = mergeUnderNameMapping[mergeUnder] || taxa.taxa_name;
 
-      const assignedLifeId = taxaLifeFormAssignments[taxa.taxa_id] || taxa.life_id;
+      const assignedLifeId =
+        taxaLifeFormAssignments[taxa.taxa_id] || taxa.life_id;
 
       if (!taxaMapping[mergeUnder]) {
         taxaMapping[mergeUnder] = {
@@ -357,7 +396,7 @@ function Dashboard() {
           taxa_names: [],
           life_id: assignedLifeId.toLowerCase().trim(),
           order: taxa.order ? parseInt(taxa.order) : 9999,
-          fontstyle: taxa.fontstyle || 'plain',
+          fontstyle: taxa.fontstyle || "plain",
         };
       }
       taxaMapping[mergeUnder].taxa_ids.push(taxa.taxa_id);
@@ -375,7 +414,7 @@ function Dashboard() {
 
     // For each data row
     const dataRows = rawData.map((row) => {
-      const depth = parseFloat(row['core_depth']); // Use core_depth as is
+      const depth = parseFloat(row["core_depth"]); // Use core_depth as is
 
       const age = interpolateAge(depth);
 
@@ -454,7 +493,6 @@ function Dashboard() {
     setPlotData(plotData);
     setLayout(layout);
   }, [csvDataSets, graphTitle, yAxisLabel, plotType, orientation]);
-  
 
   // Prepare plot data and layout
   const preparePlotData = () => {
@@ -470,7 +508,9 @@ function Dashboard() {
     const minPercentage = 1; // Set to 1%
 
     const sortedDataSets = csvDataSets
-      .filter((dataset) => taxaToInclude.includes(dataset.mergeUnder.toLowerCase()))
+      .filter((dataset) =>
+        taxaToInclude.includes(dataset.mergeUnder.toLowerCase())
+      )
       .sort((a, b) => {
         const lifeOrderA = lifeformOrder.indexOf(a.lifeId);
         const lifeOrderB = lifeformOrder.indexOf(b.lifeId);
@@ -521,7 +561,8 @@ function Dashboard() {
     const subplotSpacing = 0.02; // 2% spacing between subplots
     const xLeftMargin = 0.1; // 10% left margin
     const xRightMargin = 0.02; // 2% right margin
-    const totalSpacing = subplotSpacing * (numTaxa - 1) + xLeftMargin + xRightMargin;
+    const totalSpacing =
+      subplotSpacing * (numTaxa - 1) + xLeftMargin + xRightMargin;
     const subplotWidth = (1 - totalSpacing) / numTaxa;
 
     // Group datasets by life form
@@ -564,14 +605,14 @@ function Dashboard() {
 
       // Determine the correct plot type and fill property
       let traceType = plotType;
-      let fill = 'none';
-      if (plotType === 'area') {
-        traceType = 'scatter';
-        fill = orientation === 'h' ? 'tozerox' : 'tozeroy';
+      let fill = "none";
+      if (plotType === "area") {
+        traceType = "scatter";
+        fill = orientation === "h" ? "tozerox" : "tozeroy";
       }
 
       const lifeId = dataset.lifeId.toLowerCase().trim();
-      const color = lifeFormColorMap[lifeId] || 'gray';
+      const color = lifeFormColorMap[lifeId] || "gray";
 
       plotData.push({
         x: dataset.x,
@@ -586,7 +627,7 @@ function Dashboard() {
           color: color,
         },
         line: {
-          shape: 'spline',
+          shape: "spline",
         },
         showlegend: false,
       });
@@ -595,14 +636,14 @@ function Dashboard() {
       annotations.push({
         text: dataset.speciesName,
         xref: `x${subplotIndex}`,
-        yref: 'paper',
+        yref: "paper",
         x: (xAxisRange[1] + xAxisRange[0]) / 2,
         y: 1.06,
-        xanchor: 'center',
+        xanchor: "center",
         showarrow: false,
         font: {
           size: 12,
-          style: dataset.fontstyle === 'italic' ? 'italic' : 'normal',
+          style: dataset.fontstyle === "italic" ? "italic" : "normal",
         },
       });
 
@@ -615,16 +656,16 @@ function Dashboard() {
       // Configure xaxis with adjustments
       layout[`xaxis${subplotIndex}`] = {
         domain: [xStart, xEnd],
-        anchor: 'y',
-        title: '',
+        anchor: "y",
+        title: "",
         range: xAxisRange,
-        tickmode: 'linear',
+        tickmode: "linear",
         dtick: 10,
-        ticks: 'outside',
+        ticks: "outside",
         ticklen: 5,
         showline: true,
         linewidth: 1,
-        linecolor: 'black',
+        linecolor: "black",
         showgrid: false,
         showticklabels: true,
         tickangle: 0, // Ensure labels are horizontal
@@ -640,7 +681,10 @@ function Dashboard() {
 
       // Calculate xStart and xEnd for the group
       const xStart = xLeftMargin + firstIndex * (subplotWidth + subplotSpacing);
-      let xEnd = xLeftMargin + (lastIndex + 1) * (subplotWidth + subplotSpacing) - subplotSpacing;
+      let xEnd =
+        xLeftMargin +
+        (lastIndex + 1) * (subplotWidth + subplotSpacing) -
+        subplotSpacing;
       if (xEnd > 1) xEnd = 1;
 
       // Calculate center position in paper coordinates
@@ -649,30 +693,30 @@ function Dashboard() {
       // Add life form group name annotation
       annotations.push({
         text: lifeFormNameMap[lifeId] || lifeId,
-        xref: 'paper',
-        yref: 'paper',
+        xref: "paper",
+        yref: "paper",
         x: xCenterPaper,
         y: 1.12, // Adjust as needed
         showarrow: false,
         font: {
           size: 14,
-          color: lifeFormColorMap[lifeId] || 'gray',
+          color: lifeFormColorMap[lifeId] || "gray",
         },
       });
     });
 
     // Configure shared yaxis
-    layout['yaxis'] = {
+    layout["yaxis"] = {
       title: yAxisLabel,
-      autorange: 'reversed',
+      autorange: "reversed",
       range: [maxAge, minAge],
-      tickmode: 'linear',
+      tickmode: "linear",
       dtick: 500, // Adjust intervals as needed
-      ticks: 'outside',
+      ticks: "outside",
       ticklen: 5,
       showline: true,
       linewidth: 1,
-      linecolor: 'black',
+      linecolor: "black",
       tickfont: {
         size: 10,
       },
@@ -680,9 +724,9 @@ function Dashboard() {
 
     // Add overall x-axis label
     annotations.push({
-      text: 'Percentages',
-      xref: 'paper',
-      yref: 'paper',
+      text: "Percentages",
+      xref: "paper",
+      yref: "paper",
       x: 0.5,
       y: -0.1,
       showarrow: false,
@@ -692,7 +736,7 @@ function Dashboard() {
     });
 
     layout.annotations = annotations;
-    layout.width = 150 * numTaxa + (50 * (numTaxa - 1)); // Adjust width as needed
+    layout.width = 150 * numTaxa + 50 * (numTaxa - 1); // Adjust width as needed
     layout.height = 600; // Fixed height
 
     return { plotData, layout };
@@ -704,21 +748,26 @@ function Dashboard() {
   // Download graph function
   const downloadGraph = () => {
     if (isDownloading) {
-      console.warn('Download already in progress. Please wait.');
+      console.warn("Download already in progress. Please wait.");
       return;
     }
 
     // Map resolution to width and height
     const resolutionMap = {
-      '1080p': { width: 1920, height: 1080 },
-      '2k': { width: 2560, height: 1440 },
-      '4k': { width: 3840, height: 2160 },
+      "1080p": { width: 1920, height: 1080 },
+      "2k": { width: 2560, height: 1440 },
+      "4k": { width: 3840, height: 2160 },
     };
 
     const { width, height } = resolutionMap[resolution];
 
-    if (!graphRef.current || !graphRef.current.el || !plotData || plotData.length === 0) {
-      console.error('No data to download.');
+    if (
+      !graphRef.current ||
+      !graphRef.current.el ||
+      !plotData ||
+      plotData.length === 0
+    ) {
+      console.error("No data to download.");
       setShowWarning(true);
       return;
     }
@@ -729,14 +778,14 @@ function Dashboard() {
       format: imageFormat,
       width: width,
       height: height,
-      filename: graphTitle.replace(/ /g, '_'),
+      filename: graphTitle.replace(/ /g, "_"),
     })
       .then(() => {
-        console.log('Download successful');
+        console.log("Download successful");
         setIsDownloading(false);
       })
       .catch((error) => {
-        console.error('Download failed:', error);
+        console.error("Download failed:", error);
         setIsDownloading(false);
       });
 
@@ -746,7 +795,7 @@ function Dashboard() {
   // Handle download button click
   const handleDownloadButtonClick = () => {
     if (!plotData || plotData.length === 0) {
-      console.error('No data available to download.');
+      console.error("No data available to download.");
       setShowWarning(true);
     } else {
       setModalOpen(true);
@@ -767,11 +816,7 @@ function Dashboard() {
               <div className={styles.dashboardContent}>
                 <div className={styles.plotBox}>
                   {/* Plotly Graph */}
-                  <Plot
-                    ref={graphRef}
-                    data={plotData}
-                    layout={layout}
-                  />
+                  <Plot ref={graphRef} data={plotData} layout={layout} />
 
                   <div className={styles.uploadButtonWrapper}>
                     <div className={styles.horizontalButtons}>
@@ -840,42 +885,76 @@ function Dashboard() {
                           taxaData.length === 0 ||
                           lifeFormGroups.length === 0
                             ? styles.disabledButton
-                            : ''
+                            : ""
                         }`}
                       >
                         Upload Data CSV File
                       </label>
+
+                      {/* CSV File Upload */}
+                      <input
+                        type="file"
+                        id="csvFileUpload"
+                        onChange={handleFileChangeCSV}
+                        className={styles.fileInput}
+                      />
+                      <button
+                        onClick={() =>
+                          document.getElementById("csvFileUpload").click()
+                        }
+                        className={styles.customFileButton}
+                      >
+                        Select CSV File
+                      </button>
+                      <button
+                        onClick={handleFileUploadCSV}
+                        className={styles.customFileButton}
+                      >
+                        Upload CSV File
+                      </button>
                     </div>
 
                     {/* Buttons to Show/Hide Assignments */}
                     <div className={styles.assignmentButtons}>
                       {taxaData.length > 0 && lifeFormGroups.length > 0 && (
                         <button
-                          onClick={() => setShowTaxaAssignment(!showTaxaAssignment)}
+                          onClick={() =>
+                            setShowTaxaAssignment(!showTaxaAssignment)
+                          }
                           className={styles.customFileButton}
                         >
-                          {showTaxaAssignment ? 'Hide Taxa Assignments' : 'Assign Taxa to Life Forms'}
+                          {showTaxaAssignment
+                            ? "Hide Taxa Assignments"
+                            : "Assign Taxa to Life Forms"}
                         </button>
                       )}
                       {lifeFormGroups.length > 0 && (
                         <button
-                          onClick={() => setShowLifeFormAssignment(!showLifeFormAssignment)}
+                          onClick={() =>
+                            setShowLifeFormAssignment(!showLifeFormAssignment)
+                          }
                           className={styles.customFileButton}
                         >
-                          {showLifeFormAssignment ? 'Hide Life Forms' : 'Edit Life Forms'}
+                          {showLifeFormAssignment
+                            ? "Hide Life Forms"
+                            : "Edit Life Forms"}
                         </button>
                       )}
                     </div>
 
                     {/* Taxa Life Form Assignment Component */}
-                    {showTaxaAssignment && taxaData.length > 0 && lifeFormGroups.length > 0 && (
-                      <TaxaLifeFormAssignment
-                        taxaData={taxaData}
-                        lifeFormGroups={lifeFormGroups}
-                        taxaLifeFormAssignments={taxaLifeFormAssignments} // Added this line
-                        setTaxaLifeFormAssignments={setTaxaLifeFormAssignments}
-                      />
-                    )}
+                    {showTaxaAssignment &&
+                      taxaData.length > 0 &&
+                      lifeFormGroups.length > 0 && (
+                        <TaxaLifeFormAssignment
+                          taxaData={taxaData}
+                          lifeFormGroups={lifeFormGroups}
+                          taxaLifeFormAssignments={taxaLifeFormAssignments} // Added this line
+                          setTaxaLifeFormAssignments={
+                            setTaxaLifeFormAssignments
+                          }
+                        />
+                      )}
 
                     {/* Life Form Color and Name Assignment Component */}
                     {showLifeFormAssignment && lifeFormGroups.length > 0 && (
@@ -943,10 +1022,20 @@ function Dashboard() {
                       <div className={styles.inputWrapper}>
                         <Select
                           isMulti
-                          options={availableTaxa.map((taxa) => ({ label: taxa, value: taxa }))}
-                          value={selectedTaxa.map((taxa) => ({ label: taxa, value: taxa }))}
+                          options={availableTaxa.map((taxa) => ({
+                            label: taxa,
+                            value: taxa,
+                          }))}
+                          value={selectedTaxa.map((taxa) => ({
+                            label: taxa,
+                            value: taxa,
+                          }))}
                           onChange={(selectedOptions) => {
-                            setSelectedTaxa(selectedOptions ? selectedOptions.map((option) => option.value) : []);
+                            setSelectedTaxa(
+                              selectedOptions
+                                ? selectedOptions.map((option) => option.value)
+                                : []
+                            );
                           }}
                           closeMenuOnSelect={false}
                         />
@@ -954,7 +1043,10 @@ function Dashboard() {
 
                       {/* Download Button */}
                       <div className={styles.downloadButtonWrapper}>
-                        <button onClick={handleDownloadButtonClick} className={styles.downloadButton}>
+                        <button
+                          onClick={handleDownloadButtonClick}
+                          className={styles.downloadButton}
+                        >
                           Download Graph
                         </button>
                       </div>
@@ -1004,10 +1096,16 @@ function Dashboard() {
                   <option value="4k">3840x2160</option>
                 </select>
               </div>
-              <button onClick={downloadGraph} className={styles.modalDownloadButton}>
+              <button
+                onClick={downloadGraph}
+                className={styles.modalDownloadButton}
+              >
                 Confirm Download
               </button>
-              <button onClick={() => setModalOpen(false)} className={styles.modalCloseButton}>
+              <button
+                onClick={() => setModalOpen(false)}
+                className={styles.modalCloseButton}
+              >
                 Close
               </button>
             </div>
@@ -1019,8 +1117,16 @@ function Dashboard() {
           <div className={styles.warningModal}>
             <div className={styles.warningModalContent}>
               <h2>No Data Available</h2>
-              <p>Please upload the required CSV files and generate a graph before downloading.</p>
-              <button onClick={handleCloseWarning} className={styles.warningCloseButton}>Close</button>
+              <p>
+                Please upload the required CSV files and generate a graph before
+                downloading.
+              </p>
+              <button
+                onClick={handleCloseWarning}
+                className={styles.warningCloseButton}
+              >
+                Close
+              </button>
             </div>
           </div>
         )}

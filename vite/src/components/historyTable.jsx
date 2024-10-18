@@ -1,39 +1,45 @@
 import api from "../api";
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import "../cssPages/historyTable.css";
 
 function DataTable() {
   const [data, setData] = useState([]);
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.get("/api/user-csv-files/");
-        setData(response.data);
-      } catch (error) {
-        console.error("Error fetching data", error);
-      }
-    };
-
     fetchData();
   }, []);
 
-
-  // Function to handle navigation
-  const handleDownload = (id) => {
-    console.log(`Download data for id: ${id}`);
-    navigate('/dashboard'); // Navigate to the Dashboard page
+  const fetchData = async () => {
+    try {
+      const response = await api.get("/api/user-csv-files/");
+      setData(response.data);
+    } catch (error) {
+      console.error("Error fetching data", error);
+    }
   };
 
-  // Function to handle deleting a specific entry
-  const handleDelete = (id) => {
-    const confirmed = window.confirm("Are you sure you want to delete this file?");
+  const handleDownload = (id) => {
+    console.log(`Download data for id: ${id}`);
+    navigate("/dashboard");
+  };
+
+  const handleDelete = async (id) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this file?"
+    );
     if (confirmed) {
-      const updatedData = data.filter((item) => item.id !== id);
-      setData(updatedData);
-      console.log(`Deleted entry with id: ${id}`);
+      try {
+        await api.delete(`/api/csv_files/${id}/`);
+        
+        // Fetch the updated data from the server
+        await fetchData();
+        
+        console.log(`Deleted entry with id: ${id}`);
+      } catch (error) {
+        console.error("Error deleting file", error);
+      }
     } else {
       console.log("File deletion canceled.");
     }
@@ -53,8 +59,10 @@ function DataTable() {
       <tbody>
         {data.map((row) => (
           <tr key={row.id}>
-            <td className="id-column">{row.id}</td>
-            <td className="date-column">{new Date(row.upload_date).toLocaleString()}</td>
+            <td className="id-column">{row.display_id}</td>
+            <td className="date-column">
+              {new Date(row.upload_date).toLocaleString()}
+            </td>
             <td className="csv-column">
               <span className="csv-link">{row.file_name}</span>
             </td>
@@ -68,7 +76,8 @@ function DataTable() {
             </td>
             <td className="delete-column">
               <button
-                className="delete-btn" onClick={() => handleDelete(row.id)}
+                className="delete-btn"
+                onClick={() => handleDelete(row.id)}
               >
                 ❌
               </button>
