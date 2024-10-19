@@ -311,100 +311,148 @@ function Dashboard() {
 
   const { plotData, layout } = memoizedPlotData;
 
-  // Prepare plot data and layout
   function preparePlotData() {
     if (csvDataSets.length === 0) return { plotData: [], layout: {} };
-
+  
     const plotData = [];
     const annotations = [];
-
+  
     // Use life form order defined by the user
     const lifeformOrder = lifeFormGroups.map((group) => group.life_id);
-
+  
     const sortedDataSets = csvDataSets
       .filter((dataset) => dataset.lifeId !== undefined)
       .sort((a, b) => {
         const lifeOrderA = lifeformOrder.indexOf(a.lifeId);
         const lifeOrderB = lifeformOrder.indexOf(b.lifeId);
-
+  
         if (lifeOrderA !== lifeOrderB) {
           return lifeOrderA - lifeOrderB;
         }
         // Then by speciesName
         return a.speciesName.localeCompare(b.speciesName);
       });
-
-    // Collect all y values to determine min and max
-    const allYValues = sortedDataSets.flatMap((dataset) => dataset.y);
-    const minY = Math.min(...allYValues);
-    const maxY = Math.max(...allYValues);
-
+  
     const numTaxa = sortedDataSets.length;
-
-    // Create mapping from life_id to color and name
+  
+    // Mapping from life_id to color and name
     const lifeFormColorMap = {};
     const lifeFormNameMap = {};
     lifeFormGroups.forEach((group) => {
       lifeFormColorMap[group.life_id] = group.color;
       lifeFormNameMap[group.life_id] = group.life_name;
     });
-
-    const threshold = 5; // Threshold below which exaggeration is applied
-    const desiredMaxValue = 20; // Value to scale up to
-
+  
     // Adjust layout margins for overall x-axis label
     const layout = {
       title: graphTitle,
       showlegend: false,
       annotations: [],
-      margin: { t: 180, b: 180, l: 100, r: 100 }, // Increased bottom margin
+      margin: { t: 180, b: 180, l: 100, r: 100 }, // Adjust margins as needed
     };
-
+  
+    // Dynamic font scaling based on layout height
+    layout.height = 600; // Fixed height
+    const baseFontSize = (layout.height / 600) * 12;
+  
     const subplotSpacing = 0.02; // 2% spacing between subplots
     const xLeftMargin = 0.1; // 10% left margin
     const xRightMargin = 0.02; // 2% right margin
     const totalSpacing =
       subplotSpacing * (numTaxa - 1) + xLeftMargin + xRightMargin;
     const subplotWidth = (1 - totalSpacing) / numTaxa;
-
+  
+    // Thresholds for exaggeration
+    const threshold = 5; // Threshold below which exaggeration is applied
+    const desiredMaxValue = 20; // Value to scale up to
+  
+    // Decide on the desired number of ticks per subplot
+    const desiredNumberOfTicks = 5;
+  
+    // Helper function to calculate a "nice" number for tick intervals
+    function niceNumber(range, round) {
+      const exponent = Math.floor(Math.log10(range));
+      const fraction = range / Math.pow(10, exponent);
+      let niceFraction;
+  
+      if (round) {
+        if (fraction < 1.5) {
+          niceFraction = 1;
+        } else if (fraction < 3) {
+          niceFraction = 2;
+        } else if (fraction < 7) {
+          niceFraction = 5;
+        } else {
+          niceFraction = 10;
+        }
+      } else {
+        if (fraction <= 1) {
+          niceFraction = 1;
+        } else if (fraction <= 2) {
+          niceFraction = 2;
+        } else if (fraction <= 5) {
+          niceFraction = 5;
+        } else {
+          niceFraction = 10;
+        }
+      }
+  
+      return niceFraction * Math.pow(10, exponent);
+    }
+  
     // Group datasets by life form
     const lifeformGroupsData = {};
-
+  
     sortedDataSets.forEach((dataset, index) => {
       if (dataset.x.length === 0 || dataset.y.length === 0) {
         return; // Skip datasets with no data
       }
-
+  
       const subplotIndex = index + 1;
-
+  
       const xStart = xLeftMargin + index * (subplotWidth + subplotSpacing);
       let xEnd = xStart + subplotWidth;
       if (xEnd > 1) xEnd = 1;
-
+  
       // Apply exaggeration for small data sets
       const originalMaxValue = Math.max(...dataset.x);
-
+  
       let exaggerationFactor = 1;
       if (originalMaxValue < threshold && originalMaxValue > 0) {
         exaggerationFactor = desiredMaxValue / originalMaxValue;
         // Multiply dataset.x by exaggerationFactor
         dataset.x = dataset.x.map((value) => value * exaggerationFactor);
       }
-
-      // Use originalMaxValue to set xAxisRange
-      const xAxisMax = Math.max(originalMaxValue * 1.1, 10);
-      const xAxisRange = [0, xAxisMax];
-
+  
+      // Use exaggerated max value to set xAxisRange
+      const adjustedMaxValue = originalMaxValue * exaggerationFactor;
+      const xAxisMin = 0;
+      const xAxisMax = Math.max(adjustedMaxValue * 1.1, 10);
+      const xAxisRange = [xAxisMin, xAxisMax];
+  
+      // Calculate the "nice" tick interval
+      const range = xAxisMax - xAxisMin;
+      const roughTickInterval = range / (desiredNumberOfTicks - 1);
+      const niceTickInterval = niceNumber(roughTickInterval, true);
+  
+      // Generate tick values based on the nice tick interval
+      const tickVals = [];
+      let tickValue = xAxisMin;
+      while (tickValue <= xAxisMax) {
+        tickVals.push(tickValue);
+        tickValue += niceTickInterval;
+      }
+  
       // Sort data points by y value to prevent looping in area graphs
       const dataPoints = dataset.x.map((value, idx) => ({
         x: value,
         y: dataset.y[idx],
       }));
       const sortedDataPoints = dataPoints.slice().sort((a, b) => a.y - b.y);
-
+  
       const xData = sortedDataPoints.map((dp) => dp.x);
       const yData = sortedDataPoints.map((dp) => dp.y);
-
+  
       // Determine the correct plot type and fill property
       let traceType = plotType;
       let fill = "none";
@@ -412,10 +460,10 @@ function Dashboard() {
         traceType = "scatter";
         fill = orientation === "h" ? "tozerox" : "tozeroy";
       }
-
+  
       const lifeId = dataset.lifeId;
-      const color = lifeFormColorMap[lifeId] || "gray";
-
+      const color = lifeFormColorMap[lifeId] || "#808080"; // Default to gray if color not specified
+  
       plotData.push({
         x: xData,
         y: yData,
@@ -433,7 +481,7 @@ function Dashboard() {
         },
         showlegend: false,
       });
-
+  
       // Add taxa name annotations with adjusted positions
       annotations.push({
         text: dataset.speciesName,
@@ -444,24 +492,26 @@ function Dashboard() {
         xanchor: "center",
         showarrow: false,
         font: {
-          size: 12,
+          size: baseFontSize * 0.8,
           style: dataset.fontstyle === "italic" ? "italic" : "normal",
         },
       });
-
+  
       // Collect indices for life form groups
       if (!lifeformGroupsData[lifeId]) {
         lifeformGroupsData[lifeId] = [];
       }
       lifeformGroupsData[lifeId].push({ dataset, index });
-
+  
       // Configure xaxis with adjustments
       layout[`xaxis${subplotIndex}`] = {
         domain: [xStart, xEnd],
         anchor: "y",
         title: "",
         range: xAxisRange,
-        tickmode: "auto",
+        tickmode: "array",
+        tickvals: tickVals,
+        ticktext: tickVals.map((val) => (Math.round(val * 100) / 100).toString()),
         ticks: "outside",
         ticklen: 5,
         showline: true,
@@ -472,17 +522,17 @@ function Dashboard() {
         tickangle: -45, // Rotate labels to prevent overlap
         automargin: true,
         tickfont: {
-          size: 10,
+          size: baseFontSize * 0.7,
         },
       };
     });
-
+  
     // Adjust life form group annotations (category names)
     Object.keys(lifeformGroupsData).forEach((lifeId) => {
       const groupData = lifeformGroupsData[lifeId];
       const firstIndex = groupData[0].index;
       const lastIndex = groupData[groupData.length - 1].index;
-
+  
       // Calculate xStart and xEnd for the group
       const xStart = xLeftMargin + firstIndex * (subplotWidth + subplotSpacing);
       let xEnd =
@@ -490,10 +540,10 @@ function Dashboard() {
         (lastIndex + 1) * (subplotWidth + subplotSpacing) -
         subplotSpacing;
       if (xEnd > 1) xEnd = 1;
-
+  
       // Calculate center position in paper coordinates
       const xCenterPaper = (xStart + xEnd) / 2;
-
+  
       // Add life form group name annotation
       annotations.push({
         text: lifeFormNameMap[lifeId] || lifeId,
@@ -503,12 +553,17 @@ function Dashboard() {
         y: 1.12, // Adjust as needed
         showarrow: false,
         font: {
-          size: 14,
-          color: lifeFormColorMap[lifeId] || "gray",
+          size: baseFontSize * 1.1,
+          color: lifeFormColorMap[lifeId] || "#808080",
         },
       });
     });
-
+  
+    // Collect all y values to determine min and max
+    const allYValues = sortedDataSets.flatMap((dataset) => dataset.y);
+    const minY = Math.min(...allYValues);
+    const maxY = Math.max(...allYValues);
+  
     // Configure shared yaxis
     layout["yaxis"] = {
       title: yAxisLabel,
@@ -522,85 +577,110 @@ function Dashboard() {
       automargin: true,
       tickangle: 0,
       tickfont: {
-        size: 10,
+        size: baseFontSize * 0.8,
       },
     };
-
+  
     // Add overall x-axis label
     annotations.push({
       text: "Values",
       xref: "paper",
       yref: "paper",
       x: 0.5,
-      y: -0.2, // Lowered the y position
+      y: -0.2, // Adjust as needed
       showarrow: false,
       font: {
-        size: 14,
+        size: baseFontSize,
       },
     });
-
+  
     layout.annotations = annotations;
-
+  
     // Adjust layout width dynamically
     const subplotWidthPixels = 100; // Width per subplot in pixels
     const spacingPixels = 10; // Spacing between subplots in pixels
-
+  
     layout.width =
       numTaxa * subplotWidthPixels + (numTaxa - 1) * spacingPixels + 200; // Additional pixels for margins
-
+  
     layout.height = 600; // Fixed height
     layout.autosize = false;
     layout.responsive = true;
-
+  
     return { plotData, layout };
   }
+  
+  
+  
 
-  // Download graph function
-  const downloadGraph = () => {
-    if (isDownloading) {
-      console.warn("Download already in progress. Please wait.");
-      return;
-    }
+// Function to download the graph
+const downloadGraph = () => {
+  if (isDownloading) {
+    console.warn("Download already in progress. Please wait.");
+    return;
+  }
 
-    // Map resolution to width and height
-    const resolutionMap = {
-      "1080p": { width: 1920, height: 1080 },
-      "2k": { width: 2560, height: 1440 },
-      "4k": { width: 3840, height: 2160 },
-    };
-
-    const { width, height } = resolutionMap[resolution];
-
-    if (
-      !graphRef.current ||
-      !graphRef.current.el ||
-      !plotData ||
-      plotData.length === 0
-    ) {
-      console.error("No data to download.");
-      setShowWarning(true);
-      return;
-    }
-
-    setIsDownloading(true);
-
-    Plotly.downloadImage(graphRef.current.el, {
-      format: imageFormat,
-      width: width,
-      height: height,
-      filename: graphTitle.replace(/ /g, "_"),
-    })
-      .then(() => {
-        console.log("Download successful");
-        setIsDownloading(false);
-      })
-      .catch((error) => {
-        console.error("Download failed:", error);
-        setIsDownloading(false);
-      });
-
-    setModalOpen(false);
+  // Map resolution to width and height
+  const resolutionMap = {
+    "Medium": { width: 1600, height: 1200 },
+    "Large": { width: 1920, height: 1080 },
   };
+
+  const { width, height } = resolutionMap[resolution];
+
+  if (
+    !graphRef.current ||
+    !graphRef.current.el ||
+    !csvDataSets ||
+    csvDataSets.length === 0
+  ) {
+    console.error("No data to download.");
+    setShowWarning(true);
+    return;
+  }
+
+  setIsDownloading(true);
+
+  // Generate plotData and layout with specified width and height
+  const { plotData: exportPlotData, layout: exportLayout } = preparePlotData(
+    width,
+    height
+  );
+
+  // Prepare options for Plotly.toImage
+  const downloadOptions = {
+    format: imageFormat,
+    width: width,
+    height: height,
+  };
+
+  // Generate the image data
+  Plotly.toImage(
+    {
+      data: exportPlotData,
+      layout: exportLayout,
+      config: { responsive: false },
+    },
+    downloadOptions
+  )
+    .then((imageData) => {
+      // Create a temporary link to download the image
+      const link = document.createElement("a");
+      link.href = imageData;
+      link.download = `${graphTitle.replace(/ /g, "_")}.${imageFormat}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setIsDownloading(false);
+    })
+    .catch((error) => {
+      console.error("Download failed:", error);
+      setIsDownloading(false);
+    });
+
+  setModalOpen(false);
+};
+
 
   // Handle download button click
   const handleDownloadButtonClick = () => {
@@ -879,15 +959,15 @@ function Dashboard() {
                   </select>
                 </div>
                 <div className={styles.labelText}>Select Resolution:</div>
-                <select
-                  value={resolution}
-                  onChange={(e) => setResolution(e.target.value)}
-                  className={styles.graphTypeDropdown}
-                >
-                  <option value="1080p">1920x1080</option>
-                  <option value="2k">2560x1440</option>
-                  <option value="4k">3840x2160</option>
-                </select>
+<select
+  value={resolution}
+  onChange={(e) => setResolution(e.target.value)}
+  className={styles.graphTypeDropdown}
+>
+  <option value="Medium">Medium (1600x1200)</option>
+  <option value="Large">Large (1920x1080)</option>
+</select>
+
               </div>
               <button
                 onClick={downloadGraph}
