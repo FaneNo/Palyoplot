@@ -358,61 +358,27 @@ function Dashboard() {
     const subplotSpacing = 0.02; // 2% spacing between subplots
     const xLeftMargin = 0.1; // 10% left margin
     const xRightMargin = 0.02; // 2% right margin
-    const totalSpacing =
-      subplotSpacing * (numTaxa - 1) + xLeftMargin + xRightMargin;
-    const subplotWidth = (1 - totalSpacing) / numTaxa;
   
     // Thresholds for exaggeration
     const threshold = 5; // Threshold below which exaggeration is applied
     const desiredMaxValue = 20; // Value to scale up to
   
-    // Decide on the desired number of ticks per subplot
-    const desiredNumberOfTicks = 5;
-  
-    // Helper function to calculate a "nice" number for tick intervals
-    function niceNumber(range, round) {
-      const exponent = Math.floor(Math.log10(range));
-      const fraction = range / Math.pow(10, exponent);
-      let niceFraction;
-  
-      if (round) {
-        if (fraction < 1.5) {
-          niceFraction = 1;
-        } else if (fraction < 3) {
-          niceFraction = 2;
-        } else if (fraction < 7) {
-          niceFraction = 5;
-        } else {
-          niceFraction = 10;
-        }
-      } else {
-        if (fraction <= 1) {
-          niceFraction = 1;
-        } else if (fraction <= 2) {
-          niceFraction = 2;
-        } else if (fraction <= 5) {
-          niceFraction = 5;
-        } else {
-          niceFraction = 10;
-        }
-      }
-  
-      return niceFraction * Math.pow(10, exponent);
-    }
+    // Set fixed tick interval
+    const tickInterval = 10;
   
     // Group datasets by life form
     const lifeformGroupsData = {};
   
-    sortedDataSets.forEach((dataset, index) => {
+    // Arrays to store data ranges and adjusted max values
+    const dataRanges = [];
+    const adjustedMaxValues = [];
+  
+    sortedDataSets.forEach((dataset) => {
       if (dataset.x.length === 0 || dataset.y.length === 0) {
+        dataRanges.push(0);
+        adjustedMaxValues.push(0);
         return; // Skip datasets with no data
       }
-  
-      const subplotIndex = index + 1;
-  
-      const xStart = xLeftMargin + index * (subplotWidth + subplotSpacing);
-      let xEnd = xStart + subplotWidth;
-      if (xEnd > 1) xEnd = 1;
   
       // Apply exaggeration for small data sets
       const originalMaxValue = Math.max(...dataset.x);
@@ -426,21 +392,48 @@ function Dashboard() {
   
       // Use exaggerated max value to set xAxisRange
       const adjustedMaxValue = originalMaxValue * exaggerationFactor;
+      adjustedMaxValues.push(adjustedMaxValue);
+  
+      // Ensure xAxisMax is a multiple of the tickInterval
+      const xAxisMax = Math.ceil(Math.max(adjustedMaxValue * 1.1, 10) / tickInterval) * tickInterval;
+      const dataRange = xAxisMax; // Since xAxisMin is 0
+      dataRanges.push(dataRange);
+    });
+  
+    // Calculate total data range
+    const totalDataRange = dataRanges.reduce((a, b) => a + b, 0);
+  
+    // Calculate subplot domains proportionally
+    const totalSpacing = subplotSpacing * (numTaxa - 1);
+    const availableDomain = 1 - xLeftMargin - xRightMargin - totalSpacing;
+    const domainPerDataUnit = availableDomain / totalDataRange;
+  
+    let xStart = xLeftMargin;
+  
+    sortedDataSets.forEach((dataset, index) => {
+      if (dataset.x.length === 0 || dataset.y.length === 0) {
+        return; // Skip datasets with no data
+      }
+  
+      const subplotIndex = index + 1;
+  
+      const dataRange = dataRanges[index];
+  
+      const subplotWidth = dataRange * domainPerDataUnit;
+  
+      let xEnd = xStart + subplotWidth;
+      if (xEnd > 1) xEnd = 1;
+  
+      const adjustedMaxValue = adjustedMaxValues[index];
+  
       const xAxisMin = 0;
-      const xAxisMax = Math.max(adjustedMaxValue * 1.1, 10);
+      const xAxisMax = Math.ceil(Math.max(adjustedMaxValue * 1.1, 10) / tickInterval) * tickInterval;
       const xAxisRange = [xAxisMin, xAxisMax];
   
-      // Calculate the "nice" tick interval
-      const range = xAxisMax - xAxisMin;
-      const roughTickInterval = range / (desiredNumberOfTicks - 1);
-      const niceTickInterval = niceNumber(roughTickInterval, true);
-  
-      // Generate tick values based on the nice tick interval
+      // Generate tick values based on the fixed tick interval
       const tickVals = [];
-      let tickValue = xAxisMin;
-      while (tickValue <= xAxisMax) {
+      for (let tickValue = xAxisMin; tickValue <= xAxisMax; tickValue += tickInterval) {
         tickVals.push(tickValue);
-        tickValue += niceTickInterval;
       }
   
       // Sort data points by y value to prevent looping in area graphs
@@ -501,17 +494,16 @@ function Dashboard() {
       if (!lifeformGroupsData[lifeId]) {
         lifeformGroupsData[lifeId] = [];
       }
-      lifeformGroupsData[lifeId].push({ dataset, index });
+      lifeformGroupsData[lifeId].push({ dataset, index, xStart, xEnd });
   
-      // Configure xaxis with adjustments
+      // Configure xaxis with fixed intervals
       layout[`xaxis${subplotIndex}`] = {
         domain: [xStart, xEnd],
         anchor: "y",
         title: "",
         range: xAxisRange,
-        tickmode: "array",
-        tickvals: tickVals,
-        ticktext: tickVals.map((val) => (Math.round(val * 100) / 100).toString()),
+        tickmode: "linear",
+        dtick: tickInterval,
         ticks: "outside",
         ticklen: 5,
         showline: true,
@@ -525,24 +517,19 @@ function Dashboard() {
           size: baseFontSize * 0.7,
         },
       };
+  
+      // Update xStart for next subplot
+      xStart = xEnd + subplotSpacing;
     });
   
     // Adjust life form group annotations (category names)
     Object.keys(lifeformGroupsData).forEach((lifeId) => {
       const groupData = lifeformGroupsData[lifeId];
-      const firstIndex = groupData[0].index;
-      const lastIndex = groupData[groupData.length - 1].index;
-  
-      // Calculate xStart and xEnd for the group
-      const xStart = xLeftMargin + firstIndex * (subplotWidth + subplotSpacing);
-      let xEnd =
-        xLeftMargin +
-        (lastIndex + 1) * (subplotWidth + subplotSpacing) -
-        subplotSpacing;
-      if (xEnd > 1) xEnd = 1;
+      const firstXStart = groupData[0].xStart;
+      const lastXEnd = groupData[groupData.length - 1].xEnd;
   
       // Calculate center position in paper coordinates
-      const xCenterPaper = (xStart + xEnd) / 2;
+      const xCenterPaper = (firstXStart + lastXEnd) / 2;
   
       // Add life form group name annotation
       annotations.push({
@@ -597,19 +584,13 @@ function Dashboard() {
     layout.annotations = annotations;
   
     // Adjust layout width dynamically
-    const subplotWidthPixels = 100; // Width per subplot in pixels
-    const spacingPixels = 10; // Spacing between subplots in pixels
-  
-    layout.width =
-      numTaxa * subplotWidthPixels + (numTaxa - 1) * spacingPixels + 200; // Additional pixels for margins
-  
+    layout.width = 1500; // Or set to desired fixed width
     layout.height = 600; // Fixed height
     layout.autosize = false;
     layout.responsive = true;
   
     return { plotData, layout };
   }
-  
   
   
 
