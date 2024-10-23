@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import os
-from .csv_data import insert_csv_data, delete_csv
+from .csv_data import insert_csv_data, delete_csv, graph_data
 from rest_framework import status
 
 # Create your views here.
@@ -77,6 +77,34 @@ def delete_csv_file(request, file_id):
         return Response({'error': 'File not found'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_graph_data(request, file_id):
+    try:
+        # Check if the file exists and belongs to the user
+        csv_file = CSVFile.objects.get(id=file_id, user=request.user)
+        
+        # Get the formatted CSV data
+        csv_data = graph_data(file_id)
+        
+        if csv_data is None:
+            return Response({'error': 'Error retrieving data'}, 
+                          status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        return Response({
+            'data': csv_data,
+            'file_name': csv_file.file_name,
+            'display_id': csv_file.display_id
+        })
+        
+    except CSVFile.DoesNotExist:
+        return Response({'error': 'File not found'}, 
+                       status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'error': str(e)}, 
+                       status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 #enable us to create new user
 class CreateUserView(generics.CreateAPIView):

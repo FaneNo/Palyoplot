@@ -157,6 +157,67 @@ def export_to_csv(file_id, output_file):
                     writer.writerow(row_data)
     finally:
         connection.close()
+        
+#export without csv
+def export_to_csv_no_csv(file_id, output_file):
+    connection = get_connection()
+    try:
+        with connection.cursor() as cursor:
+            # Fetch file information including display_id
+            cursor.execute("SELECT display_id, file_name FROM csv_files WHERE id = ?", (file_id,))
+            display_id, file_name = cursor.fetchone()
+
+            # Fetch column names for the header
+            cursor.execute("""
+                SELECT 
+                    column_name
+                FROM 
+                    csv_columns
+                WHERE 
+                    file_id = ?
+                ORDER BY 
+                    column_order;
+            """, (file_id,))
+            columns = [col[0] for col in cursor.fetchall()]
+            
+            cursor.execute("""
+                SELECT 
+                    cd.row_number,
+                    cc.column_name,
+                    cd.value
+                FROM 
+                    csv_data cd
+                JOIN 
+                    csv_columns cc ON cd.column_id = cc.id
+                WHERE
+                    cd.file_id = ?
+                ORDER BY 
+                    cd.row_number, cc.column_order;
+            """, (file_id,))
+            rows = cursor.fetchall()
+
+            # Organize data into rows
+            data = {}
+            for row in rows:
+                row_number, column_name, value = row
+                if row_number not in data:
+                    data[row_number] = {}
+                data[row_number][column_name] = value
+
+            # Add file information to the CSV
+            file_info = ['File ID', 'File Name']
+            columns = file_info + columns
+            with open(output_file, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                # Write the header
+                writer.writerow(columns)
+                
+                # Write file information and data rows
+                for row_number in sorted(data.keys()):
+                    row_data = [display_id, file_name] + [data[row_number].get(col, '') for col in columns[len(file_info):]]
+                    writer.writerow(row_data)
+    finally:
+        connection.close()
 
 def delete_csv(file_id):
     connection = get_connection()
@@ -206,13 +267,12 @@ def delete_csv(file_id):
         
 def graph_data(file_id):
     connection = get_connection()
-    cursor = connection.cursor()
     try:
         with connection.cursor() as cursor:
             # Fetch file information including display_id
             cursor.execute("SELECT display_id, file_name FROM csv_files WHERE id = ?", (file_id,))
             display_id, file_name = cursor.fetchone()
-
+            
             # Fetch column names for the header
             cursor.execute("""
                 SELECT 
@@ -226,6 +286,7 @@ def graph_data(file_id):
             """, (file_id,))
             columns = [col[0] for col in cursor.fetchall()]
             
+            # Fetch all data rows
             cursor.execute("""
                 SELECT 
                     cd.row_number,
@@ -241,20 +302,39 @@ def graph_data(file_id):
                     cd.row_number, cc.column_order;
             """, (file_id,))
             rows = cursor.fetchall()
-
-            # Organize data into rows
+            
+            # Organize data into dictionary
             data = {}
             for row in rows:
                 row_number, column_name, value = row
                 if row_number not in data:
                     data[row_number] = {}
                 data[row_number][column_name] = value
-
-
             
+            # Format output string
+            output = []
+            
+            # Add header row with quotes
+            header = '","'.join([''] + columns)  # Add empty string for initial quote
+            output.append(f'"{header}"')
+            
+            # Add data rows
+            for row_num in sorted(data.keys()):
+                row_values = []
+                # Add row number in quotes
+                row_values.append(f'"{row_num}"')
+                # Add each column value
+                for col in columns:
+                    value = data[row_num].get(col, '')
+                    row_values.append(str(value))
+                output.append(','.join(row_values))
+            
+            # Join all rows with newlines
+            return '\n'.join(output)
             
     except mariadb.Error as e:
         print(f"Error fetching data: {e}")
+        return None
     finally:
         connection.close()
         

@@ -7,6 +7,8 @@ import Plotly from "plotly.js-dist-min";
 import Select from "react-select";
 import api from "../api"; // Import for backend API calls
 
+import { useLocation } from "react-router-dom";
+
 // Component for assigning taxa to life forms
 function TaxaLifeFormAssignment({
   taxaNames,
@@ -149,6 +151,10 @@ function LifeFormColorAssignment({ lifeFormGroups, setLifeFormGroups }) {
 }
 
 function Dashboard() {
+    const location = useLocation();
+    const autoGraphData = location.state?.autoGraphData;
+
+
   // State variables
   const [csvDataSets, setCsvDataSets] = useState([]);
   const [rawData, setRawData] = useState([]);
@@ -250,6 +256,37 @@ function Dashboard() {
       });
   };
 
+  //handle auto-graphing
+  useEffect(() => {
+    if (autoGraphData) {
+      // Set the y-axis column to the first numeric column
+      const numericColumn = autoGraphData.headers.find(header => {
+        return autoGraphData.data.some(row => !isNaN(parseFloat(row[header])));
+      });
+      
+      if (numericColumn) {
+        setYAxisColumn(numericColumn);
+        
+        // Set selected taxa to all remaining numeric columns
+        const remainingNumericColumns = autoGraphData.headers.filter(header => {
+          return header !== numericColumn && 
+                 autoGraphData.data.some(row => !isNaN(parseFloat(row[header])));
+        });
+        
+        setSelectedTaxa(remainingNumericColumns);
+        
+        // Set raw data
+        setRawData(autoGraphData.data);
+        
+        // Set available taxa
+        setAvailableTaxa(autoGraphData.headers);
+        
+        // Set default graph title using file name
+        setGraphTitle(`${autoGraphData.fileName} - Graph ${autoGraphData.displayId}`);
+      }
+    }
+  }, [autoGraphData]);
+
   // Update taxaLifeFormAssignments when selectedTaxa changes
   useEffect(() => {
     setTaxaLifeFormAssignments((prevAssignments) => {
@@ -313,28 +350,28 @@ function Dashboard() {
 
   function preparePlotData() {
     if (csvDataSets.length === 0) return { plotData: [], layout: {} };
-  
+
     const plotData = [];
     const annotations = [];
-  
+
     // Use life form order defined by the user
     const lifeformOrder = lifeFormGroups.map((group) => group.life_id);
-  
+
     const sortedDataSets = csvDataSets
       .filter((dataset) => dataset.lifeId !== undefined)
       .sort((a, b) => {
         const lifeOrderA = lifeformOrder.indexOf(a.lifeId);
         const lifeOrderB = lifeformOrder.indexOf(b.lifeId);
-  
+
         if (lifeOrderA !== lifeOrderB) {
           return lifeOrderA - lifeOrderB;
         }
         // Then by speciesName
         return a.speciesName.localeCompare(b.speciesName);
       });
-  
+
     const numTaxa = sortedDataSets.length;
-  
+
     // Mapping from life_id to color and name
     const lifeFormColorMap = {};
     const lifeFormNameMap = {};
@@ -342,7 +379,7 @@ function Dashboard() {
       lifeFormColorMap[group.life_id] = group.color;
       lifeFormNameMap[group.life_id] = group.life_name;
     });
-  
+
     // Adjust layout margins for overall x-axis label
     const layout = {
       title: graphTitle,
@@ -350,102 +387,110 @@ function Dashboard() {
       annotations: [],
       margin: { t: 180, b: 180, l: 100, r: 100 }, // Adjust margins as needed
     };
-  
+
     // Dynamic font scaling based on layout height
     layout.height = 600; // Fixed height
     const baseFontSize = (layout.height / 600) * 12;
-  
+
     const subplotSpacing = 0.02; // 2% spacing between subplots
     const xLeftMargin = 0.1; // 10% left margin
     const xRightMargin = 0.02; // 2% right margin
-  
+
     // Thresholds for exaggeration
     const threshold = 5; // Threshold below which exaggeration is applied
     const desiredMaxValue = 20; // Value to scale up to
-  
+
     // Set fixed tick interval
     const tickInterval = 10;
-  
+
     // Group datasets by life form
     const lifeformGroupsData = {};
-  
+
     // Arrays to store data ranges and adjusted max values
     const dataRanges = [];
     const adjustedMaxValues = [];
-  
+
     sortedDataSets.forEach((dataset) => {
       if (dataset.x.length === 0 || dataset.y.length === 0) {
         dataRanges.push(0);
         adjustedMaxValues.push(0);
         return; // Skip datasets with no data
       }
-  
+
       // Apply exaggeration for small data sets
       const originalMaxValue = Math.max(...dataset.x);
-  
+
       let exaggerationFactor = 1;
       if (originalMaxValue < threshold && originalMaxValue > 0) {
         exaggerationFactor = desiredMaxValue / originalMaxValue;
         // Multiply dataset.x by exaggerationFactor
         dataset.x = dataset.x.map((value) => value * exaggerationFactor);
       }
-  
+
       // Use exaggerated max value to set xAxisRange
       const adjustedMaxValue = originalMaxValue * exaggerationFactor;
       adjustedMaxValues.push(adjustedMaxValue);
-  
+
       // Ensure xAxisMax is a multiple of the tickInterval
-      const xAxisMax = Math.ceil(Math.max(adjustedMaxValue * 1.1, 10) / tickInterval) * tickInterval;
+      const xAxisMax =
+        Math.ceil(Math.max(adjustedMaxValue * 1.1, 10) / tickInterval) *
+        tickInterval;
       const dataRange = xAxisMax; // Since xAxisMin is 0
       dataRanges.push(dataRange);
     });
-  
+
     // Calculate total data range
     const totalDataRange = dataRanges.reduce((a, b) => a + b, 0);
-  
+
     // Calculate subplot domains proportionally
     const totalSpacing = subplotSpacing * (numTaxa - 1);
     const availableDomain = 1 - xLeftMargin - xRightMargin - totalSpacing;
     const domainPerDataUnit = availableDomain / totalDataRange;
-  
+
     let xStart = xLeftMargin;
-  
+
     sortedDataSets.forEach((dataset, index) => {
       if (dataset.x.length === 0 || dataset.y.length === 0) {
         return; // Skip datasets with no data
       }
-  
+
       const subplotIndex = index + 1;
-  
+
       const dataRange = dataRanges[index];
-  
+
       const subplotWidth = dataRange * domainPerDataUnit;
-  
+
       let xEnd = xStart + subplotWidth;
       if (xEnd > 1) xEnd = 1;
-  
+
       const adjustedMaxValue = adjustedMaxValues[index];
-  
+
       const xAxisMin = 0;
-      const xAxisMax = Math.ceil(Math.max(adjustedMaxValue * 1.1, 10) / tickInterval) * tickInterval;
+      const xAxisMax =
+        Math.ceil(Math.max(adjustedMaxValue * 1.1, 10) / tickInterval) *
+        tickInterval;
       const xAxisRange = [xAxisMin, xAxisMax];
-  
+
       // Generate tick values based on the fixed tick interval
       const tickVals = [];
-      for (let tickValue = xAxisMin; tickValue <= xAxisMax; tickValue += tickInterval) {
+      for (
+        let tickValue = xAxisMin;
+        tickValue <= xAxisMax;
+        tickValue += tickInterval
+      ) {
         tickVals.push(tickValue);
       }
-  
+
       // Sort data points by y value to prevent looping in area graphs
       const dataPoints = dataset.x.map((value, idx) => ({
         x: value,
         y: dataset.y[idx],
       }));
       const sortedDataPoints = dataPoints.slice().sort((a, b) => a.y - b.y);
-  
+
       const xData = sortedDataPoints.map((dp) => dp.x);
       const yData = sortedDataPoints.map((dp) => dp.y);
-  
+
       // Determine the correct plot type and fill property
       let traceType = plotType;
       let fill = "none";
@@ -453,10 +498,10 @@ function Dashboard() {
         traceType = "scatter";
         fill = orientation === "h" ? "tozerox" : "tozeroy";
       }
-  
+
       const lifeId = dataset.lifeId;
       const color = lifeFormColorMap[lifeId] || "#808080"; // Default to gray if color not specified
-  
+
       plotData.push({
         x: xData,
         y: yData,
@@ -474,7 +519,7 @@ function Dashboard() {
         },
         showlegend: false,
       });
-  
+
       // Add taxa name annotations with adjusted positions
       annotations.push({
         text: dataset.speciesName,
@@ -489,13 +534,13 @@ function Dashboard() {
           style: dataset.fontstyle === "italic" ? "italic" : "normal",
         },
       });
-  
+
       // Collect indices for life form groups
       if (!lifeformGroupsData[lifeId]) {
         lifeformGroupsData[lifeId] = [];
       }
       lifeformGroupsData[lifeId].push({ dataset, index, xStart, xEnd });
-  
+
       // Configure xaxis with fixed intervals
       layout[`xaxis${subplotIndex}`] = {
         domain: [xStart, xEnd],
@@ -517,20 +562,20 @@ function Dashboard() {
           size: baseFontSize * 0.7,
         },
       };
-  
+
       // Update xStart for next subplot
       xStart = xEnd + subplotSpacing;
     });
-  
+
     // Adjust life form group annotations (category names)
     Object.keys(lifeformGroupsData).forEach((lifeId) => {
       const groupData = lifeformGroupsData[lifeId];
       const firstXStart = groupData[0].xStart;
       const lastXEnd = groupData[groupData.length - 1].xEnd;
-  
+
       // Calculate center position in paper coordinates
       const xCenterPaper = (firstXStart + lastXEnd) / 2;
-  
+
       // Add life form group name annotation
       annotations.push({
         text: lifeFormNameMap[lifeId] || lifeId,
@@ -545,12 +590,12 @@ function Dashboard() {
         },
       });
     });
-  
+
     // Collect all y values to determine min and max
     const allYValues = sortedDataSets.flatMap((dataset) => dataset.y);
     const minY = Math.min(...allYValues);
     const maxY = Math.max(...allYValues);
-  
+
     // Configure shared yaxis
     layout["yaxis"] = {
       title: yAxisLabel,
@@ -567,7 +612,7 @@ function Dashboard() {
         size: baseFontSize * 0.8,
       },
     };
-  
+
     // Add overall x-axis label
     annotations.push({
       text: "Values",
@@ -580,88 +625,85 @@ function Dashboard() {
         size: baseFontSize,
       },
     });
-  
+
     layout.annotations = annotations;
-  
+
     // Adjust layout width dynamically
     layout.width = 1500; // Or set to desired fixed width
     layout.height = 600; // Fixed height
     layout.autosize = false;
     layout.responsive = true;
-  
+
     return { plotData, layout };
   }
-  
-  
 
-// Function to download the graph
-const downloadGraph = () => {
-  if (isDownloading) {
-    console.warn("Download already in progress. Please wait.");
-    return;
-  }
+  // Function to download the graph
+  const downloadGraph = () => {
+    if (isDownloading) {
+      console.warn("Download already in progress. Please wait.");
+      return;
+    }
 
-  // Map resolution to width and height
-  const resolutionMap = {
-    "Medium": { width: 1600, height: 1200 },
-    "Large": { width: 1920, height: 1080 },
+    // Map resolution to width and height
+    const resolutionMap = {
+      Medium: { width: 1600, height: 1200 },
+      Large: { width: 1920, height: 1080 },
+    };
+
+    const { width, height } = resolutionMap[resolution];
+
+    if (
+      !graphRef.current ||
+      !graphRef.current.el ||
+      !csvDataSets ||
+      csvDataSets.length === 0
+    ) {
+      console.error("No data to download.");
+      setShowWarning(true);
+      return;
+    }
+
+    setIsDownloading(true);
+
+    // Generate plotData and layout with specified width and height
+    const { plotData: exportPlotData, layout: exportLayout } = preparePlotData(
+      width,
+      height
+    );
+
+    // Prepare options for Plotly.toImage
+    const downloadOptions = {
+      format: imageFormat,
+      width: width,
+      height: height,
+    };
+
+    // Generate the image data
+    Plotly.toImage(
+      {
+        data: exportPlotData,
+        layout: exportLayout,
+        config: { responsive: false },
+      },
+      downloadOptions
+    )
+      .then((imageData) => {
+        // Create a temporary link to download the image
+        const link = document.createElement("a");
+        link.href = imageData;
+        link.download = `${graphTitle.replace(/ /g, "_")}.${imageFormat}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setIsDownloading(false);
+      })
+      .catch((error) => {
+        console.error("Download failed:", error);
+        setIsDownloading(false);
+      });
+
+    setModalOpen(false);
   };
-
-  const { width, height } = resolutionMap[resolution];
-
-  if (
-    !graphRef.current ||
-    !graphRef.current.el ||
-    !csvDataSets ||
-    csvDataSets.length === 0
-  ) {
-    console.error("No data to download.");
-    setShowWarning(true);
-    return;
-  }
-
-  setIsDownloading(true);
-
-  // Generate plotData and layout with specified width and height
-  const { plotData: exportPlotData, layout: exportLayout } = preparePlotData(
-    width,
-    height
-  );
-
-  // Prepare options for Plotly.toImage
-  const downloadOptions = {
-    format: imageFormat,
-    width: width,
-    height: height,
-  };
-
-  // Generate the image data
-  Plotly.toImage(
-    {
-      data: exportPlotData,
-      layout: exportLayout,
-      config: { responsive: false },
-    },
-    downloadOptions
-  )
-    .then((imageData) => {
-      // Create a temporary link to download the image
-      const link = document.createElement("a");
-      link.href = imageData;
-      link.download = `${graphTitle.replace(/ /g, "_")}.${imageFormat}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      setIsDownloading(false);
-    })
-    .catch((error) => {
-      console.error("Download failed:", error);
-      setIsDownloading(false);
-    });
-
-  setModalOpen(false);
-};
-
 
   // Handle download button click
   const handleDownloadButtonClick = () => {
@@ -695,7 +737,7 @@ const downloadGraph = () => {
                       useResizeHandler={true}
                       style={{ width: "100%" }}
                     />
-
+        
                     <div className={styles.uploadButtonWrapper}>
                       <div className={styles.horizontalButtons}>
                         {/* CSV File Upload */}
@@ -741,7 +783,9 @@ const downloadGraph = () => {
                             </button>
                             <button
                               onClick={() =>
-                                setShowLifeFormAssignment(!showLifeFormAssignment)
+                                setShowLifeFormAssignment(
+                                  !showLifeFormAssignment
+                                )
                               }
                               className={styles.customFileButton}
                             >
@@ -759,7 +803,9 @@ const downloadGraph = () => {
                           taxaNames={selectedTaxa}
                           lifeFormGroups={lifeFormGroups}
                           taxaLifeFormAssignments={taxaLifeFormAssignments}
-                          setTaxaLifeFormAssignments={setTaxaLifeFormAssignments}
+                          setTaxaLifeFormAssignments={
+                            setTaxaLifeFormAssignments
+                          }
                         />
                       )}
 
@@ -940,15 +986,14 @@ const downloadGraph = () => {
                   </select>
                 </div>
                 <div className={styles.labelText}>Select Resolution:</div>
-<select
-  value={resolution}
-  onChange={(e) => setResolution(e.target.value)}
-  className={styles.graphTypeDropdown}
->
-  <option value="Medium">Medium (1600x1200)</option>
-  <option value="Large">Large (1920x1080)</option>
-</select>
-
+                <select
+                  value={resolution}
+                  onChange={(e) => setResolution(e.target.value)}
+                  className={styles.graphTypeDropdown}
+                >
+                  <option value="Medium">Medium (1600x1200)</option>
+                  <option value="Large">Large (1920x1080)</option>
+                </select>
               </div>
               <button
                 onClick={downloadGraph}
@@ -987,7 +1032,8 @@ const downloadGraph = () => {
       </div>
 
       {/* Commented-Out Code for Future Reference */}
-      {/*
+      {
+        /*
 
       // --- Commented-Out Imports ---
       // import api from "../api";
@@ -999,11 +1045,9 @@ const downloadGraph = () => {
       const [taxaLifeFormAssignments, setTaxaLifeFormAssignments] = useState({});
       const [showTaxaAssignment, setShowTaxaAssignment] = useState(false);
       */
-
-      // --- Commented-Out Functions ---
-
-      // Function to handle the age model CSV upload
-      /*
+        // --- Commented-Out Functions ---
+        // Function to handle the age model CSV upload
+        /*
       const handleAgeModelUpload = (event) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -1028,9 +1072,8 @@ const downloadGraph = () => {
         });
       };
       */
-
-      // Function to handle the taxa typing CSV upload
-      /*
+        // Function to handle the taxa typing CSV upload
+        /*
       const handleTaxaTypingUpload = (event) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -1059,9 +1102,8 @@ const downloadGraph = () => {
         });
       };
       */
-
-      // Interpolation function using the age model data
-      /*
+        // Interpolation function using the age model data
+        /*
       const interpolateAge = (coreDepth) => {
         if (ageModelData.length === 0) {
           console.warn("Age model data is empty.");
@@ -1097,9 +1139,8 @@ const downloadGraph = () => {
         return null;
       };
       */
-
-      // --- Commented-Out useEffect Hook ---
-      /*
+        // --- Commented-Out useEffect Hook ---
+        /*
       useEffect(() => {
         if (rawData.length === 0 || taxaData.length === 0) return;
 
@@ -1214,11 +1255,9 @@ const downloadGraph = () => {
         setCsvDataSets(newSpeciesData);
       }, [rawData, taxaLifeFormAssignments, taxaData, selectedTaxa]);
       */
-
-      // --- Commented-Out JSX Elements ---
-
-      /* Age Model CSV Upload */
-      /*
+        // --- Commented-Out JSX Elements ---
+        /* Age Model CSV Upload */
+        /*
       <input
         type="file"
         accept=".csv"
@@ -1233,9 +1272,8 @@ const downloadGraph = () => {
         Upload Age Model CSV File
       </label>
       */
-
-      /* Taxa Typing CSV Upload */
-      /*
+        /* Taxa Typing CSV Upload */
+        /*
       <input
         type="file"
         accept=".csv"
@@ -1250,19 +1288,16 @@ const downloadGraph = () => {
         Upload Taxa Typing CSV File
       </label>
       */
-
-      /* Alert Message */
-      /*
+        /* Alert Message */
+        /*
       {(ageModelData.length === 0 || taxaData.length === 0) && (
         <div className={styles.alertMessage}>
           Please upload the Age Model CSV and Taxa Typing CSV files before uploading the Data CSV file.
         </div>
       )}
       */
-
-      // --- Commented-Out Variables in preparePlotData ---
-
-      /*
+        // --- Commented-Out Variables in preparePlotData ---
+        /*
       const allAges = sortedDataSets.flatMap((dataset) => dataset.y);
       const minAge = Math.min(...allAges);
       const maxAge = Math.max(...allAges);
@@ -1282,11 +1317,9 @@ const downloadGraph = () => {
         },
       };
       */
-
-      // --- Commented-Out Taxa Data and Mappings ---
-
-      /* List of taxa to include using merge_under codes (all in lowercase) */
-      /*
+        // --- Commented-Out Taxa Data and Mappings ---
+        /* List of taxa to include using merge_under codes (all in lowercase) */
+        /*
       const taxaToInclude = [
         "pp", // Pinus
         "cu", // Cupressaceae
@@ -1302,9 +1335,8 @@ const downloadGraph = () => {
         "uk", // Unknown
       ];
       */
-
-      /* Mapping from merge_under codes to full taxa names */
-      /*
+        /* Mapping from merge_under codes to full taxa names */
+        /*
       const mergeUnderNameMapping = {
         pp: "Pinus",
         cu: "Cupressaceae",
@@ -1320,7 +1352,6 @@ const downloadGraph = () => {
         uk: "Unknown",
       };
       */
-
       }
     </>
   );
