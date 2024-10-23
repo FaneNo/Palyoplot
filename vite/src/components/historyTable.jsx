@@ -24,7 +24,43 @@ function DataTable() {
     console.log(`Download data for id: ${id}`);
     navigate("/dashboard");
   };
+  
+  //get the data to graph
+  const handleGraphClick = async (id) => {
+    try {
+      const response = await api.get(`/api/graph-data/${id}/`);
+      
+      // Parse the CSV string into structured data
+      const rows = response.data.data.split('\n');
+      const headers = rows[0].replace(/"/g, '').split(',').filter(Boolean);
+      
+      const parsedData = [];
+      for (let i = 1; i < rows.length; i++) {
+        const values = rows[i].split(',');
+        const row = {};
+        headers.forEach((header, index) => {
+          row[header] = values[index];
+        });
+        parsedData.push(row);
+      }
+  
+      // Navigate to dashboard with the data
+      navigate("/dashboard", { 
+        state: { 
+          autoGraphData: {
+            data: parsedData,
+            headers: headers,
+            fileName: response.data.file_name,
+            displayId: response.data.display_id
+          }
+        } 
+      });
+    } catch (error) {
+      console.error("Error fetching graph data", error);
+    }
+  };
 
+  //delete file function
   const handleDelete = async (id) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this file?"
@@ -32,10 +68,10 @@ function DataTable() {
     if (confirmed) {
       try {
         await api.delete(`/api/csv_files/${id}/`);
-        
+
         // Fetch the updated data from the server
         await fetchData();
-        
+
         console.log(`Deleted entry with id: ${id}`);
       } catch (error) {
         console.error("Error deleting file", error);
@@ -69,7 +105,7 @@ function DataTable() {
             <td className="graph-column">
               <button
                 className="graph-btn"
-                onClick={() => handleDownload(row.id)}
+                onClick={() => handleGraphClick(row.id)}
               >
                 Graph Now
               </button>
