@@ -150,6 +150,76 @@ function LifeFormColorAssignment({ lifeFormGroups, setLifeFormGroups }) {
   );
 }
 
+// TaxaSelection component definition
+function TaxaSelection({
+  availableTaxa,
+  selectedTaxa,
+  setSelectedTaxa,
+  taxaFontStyles,
+  setTaxaFontStyles,
+  yAxisColumn,
+}) {
+  const handleTaxaChange = (taxaName) => {
+    if (selectedTaxa.includes(taxaName)) {
+      setSelectedTaxa(selectedTaxa.filter((t) => t !== taxaName));
+    } else {
+      setSelectedTaxa([...selectedTaxa, taxaName]);
+    }
+  };
+
+  const handleFontStyleChange = (taxaName, fontstyle) => {
+    setTaxaFontStyles((prevStyles) => ({
+      ...prevStyles,
+      [taxaName]: fontstyle,
+    }));
+  };
+
+  const excludedColumns = [yAxisColumn, 'adj_depth', 'core_depth'];
+
+  return (
+    <div className={styles.taxaSelection}>
+      <h3>Select Taxa to Plot and Set Font Style</h3>
+      <table className={styles.taxaTable}>
+        <thead>
+          <tr>
+            <th>Plot</th>
+            <th>Taxa Name</th>
+            <th>Italicize</th>
+          </tr>
+        </thead>
+        <tbody>
+          {availableTaxa
+            .filter((taxaName) => !excludedColumns.includes(taxaName))
+            .map((taxaName) => (
+              <tr key={taxaName}>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={selectedTaxa.includes(taxaName)}
+                    onChange={() => handleTaxaChange(taxaName)}
+                  />
+                </td>
+                <td>{taxaName}</td>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={taxaFontStyles[taxaName] === 'italic'}
+                    onChange={(e) =>
+                      handleFontStyleChange(
+                        taxaName,
+                        e.target.checked ? 'italic' : 'normal'
+                      )
+                    }
+                  />
+                </td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 function Dashboard() {
     const location = useLocation();
     const autoGraphData = location.state?.autoGraphData;
@@ -256,6 +326,10 @@ function Dashboard() {
       });
   };
 
+  // State variables for taxa selection visibility and font styles
+  const [showTaxaSelection, setShowTaxaSelection] = useState(false);
+  const [taxaFontStyles, setTaxaFontStyles] = useState({});
+
   //handle auto-graphing
   useEffect(() => {
     if (autoGraphData) {
@@ -314,14 +388,14 @@ function Dashboard() {
       const x = rawData.map((row) => parseFloat(row[taxaName]) || 0);
       const y = rawData.map((row) => parseFloat(row[yAxisColumn]) || 0);
       const lifeId = taxaLifeFormAssignments[taxaName];
-      const fontstyle = "plain"; // Or allow user to set fontstyle
+      const fontStyle = taxaFontStyles[taxaName] || 'normal';
 
       return {
         speciesName: taxaName,
         lifeId: lifeId,
         x: x,
         y: y,
-        fontstyle: fontstyle,
+        fontstyle: fontStyle,
       };
     });
 
@@ -332,6 +406,7 @@ function Dashboard() {
     selectedTaxa,
     yAxisColumn,
     lifeFormGroups,
+    taxaFontStyles,
   ]);
 
   // Prepare data for plotting using useMemo
@@ -344,6 +419,7 @@ function Dashboard() {
     plotType,
     orientation,
     reverseYAxis,
+    taxaFontStyles,
   ]);
 
   const { plotData, layout } = memoizedPlotData;
@@ -531,7 +607,7 @@ function Dashboard() {
         showarrow: false,
         font: {
           size: baseFontSize * 0.8,
-          style: dataset.fontstyle === "italic" ? "italic" : "normal",
+          style: dataset.fontstyle,
         },
       });
 
@@ -767,19 +843,29 @@ function Dashboard() {
                         </button>
                       </div>
 
+                      {/* TaxaSelection Component */}
+                      {showTaxaSelection && (
+                        <TaxaSelection
+                          availableTaxa={availableTaxa}
+                          selectedTaxa={selectedTaxa}
+                          setSelectedTaxa={setSelectedTaxa}
+                          taxaFontStyles={taxaFontStyles}
+                          setTaxaFontStyles={setTaxaFontStyles}
+                          yAxisColumn={yAxisColumn}
+                        />
+                      )}
+
                       {/* Buttons to Show/Hide Assignments */}
                       <div className={styles.assignmentButtons}>
                         {availableTaxa.length > 0 && (
                           <>
                             <button
                               onClick={() =>
-                                setShowTaxaAssignment(!showTaxaAssignment)
+                                setShowTaxaSelection(!showTaxaSelection)
                               }
                               className={styles.customFileButton}
                             >
-                              {showTaxaAssignment
-                                ? "Hide Taxa Assignments"
-                                : "Assign Taxa to Life Forms"}
+                              {showTaxaSelection ? "Hide Taxa Selection" : "Edit Taxa Selection"}
                             </button>
                             <button
                               onClick={() =>
@@ -829,11 +915,11 @@ function Dashboard() {
                               <select
                                 value={yAxisColumn}
                                 onChange={(e) => {
+                                  const excludedColumns = [e.target.value, 'adj_depth', 'core_depth'];
                                   setYAxisColumn(e.target.value);
-                                  // Update selectedTaxa to exclude the selected y-axis column
                                   setSelectedTaxa(
                                     availableTaxa.filter(
-                                      (col) => col !== e.target.value
+                                      (col) => !excludedColumns.includes(col)
                                     )
                                   );
                                 }}
@@ -846,38 +932,6 @@ function Dashboard() {
                                   </option>
                                 ))}
                               </select>
-                            </div>
-                          </>
-                        )}
-
-                        {/* Taxa Selection Dropdown */}
-                        {availableTaxa.length > 0 && yAxisColumn && (
-                          <>
-                            <div className={styles.labelText}>Select Taxa:</div>
-                            <div className={styles.inputWrapper}>
-                              <Select
-                                isMulti
-                                options={availableTaxa
-                                  .filter((col) => col !== yAxisColumn)
-                                  .map((taxa) => ({
-                                    label: taxa,
-                                    value: taxa,
-                                  }))}
-                                value={selectedTaxa.map((taxa) => ({
-                                  label: taxa,
-                                  value: taxa,
-                                }))}
-                                onChange={(selectedOptions) => {
-                                  setSelectedTaxa(
-                                    selectedOptions
-                                      ? selectedOptions.map(
-                                          (option) => option.value
-                                        )
-                                      : []
-                                  );
-                                }}
-                                closeMenuOnSelect={false}
-                              />
                             </div>
                           </>
                         )}

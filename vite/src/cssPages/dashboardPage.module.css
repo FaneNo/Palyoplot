@@ -335,6 +335,27 @@
   margin: 0 10px;
 }
 
+/* Styles for TaxaSelection component*/
+.taxaSelection {
+  margin-bottom: 20px;
+}
+
+.taxaTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.taxaTable th,
+.taxaTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.taxaTable th {
+  background-color: #f2f2f2;
+}
+
 /* Additional styles for better responsiveness */
 @media (max-width: 768px) {
   .horizontalButtons {
