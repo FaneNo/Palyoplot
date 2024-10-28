@@ -23,6 +23,9 @@ class Dataset(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # Storing image as base 64-encoded
+    image = models.TextField(null=True, blank=True)
+
     def __str__(self):
         return self.title
 

@@ -1,11 +1,11 @@
 import datetime
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework import generics
 from .serializers import UserSerializer, CSVFileSer
-from .models import CSVFile
+from .models import CSVFile, Dataset
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
@@ -83,5 +83,18 @@ class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer #tell this view what kind of data that need to be accept to create a new user
     permission_classes = [AllowAny] #who can call this function
+
+# Save graph image
+def save_graph_image(request):
+    user = request.user
+    dataset_id = request.data.get('dataset_id')
+    image_data = request.data.get('image')
+    dataset = get_object_or_404(Dataset)
+
+    if image_data:
+        dataset.image = image_data
+        dataset.save()
+        return Response({'message': 'Graph image saved successfully'}, status=status.HTTP_200_OK)
+    return Response({'error': 'No image data found'}, status=status.HTTP_400_BAD_REQUEST)
     
 
