@@ -276,7 +276,9 @@
   margin-left: 10px;
 }
 
-.moveButton {
+.moveButton,
+.deleteButton,
+.addLifeFormButton {
   background-color: #2c6fbb;
   color: white;
   border: none;
@@ -291,10 +293,11 @@
   cursor: not-allowed;
 }
 
-.moveButton:hover:not(:disabled) {
+.moveButton:hover:not(:disabled),
+.deleteButton:hover,
+.addLifeFormButton:hover {
   background-color: #1c4f8b;
 }
-
 
 /* Styles for TaxaLifeFormAssignment component */
 .taxaLifeFormAssignment {
