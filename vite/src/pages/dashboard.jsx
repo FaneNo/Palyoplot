@@ -382,6 +382,8 @@ function Dashboard() {
       // Capture image in base64
       const imageBase64 = await Plotly.toImage(graphElement, { format: "png", width: 800, height: 600});
 
+      console.log("Captured base64 image data: ", imageBase64);
+
       // Call function to upload image to database
       await uploadImageToDatabase(imageBase64);
       alert("Graph image saved successfully");
@@ -396,11 +398,14 @@ function Dashboard() {
   const uploadImageToDatabase = async (imageBase64) => {
 
     try {
-      const response = await fetch("/api/upload-graph-image", {
+      const token = localStorage.getItem("accessToken");
+      const response = await fetch("http://127.0.0.1:8000/api/upload-graph-image/", {
         method: "POST",
         headers: {
           "Content-Type" : "application/json",
+          "Authorization" : 'Bearer ${token}',
         },
+        credentials: "include",
         body: JSON.stringify({ image_data: imageBase64}),
       });
 

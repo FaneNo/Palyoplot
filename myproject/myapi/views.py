@@ -108,18 +108,26 @@ def get_graph_data(request, file_id):
                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(['POST'])
+@permission_classes([AllowAny]) # for testing
 def upload_graph_image(request):
     image_data = request.data.get("image_data")
 
     if not image_data:
         return Response({"error": "No image data provided"}, status=400)
     
+    print("Received image data: ", image_data[50])
+    
     # Decode base64 image
-    format, imgstr = image_data.split(';base64')
-    image_bytes = base64.b64decode(imgstr)
+    try: 
+        format, imgstr = image_data.split(';base64')
+        image_bytes = base64.b64decode(imgstr)
+        print("Successfully decoded base64 image data")
+    except (ValueError, TypeError) as e:
+        print("Error decoding base64 image data: ", e)
+        return Response({"error": "Invalid image data format"}, status=400)
 
     # Save image data to Dataset model
-    dataset = Dataset.objects.create(image_data=image_bytes)
+    dataset = Dataset.objects.create(user=request.user, image_data=image_bytes)
     dataset.save()
 
     return Response({"message": "Image uploaded successfully"})
