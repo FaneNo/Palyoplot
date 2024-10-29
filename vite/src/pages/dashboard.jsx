@@ -942,6 +942,7 @@ function Dashboard() {
                         <button
                           /*onClick={captureAndSaveGraphImage}*/
                           className={styles.customFileButton}
+                          disabled={!file}
                         >
                           Upload Graph Image
                           </button>
