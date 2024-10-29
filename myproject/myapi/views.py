@@ -1,6 +1,9 @@
 import base64
 import datetime
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.views import View
+from .forms import RegisterForm
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.contrib.auth.models import User
@@ -132,9 +135,36 @@ def upload_graph_image(request):
 
     return Response({"message": "Image uploaded successfully"})
 
-
+# API driven?
 #enable us to create new user
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer #tell this view what kind of data that need to be accept to create a new user
     permission_classes = [AllowAny] #who can call this function
+
+
+def home(request):
+    return render(request, 'users/home.html')
+
+# user facing, user entered info, Django built in not using REST
+class RegisterView(View):
+    form_class = RegisterForm
+    initial = {'key': 'value'}
+    template_name = 'users/register.html'
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            username = form.cleaned_data.get('username')
+            messages.success(request, f'Account created for {username}')
+
+            return redirect(to='/')
+
+        return render(request, self.template_name, {'form': form})
