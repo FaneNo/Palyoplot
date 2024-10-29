@@ -1,3 +1,4 @@
+import base64
 import datetime
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
@@ -5,7 +6,7 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework import generics
 from .serializers import UserSerializer, CSVFileSer
-from .models import CSVFile
+from .models import CSVFile, Dataset
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
@@ -105,11 +106,27 @@ def get_graph_data(request, file_id):
     except Exception as e:
         return Response({'error': str(e)}, 
                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['POST'])
+def upload_graph_image(request):
+    image_data = request.data.get("image_data")
+
+    if not image_data:
+        return Response({"error": "No image data provided"}, status=400)
+    
+    # Decode base64 image
+    format, imgstr = image_data.split(';base64')
+    image_bytes = base64.b64decode(imgstr)
+
+    # Save image data to Dataset model
+    dataset = Dataset.objects.create(image_data=image_bytes)
+    dataset.save()
+
+    return Response({"message": "Image uploaded successfully"})
+
 
 #enable us to create new user
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer #tell this view what kind of data that need to be accept to create a new user
     permission_classes = [AllowAny] #who can call this function
-    
-
