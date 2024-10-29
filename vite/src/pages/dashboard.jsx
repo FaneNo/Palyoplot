@@ -940,7 +940,7 @@ function Dashboard() {
 
                         {/* Upload Image */}
                         <button
-                          /*onClick={captureAndSaveGraphImage}*/
+                          onClick={handleSaveImage}
                           className={styles.customFileButton}
                           disabled={!file}
                         >
