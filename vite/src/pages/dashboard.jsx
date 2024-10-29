@@ -374,6 +374,45 @@ function Dashboard() {
       });
   };
 
+  // Function to handle uploading graph image to backend
+  const handleSaveImage = async () => {
+    const graphElement = document.querySelector(".js-plotly-plot"); // Targets the plotly graph
+
+    try {
+      // Capture image in base64
+      const imageBase64 = await Plotly.toImage(graphElement, { format: "png", width: 800, height: 600});
+
+      // Call function to upload image to database
+      await uploadImageToDatabase(imageBase64);
+      alert("Graph image saved successfully");
+
+    } catch (error) {
+        console.error("Error capturing graph image: ", error);
+        alert("Failed to save graph image");
+    }
+  };
+
+  // Function to send image to backend
+  const uploadImageToDatabase = async (imageBase64) => {
+
+    try {
+      const response = await fetch("/api/upload-graph-image", {
+        method: "POST",
+        headers: {
+          "Content-Type" : "application/json",
+        },
+        body: JSON.stringify({ image_data: imageBase64}),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to upload image");
+      }
+    } catch (error) {
+        console.error("Error uploading image:", error);
+    }
+  };
+
+
   // Handle auto-graphing
   useEffect(() => {
     if (autoGraphData) {
