@@ -898,6 +898,15 @@ function Dashboard() {
                         >
                           Upload CSV File
                         </button>
+
+                        {/* Upload Image */}
+                        <button
+                          /*onClick={captureAndSaveGraphImage}*/
+                          className={styles.customFileButton}
+                        >
+                          Upload Graph Image
+                          </button>
+
                       </div>
 
                       {/* TaxaSelection Component */}
