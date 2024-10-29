@@ -23,6 +23,9 @@ class Dataset(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # Image data in base64
+    image_data = models.TextField(blank=True, null=True)
+
     def __str__(self):
         return self.title
 
