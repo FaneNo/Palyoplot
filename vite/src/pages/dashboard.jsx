@@ -1,5 +1,3 @@
-// dashboard.jsx
-
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import Papa from "papaparse";
 import DashboardNav from "../components/dashboardNav";
