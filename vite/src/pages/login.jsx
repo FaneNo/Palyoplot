@@ -72,6 +72,15 @@ function Login() {
               Register Account
             </button>
           </div>
+          <div className={styles.formGroup}>
+              <button
+                type="button"
+                className={styles.forgotPasswordButton}
+                onClick={() => navigate("/password-reset")}
+              >
+                Forgot Password?
+              </button>
+            </div>
         </form>
       </div>
     </div>

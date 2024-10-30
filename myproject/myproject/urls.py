@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from myapi.views import CreateUserView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView #allow us to obtain refresh token for user to sign in
+from django.contrib.auth import views as auth_views
 
 #this is not for delete/save or any function about the graph
 #do it in the myapi urls.py instead
@@ -29,4 +30,10 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name="refresh"),
     path('api-auth/', include("rest_framework.urls")),
     path('api/', include('myapi.urls')),
+
+    path('password-reset/', auth_views.PasswordResetView.as_view(), name='password_reset'), # Django default
+    path('password-reset/', auth_views.PasswordResetView.as_view(), name='password_reset'), # Django default
+    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 ]

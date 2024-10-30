@@ -12,6 +12,7 @@ import Tutorial from "./pages/tutorial";
 import AuthorizedNav from "./components/authorizedNav";
 import {jwtDecode} from "jwt-decode"
 import api from "./api"
+import PasswordReset from "./pages/passwordReset";
 
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "./token";
 import { useState, useEffect, useContext } from "react";
@@ -94,6 +95,7 @@ function App() {
             }
           />
           <Route path="/login" element={<Login />} />
+          <Route path="/password-reset" element={<PasswordReset />} />
           <Route path="/logout" element={<Logout />} />
           <Route 
             path="/profile"
