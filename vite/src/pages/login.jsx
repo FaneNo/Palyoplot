@@ -75,8 +75,8 @@ function Login() {
           <div className={styles.formGroup}>
               <button
                 type="button"
-                className={styles.forgotPasswordButton}
-                onClick={() => navigate("/password-reset")}
+                className={styles.registerButton}
+                onClick={() => window.location.href = "http://127.0.0.1:8000/password-reset/"}
               >
                 Forgot Password?
               </button>
