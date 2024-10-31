@@ -276,7 +276,9 @@
   margin-left: 10px;
 }
 
-.moveButton {
+.moveButton,
+.deleteButton,
+.addLifeFormButton {
   background-color: #2c6fbb;
   color: white;
   border: none;
@@ -291,10 +293,11 @@
   cursor: not-allowed;
 }
 
-.moveButton:hover:not(:disabled) {
+.moveButton:hover:not(:disabled),
+.deleteButton:hover,
+.addLifeFormButton:hover {
   background-color: #1c4f8b;
 }
-
 
 /* Styles for TaxaLifeFormAssignment component */
 .taxaLifeFormAssignment {
@@ -333,6 +336,27 @@
 
 .assignmentButtons .customFileButton {
   margin: 0 10px;
+}
+
+/* Styles for TaxaSelection component*/
+.taxaSelection {
+  margin-bottom: 20px;
+}
+
+.taxaTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.taxaTable th,
+.taxaTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.taxaTable th {
+  background-color: #f2f2f2;
 }
 
 /* Additional styles for better responsiveness */
