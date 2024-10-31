@@ -151,9 +151,8 @@ function LifeFormColorAssignment({ lifeFormGroups, setLifeFormGroups }) {
 }
 
 function Dashboard() {
-    const location = useLocation();
-    const autoGraphData = location.state?.autoGraphData;
-
+  const location = useLocation();
+  const autoGraphData = location.state?.autoGraphData;
 
   // State variables
   const [csvDataSets, setCsvDataSets] = useState([]);
@@ -260,29 +259,37 @@ function Dashboard() {
   useEffect(() => {
     if (autoGraphData) {
       // Set the y-axis column to the first numeric column
-      const numericColumn = autoGraphData.headers.find(header => {
-        return autoGraphData.data.some(row => !isNaN(parseFloat(row[header])));
+      const numericColumn = autoGraphData.headers.find((header) => {
+        return autoGraphData.data.some(
+          (row) => !isNaN(parseFloat(row[header]))
+        );
       });
-      
+
       if (numericColumn) {
         setYAxisColumn(numericColumn);
-        
+
         // Set selected taxa to all remaining numeric columns
-        const remainingNumericColumns = autoGraphData.headers.filter(header => {
-          return header !== numericColumn && 
-                 autoGraphData.data.some(row => !isNaN(parseFloat(row[header])));
-        });
-        
+        const remainingNumericColumns = autoGraphData.headers.filter(
+          (header) => {
+            return (
+              header !== numericColumn &&
+              autoGraphData.data.some((row) => !isNaN(parseFloat(row[header])))
+            );
+          }
+        );
+
         setSelectedTaxa(remainingNumericColumns);
-        
+
         // Set raw data
         setRawData(autoGraphData.data);
-        
+
         // Set available taxa
         setAvailableTaxa(autoGraphData.headers);
-        
+
         // Set default graph title using file name
-        setGraphTitle(`${autoGraphData.fileName} - Graph ${autoGraphData.displayId}`);
+        setGraphTitle(
+          `${autoGraphData.fileName} - Graph ${autoGraphData.displayId}`
+        );
       }
     }
   }, [autoGraphData]);
@@ -737,7 +744,7 @@ function Dashboard() {
                       useResizeHandler={true}
                       style={{ width: "100%" }}
                     />
-        
+
                     <div className={styles.uploadButtonWrapper}>
                       <div className={styles.horizontalButtons}>
                         {/* CSV File Upload */}
