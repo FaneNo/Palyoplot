@@ -4,6 +4,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.contrib.auth.models import User
+from django.core.files.base import ContentFile
 from rest_framework import generics
 from .serializers import UserSerializer, CSVFileSer
 from .models import CSVFile, Dataset
@@ -110,24 +111,24 @@ def get_graph_data(request, file_id):
 @api_view(['POST'])
 @permission_classes([AllowAny]) # for testing
 def upload_graph_image(request):
-    image_data = request.data.get("image_data")
+    image_file = request.FILES.get("image")
 
-    if not image_data:
-        return Response({"error": "No image data provided"}, status=400)
+    if not image_file:
+        return Response({"error": "No image file provided"}, status=400)
     
-    print("Received image data: ", image_data[50])
+    # print("Received image data: ", image_data[50])
     
     # Decode base64 image
-    try: 
-        format, imgstr = image_data.split(';base64')
-        image_bytes = base64.b64decode(imgstr)
-        print("Successfully decoded base64 image data")
-    except (ValueError, TypeError) as e:
-        print("Error decoding base64 image data: ", e)
-        return Response({"error": "Invalid image data format"}, status=400)
+    # try: 
+    #    format, imgstr = image_data.split(';base64')
+    #    image_bytes = base64.b64decode(imgstr)
+    #    print("Successfully decoded base64 image data")
+    # except (ValueError, TypeError) as e:
+    #    print("Error decoding base64 image data: ", e)
+    # return Response({"error": "Invalid image data format"}, status=400)
 
     # Save image data to Dataset model
-    dataset = Dataset.objects.create(user=request.user, image_data=image_bytes)
+    dataset = Dataset.objects.create(user=request.user, image_data=image_file)
     dataset.save()
 
     return Response({"message": "Image uploaded successfully"})
