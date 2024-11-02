@@ -5,7 +5,6 @@ import styles from "../cssPages/dashboardPage.module.css";
 import Plot from "react-plotly.js";
 import Plotly from "plotly.js-dist-min";
 import api from "../api";
-
 import { useLocation } from "react-router-dom";
 
 // Updated TaxaSelection component without Y-axis assignment per taxa
@@ -16,7 +15,10 @@ function TaxaSelection({
   taxaFontStyles,
   setTaxaFontStyles,
   yAxisColumn,
-  secondYAxisColumn,
+  taxaLifeFormAssignments,
+  lifeFormGroups,
+  taxaOrder,
+  setTaxaOrder,
 }) {
   const handleTaxaChange = (taxaName) => {
     if (selectedTaxa.includes(taxaName)) {
@@ -33,38 +35,133 @@ function TaxaSelection({
     }));
   };
 
-  const excludedColumns = [
-    yAxisColumn,
-    secondYAxisColumn,
-    "adj_depth",
-    "core_depth",
-  ];
+  const excludedColumns = useMemo(
+    () => [yAxisColumn, "adj_depth", "core_depth"],
+    [yAxisColumn]
+  );
+
+  // Filter taxa to exclude certain columns
+  const filteredTaxa = useMemo(() => {
+    return availableTaxa.filter(
+      (taxaName) => !excludedColumns.includes(taxaName)
+    );
+  }, [availableTaxa, excludedColumns]);
+
+  // Group taxa by life form
+  const taxaByLifeForm = useMemo(() => {
+    const groupedTaxa = {};
+
+    filteredTaxa.forEach((taxaName) => {
+      const lifeFormId = taxaLifeFormAssignments[taxaName] || "unassigned";
+      if (!groupedTaxa[lifeFormId]) {
+        groupedTaxa[lifeFormId] = [];
+      }
+      groupedTaxa[lifeFormId].push(taxaName);
+    });
+
+    return groupedTaxa;
+  }, [filteredTaxa, taxaLifeFormAssignments]);
+
+  // Initialize taxaOrder when taxaByLifeForm changes
+  useEffect(() => {
+    setTaxaOrder((prevOrder) => {
+      const newOrder = { ...prevOrder };
+      let hasChanged = false;
+
+      Object.keys(taxaByLifeForm).forEach((lifeFormId) => {
+        if (!newOrder[lifeFormId]) {
+          newOrder[lifeFormId] = [...taxaByLifeForm[lifeFormId]];
+          hasChanged = true;
+        }
+      });
+
+      return hasChanged ? newOrder : prevOrder;
+    });
+  }, [taxaByLifeForm]);
+
+  // Include 'Unassigned' life form if necessary
+  const lifeFormGroupsWithUnassigned = useMemo(
+    () => [
+      ...lifeFormGroups,
+      { life_id: "unassigned", life_name: "Unassigned" },
+    ],
+    [lifeFormGroups]
+  );
+
+  // Event handlers to move taxa up and down
+  const moveTaxaUp = (lifeFormId, index) => {
+    if (index === 0) return; // Cannot move up the first item
+    setTaxaOrder((prevOrder) => {
+      const newOrder = { ...prevOrder };
+      const taxaList = [...newOrder[lifeFormId]];
+      [taxaList[index - 1], taxaList[index]] = [
+        taxaList[index],
+        taxaList[index - 1],
+      ];
+      newOrder[lifeFormId] = taxaList;
+      return newOrder;
+    });
+  };
+
+  const moveTaxaDown = (lifeFormId, index) => {
+    const taxaListLength = taxaOrder[lifeFormId].length;
+    if (index === taxaListLength - 1) return; // Cannot move down the last item
+    setTaxaOrder((prevOrder) => {
+      const newOrder = { ...prevOrder };
+      const taxaList = [...newOrder[lifeFormId]];
+      [taxaList[index + 1], taxaList[index]] = [
+        taxaList[index],
+        taxaList[index + 1],
+      ];
+      newOrder[lifeFormId] = taxaList;
+      return newOrder;
+    });
+  };
 
   return (
     <div className={styles.taxaSelection}>
       <h3>Select Taxa to Plot and Set Font Style</h3>
-      <table className={styles.taxaTable}>
-        <thead>
-          <tr>
-            <th>Plot</th>
-            <th>Taxa Name</th>
-            <th>Italicize</th>
-          </tr>
-        </thead>
-        <tbody>
-          {availableTaxa
-            .filter((taxaName) => !excludedColumns.includes(taxaName))
-            .map((taxaName) => (
-              <tr key={taxaName}>
-                <td>
+      {lifeFormGroupsWithUnassigned.map((lifeForm) => (
+        <div key={lifeForm.life_id}>
+          <h4>{lifeForm.life_name}</h4>
+          <div className={styles.lifeFormGroup}>
+            {taxaOrder[lifeForm.life_id]?.map((taxaName, index) => (
+              <div key={taxaName} className={styles.taxaItem}>
+                {/* Up and Down Buttons */}
+                <div className={styles.buttonWrapper}>
+                  <button
+                    onClick={() => moveTaxaUp(lifeForm.life_id, index)}
+                    disabled={index === 0}
+                    className={styles.moveButton}
+                  >
+                    ↑
+                  </button>
+                  <button
+                    onClick={() => moveTaxaDown(lifeForm.life_id, index)}
+                    disabled={
+                      index === taxaOrder[lifeForm.life_id].length - 1
+                    }
+                    className={styles.moveButton}
+                  >
+                    ↓
+                  </button>
+                </div>
+
+                {/* Plot Checkbox and Label */}
+                <div className={styles.checkboxWrapperColumn}>
                   <input
                     type="checkbox"
                     checked={selectedTaxa.includes(taxaName)}
                     onChange={() => handleTaxaChange(taxaName)}
                   />
-                </td>
-                <td>{taxaName}</td>
-                <td>
+                  <label className={styles.checkboxLabel}>Plot</label>
+                </div>
+
+                {/* Taxa Name */}
+                <span className={styles.taxaName}>{taxaName}</span>
+
+                {/* Italicize Checkbox and Label */}
+                <div className={styles.checkboxWrapperColumn}>
                   <input
                     type="checkbox"
                     checked={taxaFontStyles[taxaName] === "italic"}
@@ -75,11 +172,13 @@ function TaxaSelection({
                       )
                     }
                   />
-                </td>
-              </tr>
+                  <label className={styles.checkboxLabel}>Italicize</label>
+                </div>
+              </div>
             ))}
-        </tbody>
-      </table>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -316,6 +415,8 @@ function Dashboard() {
   const [showTaxaSelection, setShowTaxaSelection] = useState(false);
   const [taxaFontStyles, setTaxaFontStyles] = useState({});
 
+  const [taxaOrder, setTaxaOrder] = useState({});
+
   // Function to handle the main data CSV selection
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -547,6 +648,27 @@ function Dashboard() {
     const plotData = [];
     const annotations = [];
 
+    // Include 'Unassigned' life form
+    const lifeFormGroupsWithUnassigned = [
+      ...lifeFormGroups,
+      { life_id: "unassigned", life_name: "Unassigned" },
+    ];
+
+    // Build ordered list of taxa based on taxaOrder
+    const orderedTaxa = lifeFormGroupsWithUnassigned.reduce((acc, lifeForm) => {
+      const taxaInLifeForm = taxaOrder[lifeForm.life_id] || [];
+      return acc.concat(taxaInLifeForm);
+    }, []);
+
+    // Filter csvDataSets to include only selectedTaxa and sort based on orderedTaxa
+    const sortedDataSets = csvDataSets
+      .filter((dataset) => selectedTaxa.includes(dataset.speciesName))
+      .sort((a, b) => {
+        const indexA = orderedTaxa.indexOf(a.speciesName);
+        const indexB = orderedTaxa.indexOf(b.speciesName);
+        return indexA - indexB;
+      });
+
     // Use life form order defined by the user
     const lifeformOrder = lifeFormGroups.map((group) => group.life_id);
 
@@ -600,106 +722,7 @@ function Dashboard() {
     // Get yData for y-axis from the first dataset (since yData is common across datasets)
     const yData = csvDataSets[0].yData;
 
-    // Get yData2 for second y-axis if specified
-    const yData2 = secondYAxisColumn
-      ? rawData.map((row) => parseFloat(row[secondYAxisColumn]) || 0)
-      : null;
-
-    // Compute y-axis range and ticks for primary y-axis
-    const yDataMin1 = Math.min(...yData);
-    const yDataMax1 = Math.max(...yData);
-
-    // Use getNiceTickInterval to compute dtick1
-    const yRange1 = yDataMax1 - yDataMin1 || 1; // Prevent division by zero
-    const dtick1 = getNiceTickInterval(yRange1);
-
-    // Adjust yAxisMin and yAxisMax to be multiples of dtick1
-    const yAxisMin1 = yDataMin1; // Start from actual data minimum
-    const yAxisMax1 = yDataMax1; // End at actual data maximum
-
-    const yAxisRange1 = reverseYAxis
-      ? [yAxisMax1, yAxisMin1]
-      : [yAxisMin1, yAxisMax1];
-
-    // Generate y-axis tick values for primary y-axis
-    let yaxisTickvals1 = [];
-    let currentTick = Math.ceil(yDataMin1 / dtick1) * dtick1;
-    if (currentTick > yDataMin1) {
-      currentTick -= dtick1;
-    }
-    while (currentTick <= yDataMax1) {
-      yaxisTickvals1.push(currentTick);
-      currentTick += dtick1;
-    }
-
-    // Generate tick labels for primary y-axis
-    let yaxisTicktext1 = yaxisTickvals1.map((val) => val.toString());
-
-    // Reverse tickvals and ticktext if reverseYAxis is true
-    if (reverseYAxis) {
-      yaxisTickvals1 = yaxisTickvals1.reverse();
-      yaxisTicktext1 = yaxisTicktext1.reverse();
-    }
-
-    // Compute y-axis range and ticks for secondary y-axis if present
-    let yAxisRange2, yaxisTickvals2, yaxisTicktext2, dtick2;
-    if (secondYAxisColumn && yData2) {
-      const yDataMin2 = Math.min(...yData2);
-      const yDataMax2 = Math.max(...yData2);
-
-      // Use getNiceTickInterval to compute dtick2
-      const yRange2 = yDataMax2 - yDataMin2 || 1; // Prevent division by zero
-      dtick2 = getNiceTickInterval(yRange2);
-
-      const yAxisMin2 = yDataMin2; // Start from actual data minimum
-      const yAxisMax2 = yDataMax2; // End at actual data maximum
-
-      yAxisRange2 = reverseYAxis
-        ? [yAxisMax2, yAxisMin2]
-        : [yAxisMin2, yAxisMax2];
-
-      // Generate y-axis tick values for secondary y-axis
-      yaxisTickvals2 = [];
-      let currentTick2 = Math.ceil(yDataMin2 / dtick2) * dtick2;
-      if (currentTick2 > yDataMin2) {
-        currentTick2 -= dtick2;
-      }
-      while (currentTick2 <= yDataMax2) {
-        yaxisTickvals2.push(currentTick2);
-        currentTick2 += dtick2;
-      }
-
-      // Generate tick labels for secondary y-axis
-      yaxisTicktext2 = yaxisTickvals2.map((val) => val.toString());
-
-      // Reverse tickvals and ticktext if reverseYAxis is true
-      if (reverseYAxis) {
-        yaxisTickvals2 = yaxisTickvals2.reverse();
-        yaxisTicktext2 = yaxisTicktext2.reverse();
-      }
-    }
-
-    // Sort csvDataSets by lifeformOrder and speciesName
-    const sortedDataSets = csvDataSets
-      .filter((dataset) => dataset.lifeId !== undefined)
-      .sort((a, b) => {
-        const lifeOrderA = lifeformOrder.indexOf(a.lifeId);
-        const lifeOrderB = lifeformOrder.indexOf(b.lifeId);
-
-        if (lifeOrderA !== lifeOrderB) {
-          return lifeOrderA - lifeOrderB;
-        }
-        // Then by speciesName
-        return a.speciesName.localeCompare(b.speciesName);
-      });
-
-    // Initialize lifeformGroupsData
-    const lifeformGroupsData = {};
-
-    // Define subplotSpacing
-    const subplotSpacing = 0.02; // 2% spacing between subplots
-
-    sortedDataSets.forEach((dataset, index) => {
+    sortedDataSets.forEach((dataset) => {
       if (dataset.x.length === 0 || dataset.yData.length === 0) {
         dataRanges.push(0);
         adjustedMaxValues.push(0);
@@ -1179,6 +1202,10 @@ function Dashboard() {
                           setTaxaFontStyles={setTaxaFontStyles}
                           yAxisColumn={yAxisColumn}
                           secondYAxisColumn={secondYAxisColumn}
+                          taxaLifeFormAssignments={taxaLifeFormAssignments}
+                          lifeFormGroups={lifeFormGroups}
+                          taxaOrder={taxaOrder}
+                          setTaxaOrder={setTaxaOrder}
                         />
                       )}
 
