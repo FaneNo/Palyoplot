@@ -6,6 +6,7 @@ import Plot from "react-plotly.js";
 import Plotly from "plotly.js-dist-min";
 import api from "../api";
 import { useLocation } from "react-router-dom";
+import { ACCESS_TOKEN } from "../token";
 
 // Updated TaxaSelection component without Y-axis assignment per taxa
 function TaxaSelection({
@@ -488,12 +489,14 @@ function Dashboard() {
 
     try {
       // Capture image in base64
-      const imageBase64 = await Plotly.toImage(graphElement, { format: "png", width: 800, height: 600});
+      const image = await Plotly.toImage(graphElement, { format: "png", width: 800, height: 600});
+      const response = await fetch(image);
+      const imageBlob = await response.blob();
 
-      console.log("Captured base64 image data: ", imageBase64);
+      //console.log("Captured base64 image data: ", imageBase64);
 
       // Call function to upload image to database
-      await uploadImageToDatabase(imageBase64);
+      await uploadImageToDatabase(imageBlob);
       alert("Graph image saved successfully");
 
     } catch (error) {
@@ -503,18 +506,22 @@ function Dashboard() {
   };
 
   // Function to send image to backend
-  const uploadImageToDatabase = async (imageBase64) => {
+  const uploadImageToDatabase = async (imageBlob) => {
+
+    const formData = new FormData();
+    formData.append("image", imageBlob, "graph.png");
+    // const token = localStorage.getItem("accessToken");
+
+    const token = localStorage.getItem(ACCESS_TOKEN);
 
     try {
-      const token = localStorage.getItem("accessToken");
       const response = await fetch("http://127.0.0.1:8000/api/upload-graph-image/", {
         method: "POST",
         headers: {
-          "Content-Type" : "application/json",
-          "Authorization" : 'Bearer ${token}',
+          "Authorization" : `Bearer ${token}`,
         },
-        credentials: "include",
-        body: JSON.stringify({ image_data: imageBase64}),
+        //credentials: "include",
+        body: formData,
       });
 
       if (!response.ok) {
