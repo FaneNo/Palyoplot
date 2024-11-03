@@ -5,7 +5,8 @@ import "../cssPages/historyTable.css";
 
 function DataTable() {
   const [data, setData] = useState([]);
-  const navigate = useNavigate();
+  // uncomment const navigate if handleDownload is brought back
+  // const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
@@ -20,45 +21,13 @@ function DataTable() {
     }
   };
 
+  // Commenting out in case we want it later, not currently used
+  /*
   const handleDownload = (id) => {
     console.log(`Download data for id: ${id}`);
     navigate("/dashboard");
   };
-  
-  //get the data to graph
-  const handleGraphClick = async (id) => {
-    try {
-      const response = await api.get(`/api/graph-data/${id}/`);
-      
-      // Parse the CSV string into structured data
-      const rows = response.data.data.split('\n');
-      const headers = rows[0].replace(/"/g, '').split(',').filter(Boolean);
-      
-      const parsedData = [];
-      for (let i = 1; i < rows.length; i++) {
-        const values = rows[i].split(',');
-        const row = {};
-        headers.forEach((header, index) => {
-          row[header] = values[index];
-        });
-        parsedData.push(row);
-      }
-  
-      // Navigate to dashboard with the data
-      navigate("/dashboard", { 
-        state: { 
-          autoGraphData: {
-            data: parsedData,
-            headers: headers,
-            fileName: response.data.file_name,
-            displayId: response.data.display_id
-          }
-        } 
-      });
-    } catch (error) {
-      console.error("Error fetching graph data", error);
-    }
-  };
+  */
 
   //delete file function
   const handleDelete = async (id) => {
@@ -103,12 +72,6 @@ function DataTable() {
               <span className="csv-link">{row.file_name}</span>
             </td>
             <td className="graph-column">
-              <button
-                className="graph-btn"
-                onClick={() => handleGraphClick(row.id)}
-              >
-                Graph Now
-              </button>
             </td>
             <td className="delete-column">
               <button
