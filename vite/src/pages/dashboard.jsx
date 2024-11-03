@@ -340,11 +340,13 @@ function TaxaLifeFormAssignment({
   );
 }
 
+const excludedColumns = ["age", "adj_depth", "core_depth"];
+
 function Dashboard() {
   const location = useLocation();
   const autoGraphData = location.state?.autoGraphData;
 
-  const excludedColumns = ["age", "adj_depth", "core_depth"];
+  // const excludedColumns = ["age", "adj_depth", "core_depth"];
 
   // State variables
   const [csvDataSets, setCsvDataSets] = useState([]);

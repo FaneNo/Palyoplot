@@ -32,19 +32,6 @@
   width: 10px; 
 }
 
-.table .graph-btn {
-  background-color: #2c6fbb;
-  border: none; 
-  color: white; 
-  font-size: 15px; /* Smaller font for compactness */
-  cursor: pointer; 
-}
-
-.table .graph-btn:hover {
-  background-color: #3A5A40;
-  color: black; 
-}
-
 .csv-link {
   color: #2c6fbb;
   text-decoration: underline;
@@ -55,7 +42,8 @@
 }
 
 .delete-btn {
-  color: white;
+  background-color: #FFC0C0;
+  color: black;
   border: none;
   padding: 5px;
   font-size: 16px;
@@ -64,13 +52,14 @@
 
 .delete-btn:hover {
   background-color: darkred;
+  color: white;
 }
 
 .table .graph-column, .table .delete-column {
   width: 80px;
 }
 
-.table .graph-btn, .table .delete-btn {
+.table .delete-btn {
   padding: 5px 10px;
   text-align: center;
 }

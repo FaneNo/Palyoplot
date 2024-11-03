@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useContext } from "react";
 import "./App.css";
 import Home from "./pages/home";
 import Registration from "./pages/registration";
@@ -5,16 +6,14 @@ import Dashboard from "./pages/dashboard";
 import Login from "./pages/login";
 import Profile from "./pages/profile";
 import History from "./pages/history";
-import Navbar from "./components/Navbar";
 import BottomNav from "./components/bottomNav";
 import About from "./pages/about";
 import Tutorial from "./pages/tutorial";
 import AuthorizedNav from "./components/authorizedNav";
+import { AuthProvider } from "./contexts/authContext";
 import {jwtDecode} from "jwt-decode"
 import api from "./api"
-
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "./token";
-import { useState, useEffect, useContext } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -22,66 +21,25 @@ import {
   Navigate,
 } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
-
-
+import { AuthContext } from "./contexts/authContext";
 
 function Logout() {
-  localStorage.clear();
+  //localStorage.clear();
+  const { logout } = useContext(AuthContext);
+  logout();
   return <Navigate to="/login" />;
 }
 
 function RegisterAndLogout() {
-  localStorage.clear();
+  //localStorage.clear();
   return <Registration />;
 }
 
 function App() {
-  const [isAuthorized, setIsAuthorized] = useState(null)
-
-  useEffect(() => {
-    auth().catch(() => setIsAuthorized(false));
-  }, []);
-
-  const refreshToken = async () => {
-    const refreshToken = localStorage.getItem(REFRESH_TOKEN);
-
-    try {
-      const res = await api.post("/api/token/refresh/", {
-        refresh: refreshToken,
-      });
-      if (res.status === 200) {
-        localStorage.setItem(ACCESS_TOKEN, res.data.access);
-        setIsAuthorized(true);
-      } else {
-        setIsAuthorized(false);
-      }
-    } catch (error) {
-      console.log(error);
-      setIsAuthorized(false);
-    }
-  };
-
-  const auth = async () => {
-    const token = localStorage.getItem(ACCESS_TOKEN);
-    if (!token) {
-      setIsAuthorized(false);
-      return;
-    }
-    const decoded = jwtDecode(token);
-    const tokenExpiration = decoded.exp;
-    const now = Date.now() / 1000;
-
-    if (tokenExpiration < now) {
-      await refreshToken();
-    } else {
-      setIsAuthorized(true);
-    }
-  };
-  
   return (
-    <> 
-      <Navbar/>
+    <AuthProvider>
       <Router>
+        <AuthorizedNav />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/registration" element={<RegisterAndLogout />} />
@@ -115,9 +73,9 @@ function App() {
           <Route path="/tutorial" element={<Tutorial />} />
           <Route path="/about" element={<About />} />
         </Routes>
+        <BottomNav />
       </Router>
-      <BottomNav />
-    </>
+    </AuthProvider>
   );
 }
 
