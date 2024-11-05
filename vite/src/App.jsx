@@ -1,29 +1,32 @@
 import "./App.css";
+import { lazy, Suspense, useState, useEffect } from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import api from "./api";
+import { REFRESH_TOKEN, ACCESS_TOKEN } from "./token";
+
+
 import Home from "./pages/home";
-import Registration from "./pages/registration";
-import Dashboard from "./pages/dashboard";
-import Login from "./pages/login";
-import Profile from "./pages/profile";
-import History from "./pages/history";
 import Navbar from "./components/Navbar";
 import BottomNav from "./components/bottomNav";
-import About from "./pages/about";
-import Tutorial from "./pages/tutorial";
-import AuthorizedNav from "./components/authorizedNav";
-import {jwtDecode} from "jwt-decode"
-import api from "./api"
-
-import { REFRESH_TOKEN, ACCESS_TOKEN } from "./token";
-import { useState, useEffect, useContext } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 
+const Dashboard = lazy(() => import("./pages/dashboard"));
+const Registration = lazy(() => import("./pages/registration"));
+const Login = lazy(() => import("./pages/login"));
+const Profile = lazy(() => import("./pages/profile"));
+const History = lazy(() => import("./pages/history"));
+const About = lazy(() => import("./pages/about"));
+const Tutorial = lazy(() => import("./pages/tutorial"));
+
+
+const LoadingSpinner = () => (
+  <div className="loading-spinner">
+    <div className="spinner"></div>
+    <p>Loading...</p>
+  </div>
+);
 
 function Logout() {
   localStorage.clear();
@@ -36,10 +39,12 @@ function RegisterAndLogout() {
 }
 
 function App() {
-  const [isAuthorized, setIsAuthorized] = useState(null)
+  const [isAuthorized, setIsAuthorized] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    auth().catch(() => setIsAuthorized(false));
+    auth().catch(() => setIsAuthorized(false))
+      .finally(() => setIsLoading(false));
   }, []);
 
   const refreshToken = async () => {
@@ -77,44 +82,53 @@ function App() {
       setIsAuthorized(true);
     }
   };
-  
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
   return (
-    <> 
-      <Navbar/>
+    <>
+      <Navbar />
       <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/registration" element={<RegisterAndLogout />} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/login" element={<Login />} />
-          <Route path="/password-reset" element={() => window.location.href = "http://127.0.0.1:8000/password-reset/"} />
-          <Route path="/logout" element={<Logout />} />
-          <Route 
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/history"
-            element={
-              <ProtectedRoute>
-                <History />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/tutorial" element={<Tutorial />} />
-          <Route path="/about" element={<About />} />
-        </Routes>
+        <Suspense fallback={<LoadingSpinner />}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/registration" element={<RegisterAndLogout />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/login" element={<Login />} />
+            <Route 
+              path="/password-reset" 
+              element={() => window.location.href = "http://127.0.0.1:8000/password-reset/"} 
+            />
+            <Route path="/logout" element={<Logout />} />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/history"
+              element={
+                <ProtectedRoute>
+                  <History />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/tutorial" element={<Tutorial />} />
+            <Route path="/about" element={<About />} />
+          </Routes>
+        </Suspense>
       </Router>
       <BottomNav />
     </>

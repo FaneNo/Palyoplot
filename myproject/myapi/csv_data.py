@@ -1,6 +1,7 @@
 import csv
 import mariadb
 from mariadb import ConnectionPool
+import os
 
 connection_pool = ConnectionPool(
     pool_name="mypool",

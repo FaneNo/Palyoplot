@@ -26,11 +26,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ej*g0&$b9&g4vv=0qz0#cr(1diq=8i3-&sze8!a@rp741gpy8g'
+
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+if not SECRET_KEY and not DEBUG:
+    raise ValueError("SECRET_KEY environment variable is not set!")
 
 ALLOWED_HOSTS = ["*"]
 
@@ -111,17 +114,17 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         # 'NAME': BASE_DIR / 'db.mysql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+        # 'NAME': os.getenv('DB_NAME'),
+        # 'USER': os.getenv('DB_USER'),
+        # 'PASSWORD': os.getenv('DB_PASSWORD'),
+        # 'HOST': os.getenv('DB_HOST'),
+        # 'PORT': os.getenv('DB_PORT'),
         
-        #'NAME': 'palyoplot',
-        #'USER': 'csc190191',
-        #'PASSWORD': '123',
-        #'HOST': 'localhost',
-        #'PORT': '3306',
+        'NAME': 'palyoplot',
+        'USER': 'csc190191',
+        'PASSWORD': '123',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
@@ -174,7 +177,9 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
     "http://localhost:5173",
 ]
+
 CORS_ALLOW_CREDENTIALS = True
+
 
 
 

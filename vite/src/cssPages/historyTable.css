@@ -1,76 +1,62 @@
-.table {
-  width: 60%;
-  border-collapse: collapse;
-}
 
-.table th, .table td {
-  border: 1px solid black;
-  padding: 2px 8px; /* Reduced padding for more compact table */
-  text-align: center; /* Centers all content */
-}
 
-.table th {
+.table-header {
+  display: flex;
   background-color: #3A5A40;
   color: white;
+  font-weight: bold;
 }
 
-/* Compact Date Created and ID columns */
-.table .id-column {
-  width: 5px; 
+.header-cell,
+.table-cell {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.table .date-column {
-  width: 40px; 
-
+.table-row {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  background-color: white;
 }
 
-.table .csv-column {
-  width: 40px; 
+.table-row:hover {
+  background-color: #f5f5f5;
 }
 
-.table .graph-column {
-  width: 10px; 
-}
+.id-column { width: 10%; }
+.date-column { width: 25%; }
+.csv-column { width: 35%; }
+.graph-column { width: 15%; }
+.delete-column { width: 15%; }
 
-.table .graph-btn {
+.graph-btn {
   background-color: #2c6fbb;
-  border: none; 
-  color: white; 
-  font-size: 15px; /* Smaller font for compactness */
-  cursor: pointer; 
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
 }
 
-.table .graph-btn:hover {
+.delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.graph-btn:hover {
   background-color: #3A5A40;
-  color: black; 
+}
+
+.delete-btn:hover {
+  transform: scale(1.1);
 }
 
 .csv-link {
   color: #2c6fbb;
   text-decoration: underline;
-}
-
-.csv-link:hover {
-  color: #1a4b72;
-}
-
-.delete-btn {
-  color: white;
-  border: none;
-  padding: 5px;
-  font-size: 16px;
   cursor: pointer;
-}
-
-.delete-btn:hover {
-  background-color: darkred;
-}
-
-.table .graph-column, .table .delete-column {
-  width: 80px;
-}
-
-.table .graph-btn, .table .delete-btn {
-  padding: 5px 10px;
-  text-align: center;
 }
