@@ -71,4 +71,16 @@ select {
   margin-right: 0;
 }
 
+.forgotPasswordLink {
+  color: #007bff; /* Customize the color to match your theme */
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.9em; /* Adjust font size if needed */
+}
+
+.forgotPasswordLink:hover {
+  color: #0056b3; /* Darker shade for hover */
+}
+
+
 
