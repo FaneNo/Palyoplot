@@ -340,7 +340,7 @@ function TaxaLifeFormAssignment({
   );
 }
 
-const excludedColumns = ["age", "adj_depth", "core_depth"];
+const excludedColumns = [];
 
 function Dashboard() {
   const location = useLocation();
@@ -1035,6 +1035,7 @@ function Dashboard() {
       showticklabels: true, // Ensure ticks and labels are shown
       tickvals: yaxisTickvals1,
       ticktext: yaxisTicktext1,
+      zeroline: false, // Remove the black line at y=0
     };
 
     // Configure secondary y-axis if present
@@ -1059,6 +1060,7 @@ function Dashboard() {
         },
         range: yAxisRange2,
         autorange: false,
+        zeroline: false, // Remove the black line at y=0
       };
 
       // Adjust left margin to accommodate the second y-axis
@@ -1451,8 +1453,6 @@ function Dashboard() {
                                   const excludedColumns = [
                                     yAxisColumn,
                                     e.target.value,
-                                    "adj_depth",
-                                    "core_depth",
                                   ];
                                   setSecondYAxisColumn(e.target.value);
                                   // Since the values should be the same, we do not need to update selectedTaxa here
