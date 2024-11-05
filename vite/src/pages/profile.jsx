@@ -1,23 +1,32 @@
-import styles from "../cssPages/profilePage.module.css";
+// Profile.jsx
 import React, { useState } from "react";
 import DashboardNav from "../components/dashboardNav";
 import api from "../api";
+import styles from "../cssPages/profilePage.module.css";
 
-function Profile() {
+const Profile = () => {
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
   const [message, setMessage] = useState({ text: "", type: "" });
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setMessage({ text: "", type: "" });
+    setLoading(true);
 
-    // Validate passwords match
     if (formData.newPassword !== formData.confirmPassword) {
       setMessage({ text: "New passwords do not match", type: "error" });
+      setLoading(false);
+      return;
+    }
+
+    if (formData.newPassword.length < 8) {
+      setMessage({ text: "Password must be at least 8 characters long", type: "error" });
+      setLoading(false);
       return;
     }
 
@@ -28,7 +37,6 @@ function Profile() {
       });
 
       setMessage({ text: "Password updated successfully!", type: "success" });
-      // Clear form
       setFormData({
         currentPassword: "",
         newPassword: "",
@@ -39,6 +47,8 @@ function Profile() {
         text: error.response?.data?.error || "Error updating password",
         type: "error",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -52,23 +62,28 @@ function Profile() {
 
   return (
     <div className={styles.profileBody}>
-      <div className={styles.profileNavBox}>
+      <div className={styles.profileLayout}>
         <DashboardNav />
-        <div className={styles.profileNavLeft}>
-          <div className={styles.dashboardAccContainer}>
-            <h2 className={styles.dashboardAccInfoTitle}>Update Password</h2>
+        <div className={styles.contentContainer}>
+          <div className={styles.formCard}>
+            <h2 className={styles.formTitle}>Update Password</h2>
+            
             {message.text && (
-              <div
-                className={`${styles.message} ${
-                  message.type === "error" ? styles.error : styles.success
-                }`}
-              >
+              <div className={`${styles.message} ${
+                message.type === "error" ? styles.errorMessage : styles.successMessage
+              }`}>
                 {message.text}
               </div>
             )}
-            <form onSubmit={handleSubmit} className={styles.dashboardAccForm}>
-              <div className={styles.dashboardInput}>
-                <label htmlFor="currentPassword">Current Password</label>
+
+            <form onSubmit={handleSubmit} className={styles.form}>
+              <div className={styles.formGroup}>
+                <label 
+                  htmlFor="currentPassword" 
+                  className={styles.formLabel}
+                >
+                  Current Password
+                </label>
                 <input
                   id="currentPassword"
                   type="password"
@@ -76,10 +91,17 @@ function Profile() {
                   value={formData.currentPassword}
                   onChange={handleChange}
                   required
+                  className={styles.formInput}
                 />
               </div>
-              <div className={styles.dashboardInput}>
-                <label htmlFor="newPassword">New Password</label>
+
+              <div className={styles.formGroup}>
+                <label 
+                  htmlFor="newPassword" 
+                  className={styles.formLabel}
+                >
+                  New Password
+                </label>
                 <input
                   id="newPassword"
                   type="password"
@@ -87,10 +109,17 @@ function Profile() {
                   value={formData.newPassword}
                   onChange={handleChange}
                   required
+                  className={styles.formInput}
                 />
               </div>
-              <div className={styles.dashboardInput}>
-                <label htmlFor="confirmPassword">Confirm New Password</label>
+
+              <div className={styles.formGroup}>
+                <label 
+                  htmlFor="confirmPassword" 
+                  className={styles.formLabel}
+                >
+                  Confirm New Password
+                </label>
                 <input
                   id="confirmPassword"
                   type="password"
@@ -98,11 +127,16 @@ function Profile() {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   required
+                  className={styles.formInput}
                 />
               </div>
 
-              <button type="submit" className={styles.dashboardUpdate}>
-                Update Password
+              <button
+                type="submit"
+                disabled={loading}
+                className={`${styles.submitButton} ${loading ? styles.buttonLoading : ''}`}
+              >
+                {loading ? "Updating..." : "Update Password"}
               </button>
             </form>
           </div>
@@ -110,6 +144,6 @@ function Profile() {
       </div>
     </div>
   );
-}
+};
 
 export default Profile;

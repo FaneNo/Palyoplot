@@ -1,53 +1,13 @@
-import React, { useState, useEffect, memo } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FixedSizeList as List } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
 import api from "../api";
 import "../cssPages/historyTable.css";
-
-// Memoized row component
-const Row = memo(({ data, index, style }) => {
-  const { items, onGraph, onDelete } = data;
-  const row = items[index];
-
-  if (!row) return null;
-
-  return (
-    <div style={style} className="table-row">
-      <div className="table-cell id-column">{row.display_id}</div>
-      <div className="table-cell date-column">
-        {new Date(row.upload_date).toLocaleString()}
-      </div>
-      <div className="table-cell csv-column">
-        <span className="csv-link">{row.file_name}</span>
-      </div>
-      <div className="table-cell graph-column">
-        <button
-          className="graph-btn"
-          onClick={() => onGraph(row.id)}
-        >
-          Graph Now
-        </button>
-      </div>
-      <div className="table-cell delete-column">
-        <button
-          className="delete-btn"
-          onClick={() => onDelete(row.id)}
-        >
-          ❌
-        </button>
-      </div>
-    </div>
-  );
-});
 
 const DataTable = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  // uncomment const navigate if handleDownload is brought back
-  // const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
@@ -95,57 +55,89 @@ const DataTable = () => {
       });
     } catch (error) {
       console.error("Error fetching graph data", error);
+      setError("Failed to load graph data");
     }
   };
 
   const handleDelete = async (id) => {
     try {
       await api.delete(`/api/csv_files/${id}/`);
-      await fetchData();
+      await fetchData(); 
     } catch (error) {
       console.error("Error deleting file", error);
+      setError("Failed to delete file");
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (isLoading) {
+    return (
+      <div className="loading-state">
+        Loading...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="error-state">
+        {error}
+      </div>
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <div className="empty-state">
+        No files found. Upload a CSV file to get started.
+      </div>
+    );
+  }
 
   return (
-    <table className="table">
-      <thead>
-        <tr>
-          <th className="id-column">ID</th>
-          <th className="date-column">Date Created</th>
-          <th className="csv-column">File</th>
-          <th className="graph-column">Graph</th>
-          <th className="delete-column">Delete</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((row) => (
-          <tr key={row.id}>
-            <td className="id-column">{row.display_id}</td>
-            <td className="date-column">
-              {new Date(row.upload_date).toLocaleString()}
-            </td>
-            <td className="csv-column">
-              <span className="csv-link">{row.file_name}</span>
-            </td>
-            <td className="graph-column">
-            </td>
-            <td className="delete-column">
-              <button
-                className="delete-btn"
-                onClick={() => handleDelete(row.id)}
-              >
-                ❌
-              </button>
-            </td>
+    <div className="history-table-container">
+      <table className="history-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Date Created</th>
+            <th>File</th>
+            <th>Graph</th>
+            <th>Actions</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {data.map((row) => (
+            <tr key={row.id}>
+              <td>{row.display_id}</td>
+              <td>{new Date(row.upload_date).toLocaleString()}</td>
+              <td>
+                <span 
+                  className="file-link"
+                  onClick={() => handleGraphClick(row.id)}
+                >
+                  {row.file_name}
+                </span>
+              </td>
+              <td className="graph-column">
+                {/* Graph column left intentionally empty */}
+              </td>
+              <td>
+                <button
+                  className="delete-button"
+                  onClick={() => handleDelete(row.id)}
+                >
+                  ❌
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
 export default DataTable;
+
+
+

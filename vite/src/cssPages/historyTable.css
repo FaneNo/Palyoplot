@@ -1,88 +1,109 @@
-
-
-.table-header {
-  display: flex;
-  background-color: #3A5A40;
-  color: white;
-  font-weight: bold;
+/* Base table styles */
+.history-table-container {
+  width: 100%;
+  overflow-x: auto;
 }
 
-.header-cell,
-.table-cell {
-  padding: 10px;
+.history-table {
+  min-width: 100%;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* Header styles */
+.history-table thead {
+  background-color: #3A5A40;
+}
+
+.history-table th {
+  padding: 0.75rem 1.5rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+}
+
+/* Body styles */
+.history-table tbody {
+  border-top-width: 1px;
+}
+
+.history-table tbody tr {
+  border-bottom-width: 1px;
+  border-color: #e5e7eb;
+}
+
+.history-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.history-table td {
+  padding: 1rem 1.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* Column specific styles */
+.history-table .graph-column {
+  width: 15%;
+  text-align: center;
+}
+
+/* File link styles */
+.file-link {
+  color: #2563eb;
+  cursor: pointer;
+}
+
+.file-link:hover {
+  color: #1d4ed8;
+}
+
+/* Delete button styles */
+.delete-button {
+  color: #dc2626;
+  font-weight: 500;
+  border-radius: 9999px;
+  width: 2rem;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.table-row {
-  display: flex;
-  border-bottom: 1px solid #ddd;
-  background-color: white;
-}
-
-.table-row:hover {
-  background-color: #f5f5f5;
-}
-
-.id-column { width: 10%; }
-.date-column { width: 25%; }
-.csv-column { width: 35%; }
-.graph-column { width: 15%; }
-.delete-column { width: 15%; }
-
-.graph-btn {
-  background-color: #2c6fbb;
+  transition: background-color 0.2s;
   border: none;
-  color: white;
-  padding: 5px 10px;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.delete-btn {
   background: none;
-  border: none;
-  cursor: pointer;
-  padding: 5px;
-}
-
-.graph-btn:hover {
-  background-color: #3A5A40;
-}
-
-.delete-btn:hover {
-  transform: scale(1.1);
-}
-
-.csv-link {
-  color: #2c6fbb;
-  text-decoration: underline;
-}
-
-.csv-link:hover {
-  color: #1a4b72;
-}
-
-.delete-btn {
-  background-color: #FFC0C0;
-  color: black;
-  border: none;
-  padding: 5px;
-  font-size: 16px;
   cursor: pointer;
 }
 
-.delete-btn:hover {
-  background-color: darkred;
-  color: white;
+.delete-button:hover {
+  background-color: #fee2e2;
+  color: #b91c1c;
 }
 
-.table .graph-column, .table .delete-column {
-  width: 80px;
+/* Loading state */
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 16rem;
+  font-size: 1.125rem;
 }
 
-.table .delete-btn {
-  padding: 5px 10px;
-  text-align: center;
+/* Error state */
+.error-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 16rem;
+  color: #dc2626;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 16rem;
+  font-size: 1.125rem;
 }

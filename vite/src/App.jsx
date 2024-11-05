@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import "./App.css";
-import { lazy, Suspense, useState, useEffect } from "react";
+import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import api from "./api";
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "./token";
 
 
@@ -19,15 +18,7 @@ import About from "./pages/about";
 import Tutorial from "./pages/tutorial";
 import AuthorizedNav from "./components/authorizedNav";
 import { AuthProvider } from "./contexts/authContext";
-import {jwtDecode} from "jwt-decode"
 import api from "./api"
-import { REFRESH_TOKEN, ACCESS_TOKEN } from "./token";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 
