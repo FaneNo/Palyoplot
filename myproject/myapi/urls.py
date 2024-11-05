@@ -1,4 +1,6 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views
 
 
@@ -10,3 +12,6 @@ urlpatterns = [
     path('upload-graph-image/', views.upload_graph_image, name='upload_graph_image'),
     path('update-password/', views.update_password, name='update_password'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

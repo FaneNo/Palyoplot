@@ -58,5 +58,31 @@
 .csv-link {
   color: #2c6fbb;
   text-decoration: underline;
+}
+
+.csv-link:hover {
+  color: #1a4b72;
+}
+
+.delete-btn {
+  background-color: #FFC0C0;
+  color: black;
+  border: none;
+  padding: 5px;
+  font-size: 16px;
   cursor: pointer;
+}
+
+.delete-btn:hover {
+  background-color: darkred;
+  color: white;
+}
+
+.table .graph-column, .table .delete-column {
+  width: 80px;
+}
+
+.table .delete-btn {
+  padding: 5px 10px;
+  text-align: center;
 }

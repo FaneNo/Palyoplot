@@ -46,6 +46,8 @@ const DataTable = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  // uncomment const navigate if handleDownload is brought back
+  // const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
@@ -109,35 +111,41 @@ const DataTable = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div style={{ height: '400px', width: '100%' }}>
-      <AutoSizer>
-        {({ height, width }) => (
-          <>
-            <div className="table-header" style={{ width }}>
-              <div className="header-cell id-column">ID</div>
-              <div className="header-cell date-column">Date Created</div>
-              <div className="header-cell csv-column">File</div>
-              <div className="header-cell graph-column">Graph</div>
-              <div className="header-cell delete-column">Delete</div>
-            </div>
-            <List
-              height={height - 40} // Subtract header height 
-              itemCount={data.length}
-              itemSize={50}
-              width={width}
-              itemData={{
-                items: data,
-                onGraph: handleGraphClick,
-                onDelete: handleDelete
-              }}
-            >
-              {Row}
-            </List>
-          </>
-        )}
-      </AutoSizer>
-    </div>
+    <table className="table">
+      <thead>
+        <tr>
+          <th className="id-column">ID</th>
+          <th className="date-column">Date Created</th>
+          <th className="csv-column">File</th>
+          <th className="graph-column">Graph</th>
+          <th className="delete-column">Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((row) => (
+          <tr key={row.id}>
+            <td className="id-column">{row.display_id}</td>
+            <td className="date-column">
+              {new Date(row.upload_date).toLocaleString()}
+            </td>
+            <td className="csv-column">
+              <span className="csv-link">{row.file_name}</span>
+            </td>
+            <td className="graph-column">
+            </td>
+            <td className="delete-column">
+              <button
+                className="delete-btn"
+                onClick={() => handleDelete(row.id)}
+              >
+                ❌
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 };
 
-export default memo(DataTable);
+export default DataTable;
