@@ -33,7 +33,7 @@ input, select, textarea, button {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   margin-bottom: 2em;
-  background-color: #f1e8dd; /* Changed to tan background color */
+  background-color: #f7f0ea; /* Changed to tan background color */
 }
 
 /* Label styling */
