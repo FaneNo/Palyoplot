@@ -11,7 +11,7 @@ from .models import CSVFile, Dataset
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
-
+from django.contrib.auth.hashers import check_password
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import os
@@ -61,6 +61,7 @@ def upload_csv(request):
     insert_csv_data(user.id, file_name, csv_data, visualization_prefs)
 
     return Response({'message': 'File uploaded and data inserted successfully'})
+    
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
@@ -132,6 +133,28 @@ def upload_graph_image(request):
     dataset.save()
 
     return Response({"message": "Image uploaded successfully"})
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_password(request):
+    user = request.user
+    current_password = request.data.get('currentPassword')
+    new_password = request.data.get('newPassword')
+    
+    # Verify current password
+    if not check_password(current_password, user.password):
+        return Response({
+            'error': 'Current password is incorrect'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Update password
+    user.set_password(new_password)
+    user.save()
+    
+    return Response({
+        'message': 'Password updated successfully'
+    }, status=status.HTTP_200_OK)
 
 
 #enable us to create new user
