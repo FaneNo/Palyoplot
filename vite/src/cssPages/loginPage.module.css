@@ -1,5 +1,11 @@
+/* Reset styles for form elements */
+input, select, textarea, button {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-
+/* Container styling */
 .loginContainer {
   display: flex;
   flex-direction: column;
@@ -8,14 +14,16 @@
   min-height: 100vh;
   width: 100vw;
   padding-bottom: 250px;
-  background-color: #f7f0ea; /* Set the background color for the homepage */
+  background-color: #ece3d7;; /* Tan background color */
 }
 
+/* Title styling */
 .loginTitle {
   color: #120f0b;
   margin-bottom: 1em;
 }
 
+/* Form styling */
 .loginForm {
   width: 100%;
   max-width: 500px;
@@ -25,30 +33,47 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   margin-bottom: 2em;
+  background-color: #f7f0ea; /* Changed to tan background color */
 }
 
+/* Label styling */
 .loginLabel {
   color: #120f0b;
   display: block;
   margin-bottom: 0.5em;
-  text-align: left; /* Align the labels to the left */
+  text-align: left;
   font-weight: bold;
 }
 
+/* Input field styling */
 .loginInput,
 select {
   color: #120f0b;
-  background-color: #ffffff;
+  background-color: #ffffff; /* Keep inputs white for contrast */
   width: 100%;
   padding: 0.5em;
   margin-bottom: 1em;
   border: 1px solid #ccc;
   border-radius: 4px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: add a subtle shadow */
-  font-size: 16px; /* Increase font size */
+  font-size: 16px;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
+/* Change border and shadow color on focus */
+.loginInput:focus,
+select:focus {
+  border-color: #2c6fbb;
+  box-shadow: 0 0 5px rgba(44, 111, 187, 0.5);
+  outline: none;
+}
 
+/* Change border and shadow color on invalid input */
+.loginInput:invalid {
+  border-color: #2c6fbb;
+  box-shadow: 0 0 5px rgba(44, 111, 187, 0.5);
+}
+
+/* Button styling */
 .loginButton,
 .registerButton {
   width: 49%;
@@ -64,11 +89,21 @@ select {
 
 .loginButton:hover,
 .registerButton:hover {
-  background-color: #2c6fbb;
+  background-color: #225a9b;
 }
 
 .registerButton {
   margin-right: 0;
 }
 
+/* Forgot password link styling */
+.forgotPasswordLink {
+  color: #007bff;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.9em;
+}
 
+.forgotPasswordLink:hover {
+  color: #0056b3;
+}
