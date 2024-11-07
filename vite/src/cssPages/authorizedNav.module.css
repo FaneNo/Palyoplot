@@ -53,8 +53,8 @@
   
   
   .logout {
-    background-color: #8b6c5c; /* Changed button background color to #1D2951 */
-    color: white; /* Changed button text color to white */
+    background-color: #ececec; /* Changed button background color to #1D2951 */
+    color: black; /* Changed button text color to white */
     border: none;
     padding: 15px 32px;
     font-size: 16px;
@@ -68,8 +68,8 @@
   
  
   .logout:hover {
-    background-color: #e3ccb4; /* Changed button hover background color to #1E90FF */
-    color: white; /* Changed button hover text color to white */
+    background-color: #d0d0d0; /* Changed button hover background color to #1E90FF */
+    color: black; /* Changed button hover text color to white */
   }
   
   /* Change specific elements to white */
