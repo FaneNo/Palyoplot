@@ -36,23 +36,23 @@ Palyoplot is a web-based application originally developed as an R package by Dr.
 <p align="center">Homepage of Palyoplot with the Navigation Bar on top .</p>
 
 <p align="center">
-  <img src="images/Dashboard.png" alt="Website Dashboard" width="550" height="450">
+  <img src="images/Dashboard.png" alt="Website Dashboard" width="450" height="450">
 </p>
 <p align="center">Dashboard page with the graphing tool implemented using Plotly. Upload CSV file to create a graph with different customization tools.</p>
 
 <p align="center">
-  <img src="images/samplePlot.png" alt="Website Graph" width="750" height="400">
+  <img src="images/samplePlot.png" alt="Website Graph" width="850" height="300">
 </p>
 <p align="center">Graph created on the Dashboard page, including multiple Y-Axis and life form grouping.</p>
 
 <p align="center">
-  <img src="images/historytable.png" alt="Website History" width="600" height="250">
+  <img src="images/historytable.png" alt="Website History" width="700" height="150">
 </p>
 <p align="center">History table that keeps track of created graphs and saves them to the database.</p>
 
 ### Entity-Relationship Diagram
 <p align="center">
-  <img src="images/ERD.png" alt="ERD Diagram" width="550" height="550">
+  <img src="images/ERD.png" alt="ERD Diagram" width="600" height="550">
 </p>
 <p align="center">ERD of the database structure and relationship between entities.</p>
 
