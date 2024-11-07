@@ -5,7 +5,7 @@ import step1Image from "../assets/dashboard.png";
 import step2Image from "../assets/upload.png";
 import step3Image from "../assets/compatibleFile.png";
 import step4Image from "../assets/chooseGraph.png";
-import step5Image from "../assets/sampleResult.png";
+import step5Image from "../assets/samplePlot.png";
 
 
 const Step = ({ title, description, image }) => (
@@ -14,7 +14,7 @@ const Step = ({ title, description, image }) => (
       <h2 className={styles.BulletHeading}>{title}</h2>
       <p>{description}</p>
     </div>
-    <div className={styles.imageColumn}>
+    <div className={styles.tutorialimageColumn}>
       <img src={image} alt={title} className={styles.imageSample} />
     </div>
   </div>
