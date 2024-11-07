@@ -36,7 +36,7 @@ Palyoplot is a web-based application originally developed as an R package by Dr.
 <p align="center">Homepage of Palyoplot with the Navigation Bar on top .</p>
 
 <p align="center">
-  <img src="images/Dashboard.png" alt="Website Dashboard" width="450" height="450">
+  <img src="images/Dashboard.png" alt="Website Dashboard" width="450" height="550">
 </p>
 <p align="center">Dashboard page with the graphing tool implemented using Plotly. Upload CSV file to create a graph with different customization tools.</p>
 
@@ -46,7 +46,7 @@ Palyoplot is a web-based application originally developed as an R package by Dr.
 <p align="center">Graph created on the Dashboard page, including multiple Y-Axis and life form grouping.</p>
 
 <p align="center">
-  <img src="images/historytable.png" alt="Website History" width="700" height="150">
+  <img src="images/historytable.png" alt="Website History" width="800" height="100">
 </p>
 <p align="center">History table that keeps track of created graphs and saves them to the database.</p>
 
