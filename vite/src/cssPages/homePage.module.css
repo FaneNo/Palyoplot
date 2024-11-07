@@ -1,3 +1,4 @@
+/* Adjust overall body padding and alignment */
 .homePageBody {
   background-color: #f7f0ea;
   display: flex;
@@ -5,53 +6,114 @@
   align-items: center;
   min-height: 100vh;
   min-width: 100vw;
-  padding: 50px 0;
+  padding: 30px 20px; /* Reduced padding for better spacing */
+  flex-direction: column; /* Ensures proper stacking of elements */
 }
+
+/* Title Styling */
 .homeTitle {
-  margin-bottom: 0;
-  padding-bottom: 50px;
+  margin-bottom: 10px; /* Reduced spacing below the title */
+  padding-bottom: 15px; /* Adjusted for consistency */
+  font-size: 40px; /* Increased font size for better focus */
+  text-align: center; /* Center-align the title */
 }
+
+/* Description and text styling */
 .homeText {
-  padding: 20px;
+  padding: 10px 20px; /* Reduced padding for closer content placement */
+  font-size: 18px; /* Maintain font size for readability */
+  line-height: 1.8; /* Improve line spacing for readability */
+  text-align: center; /* Center-align text for better focus */
+  max-width: 800px; /* Limit text width for easier reading */
+  margin: 0 auto 30px; /* Add bottom margin to separate from next section */
 }
+
+/* Description section container */
 .homeDescrip {
-  width: 100vw;
-  padding: 50px;
+  width: 100%;
+  padding: 20px 50px; /* Adjusted padding for balanced spacing */
+  text-align: center; /* Center-align the entire section */
 }
+
+/* Columns Container */
 .columnsContainer {
   display: flex;
+  flex-wrap: wrap; /* Ensure responsiveness for smaller screens */
   width: 100%;
   align-items: flex-start;
-  justify-content: space-between;
-  padding: 100px;
+  justify-content: center; /* Center content horizontally */
+  gap: 40px; /* Increased gap between columns */
+  padding: 40px 0; /* Adjusted padding for balanced spacing */
 }
+
+/* Text Column */
 .textColumn {
   flex: 1;
+  max-width: 600px; /* Limit the text column width */
   padding-right: 20px;
+  text-align: left; /* Keep bullet points left-aligned */
 }
+
+/* Paragraph styling under each step heading */
+.textColumn p {
+  font-size: 18px; /* Adjust font size for better readability */
+  line-height: 1.6; /* Improve line spacing */
+  margin-top: 10px; /* Add space between heading and paragraph */
+  text-align: center; /* Center-align paragraph text */
+}
+
+/* Image Column */
 .imageColumn {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center; /* Center the image horizontally */
   flex: 1;
+  max-width: 1200px; /* Increase maximum width for the image container */
   padding-left: 20px;
+  margin-top: 25px; /* Slight overlap with the bullet section for balance */
 }
-.BulletHeading {
-  padding: 20px;
-}
-.bulletPoints {
-  list-style-type: disc;
+
+.tutorialimageColumn {
+  display: flex;
+  justify-content: center; /* Center the image horizontally */
+  flex: 1;
+  max-width: 500px; /* Increase maximum width for the image container */
   padding-left: 20px;
-  text-align: left;
+  margin-top: 25px; /* Slight overlap with the bullet section for balance */
 }
-.bulletPoints li {
-  margin-bottom: 10px;
-}
+
+/* Image Styling */
 .imageSample {
   height: auto;
   max-width: 100%;
+  width: 100%; /* Ensure the image takes full width of its container */
+  max-height: 600px; /* Increased height for better display */
+  object-fit: contain; /* Ensure the image scales well while maintaining aspect ratio */
+  border-radius: 8px; /* Optional rounded corners */
 }
-.BottomHeading{
+
+/* Bullet Points Section */
+.BulletHeading {
+  padding: 30px;
+  font-size: 24px; /* Adjust bullet section heading size */
+  text-align: center;
+  margin-top: 20px; /* Slightly closer to the previous text */
+}
+
+.bulletPoints {
+  list-style-type: disc;
+  padding-left: 40px; /* Slightly increased padding for better alignment */
+  text-align: left; /* Maintain left alignment for bullet points */
+}
+
+.bulletPoints li {
+  margin-bottom: 15px;
+  font-size: 18px; /* Increase font size for readability */
+}
+
+/* Bottom heading styling */
+.BottomHeading {
   text-align: center;
   width: 100%;
-  font-size: 32px;
+  font-size: 30px; /* Slightly increased font size */
+  margin-top: 50px; /* Add spacing above the bottom heading */
 }
