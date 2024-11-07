@@ -46,7 +46,7 @@ Palyoplot is a web-based application originally developed as an R package by Dr.
 <p align="center">Graph created on the Dashboard page, including multiple Y-Axis and life form grouping.</p>
 
 <p align="center">
-  <img src="images/historypage.png" alt="Website History" width="800" height="450">
+  <img src="images/historypage.png" alt="Website History" width="900" height="450">
 </p>
 <p align="center">History table that keeps track of created graphs and saves them to the database.</p>
 
