@@ -427,3 +427,200 @@
   transform: rotate(-45deg);
   text-anchor: end;
 }
+
+.controlsContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px; /* Space between the columns */
+  margin-top: 20px;
+}
+
+.controlsColumn {
+  flex: 1; /* Each column takes equal space */
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Space between controls within a column */
+}
+
+.controlsHeader {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.controlGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.labelText {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.graphInput {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Center the overall assignment component */
+.taxaLifeFormAssignmentWrapper {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.taxaLifeFormAssignment {
+  width: 60%; /* Adjust width as needed */
+}
+
+.taxaTitle {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 15px;
+  white-space: nowrap; /* Ensure title stays on one line */
+}
+
+.taxaLifeFormTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+.taxaLifeFormTable th,
+.taxaLifeFormTable td {
+  padding: 10px;
+  text-align: left;
+}
+
+.headerTaxa,
+.headerLifeForm {
+  text-align: center; /* Ensure column headers are centered */
+}
+
+.lifeFormSelect {
+  width: 150px; /* Adjust this to ensure more words are visible */
+  min-width: 150px; /* Prevent dropdown from collapsing */
+  max-width: 200px;
+  padding: 5px;
+}
+
+.taxaLifeFormTable th {
+  white-space: nowrap; /* Prevent header titles from wrapping */
+  font-weight: bold;
+}
+.addLifeForm {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between input, color picker, and button */
+  margin-top: 10px;
+}
+
+.lifeFormInput {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  flex: 1;
+  font-size: 14px;
+}
+
+.colorPicker {
+  width: 40px;
+  height: 30px;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.addLifeFormButton {
+  background-color: #2c6fbb;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.addLifeFormButton:hover {
+  background-color: #1c4f8b;
+}
+
+.addLifeFormButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.hideButton {
+  background-color: #d9534f; /* Red color for hide buttons */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.hideButton:hover {
+  background-color: #c9302c; /* Darker red on hover */
+}
+.graphingToolsWrapper {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.graphingToolsTitle {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+/* Control group container */
+.controlGroup {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px; /* Adjust to increase or decrease space */
+  gap: 5px; /* Space between the label and the input field */
+}
+
+/* Label text for controls */
+.labelText {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 5px; /* Space below the label */
+  text-align: center; /* Center-align text if necessary */
+}
+
+/* Graph input fields and dropdowns */
+.graphInput {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%; /* Adjusts to fit within the container */
+  text-align: center; /* Center text within dropdowns or inputs */
+}
+
+/* Styles for the Reverse Y-Axis checkbox */
+input[type="checkbox"] {
+  width: 20px;  /* Adjust width as needed */
+  height: 20px; /* Adjust height as needed */
+  vertical-align: middle; /* Center-align the checkbox */
+  cursor: pointer; /* Change cursor to pointer on hover */
+}
+/* Container for Reverse Y-Axis */
+.reverseYAxisContainer {
+  display: flex;
+  align-items: center; /* Vertically center the label and checkbox */
+  justify-content: center; /* Center horizontally within the container */
+  gap: 10px; /* Space between label and checkbox */
+  width: 100%; /* Ensure full container width */
+}
+
+/* Checkbox styles for size consistency */
+.reverseYAxisCheckbox {
+  width: 20px;  /* Adjust width */
+  height: 20px; /* Adjust height */
+  cursor: pointer;
+}
