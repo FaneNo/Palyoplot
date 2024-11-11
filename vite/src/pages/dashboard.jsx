@@ -1340,9 +1340,7 @@ function Dashboard() {
                             </button>
                             <button
                               onClick={() =>
-                                setShowLifeFormAssignment(
-                                  !showLifeFormAssignment
-                                )
+                                setShowLifeFormAssignment(!showLifeFormAssignment)
                               }
                               className={`${styles.customFileButton} ${
                                 showLifeFormAssignment ? styles.hideButton : ""
@@ -1432,7 +1430,7 @@ function Dashboard() {
                             ))}
                           </select>
                         </div>
-
+  
                         <div className={styles.controlGroup}>
                           <label className={styles.labelText}>
                             Y-Axis Label
@@ -1452,7 +1450,9 @@ function Dashboard() {
                           </label>
                           <select
                             value={secondYAxisColumn}
-                            onChange={(e) => setSecondYAxisColumn(e.target.value)}
+                            onChange={(e) =>
+                              setSecondYAxisColumn(e.target.value)
+                            }
                             className={styles.graphInput}
                           >
                             <option value="">Select Column</option>
@@ -1481,18 +1481,19 @@ function Dashboard() {
                           </div>
                         )}
   
-  <div className={styles.reverseYAxisContainer}>
-  <label className={styles.labelText}>Reverse Y-Axis</label>
-  <input
-    type="checkbox"
-    checked={reverseYAxis}
-    onChange={(e) => setReverseYAxis(e.target.checked)}
-    className={styles.reverseYAxisCheckbox}
-  />
-</div>
-
-
-
+                        <div className={styles.reverseYAxisContainer}>
+                          <label className={styles.labelText}>
+                            Reverse Y-Axis
+                          </label>
+                          <input
+                            type="checkbox"
+                            checked={reverseYAxis}
+                            onChange={(e) =>
+                              setReverseYAxis(e.target.checked)
+                            }
+                            className={styles.reverseYAxisCheckbox}
+                          />
+                        </div>
                       </div>
   
                       {/* Right Column: X-Axis and Plot Settings */}
@@ -1537,7 +1538,9 @@ function Dashboard() {
                         </div>
   
                         <div className={styles.controlGroup}>
-                          <label className={styles.labelText}>Orientation </label>
+                          <label className={styles.labelText}>
+                            Orientation
+                          </label>
                           <select
                             value={orientation}
                             onChange={(e) => setOrientation(e.target.value)}
@@ -1560,6 +1563,7 @@ function Dashboard() {
                       </button>
                     </div>
   
+                    {/* Alert Message */}
                     {availableTaxa.length === 0 && (
                       <div className={styles.alertMessage}>
                         Please upload the Data CSV file to proceed.
@@ -1572,22 +1576,70 @@ function Dashboard() {
           </div>
         </div>
   
-        {/* Modals */}
+        {/* Download Modal */}
         {modalOpen && (
           <div className={styles.modal}>
-            <div className={styles.modalContent}>{/* Modal Content */}</div>
+            <div className={styles.modalContent}>
+              <h2>Download Graph</h2>
+              <div className={styles.resolutionWrapper}>
+                <div className={styles.imageFormatWrapper}>
+                  <div className={styles.labelText}>Select Image Format:</div>
+                  <select
+                    value={imageFormat}
+                    onChange={(e) => setImageFormat(e.target.value)}
+                    className={styles.graphTypeDropdown}
+                  >
+                    <option value="png">PNG</option>
+                    <option value="jpeg">JPEG</option>
+                  </select>
+                </div>
+                <div className={styles.labelText}>Select Resolution:</div>
+                <select
+                  value={resolution}
+                  onChange={(e) => setResolution(e.target.value)}
+                  className={styles.graphTypeDropdown}
+                >
+                  <option value="Medium">Medium (1600x1200)</option>
+                  <option value="Large">Large (1920x1080)</option>
+                </select>
+              </div>
+              <button
+                onClick={downloadGraph}
+                className={styles.modalDownloadButton}
+              >
+                Confirm Download
+              </button>
+              <button
+                onClick={() => setModalOpen(false)}
+                className={styles.modalCloseButton}
+              >
+                Close
+              </button>
+            </div>
           </div>
         )}
   
+        {/* Warning Modal */}
         {showWarning && (
           <div className={styles.warningModal}>
-            <div className={styles.warningModalContent}>{/* Warning Modal */}</div>
+            <div className={styles.warningModalContent}>
+              <h2>No Data Available</h2>
+              <p>
+                Please upload the required CSV file and generate a graph before
+                downloading.
+              </p>
+              <button
+                onClick={handleCloseWarning}
+                className={styles.warningCloseButton}
+              >
+                Close
+              </button>
+            </div>
           </div>
         )}
       </div>
     </>
   );
-  
   
 } 
 
