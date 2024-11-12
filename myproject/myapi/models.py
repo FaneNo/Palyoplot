@@ -24,7 +24,7 @@ class Dataset(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     # Image data
-    image_data = models.ImageField(upload_to='images/') # Store in images directory
+    image_data = models.ImageField(upload_to='images/', null=False, blank=True, default=b'') # Store in images directory
 
     def __str__(self):
         return self.title
