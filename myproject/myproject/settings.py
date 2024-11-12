@@ -14,6 +14,7 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv;
 import os
+import sys # having trouble logging into mariadb root, this works for now hopefully
 # from myapi.database import database
 
 load_dotenv()
@@ -132,6 +133,12 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',
+    }
 
 
 # Password validation
