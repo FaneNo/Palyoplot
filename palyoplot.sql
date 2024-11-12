@@ -187,6 +187,36 @@ LOCK TABLES `auth_user_user_permissions` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `csv_files`
+--
+
+DROP TABLE IF EXISTS `csv_files`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `csv_files` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `display_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `upload_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `row_count` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `csv_files_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `csv_files`
+--
+
+LOCK TABLES `csv_files` WRITE;
+/*!40000 ALTER TABLE `csv_files` DISABLE KEYS */;
+INSERT INTO `csv_files` VALUES (7,1,1,'data_Pollen.csv','2024-10-18 07:18:48',44);
+/*!40000 ALTER TABLE `csv_files` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `csv_columns`
 --
 
@@ -246,35 +276,6 @@ INSERT INTO `csv_data` VALUES (1,7,1,1,'1'),(2,7,1,2,'-61'),(3,7,1,3,'0'),(4,7,1
 /*!40000 ALTER TABLE `csv_data` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- Table structure for table `csv_files`
---
-
-DROP TABLE IF EXISTS `csv_files`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `csv_files` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `display_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `file_name` varchar(255) NOT NULL,
-  `upload_date` timestamp NOT NULL DEFAULT current_timestamp(),
-  `row_count` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `csv_files_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `csv_files`
---
-
-LOCK TABLES `csv_files` WRITE;
-/*!40000 ALTER TABLE `csv_files` DISABLE KEYS */;
-INSERT INTO `csv_files` VALUES (7,1,1,'data_Pollen.csv','2024-10-18 07:18:48',44);
-/*!40000 ALTER TABLE `csv_files` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `django_admin_log`
