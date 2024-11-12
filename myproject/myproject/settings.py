@@ -28,7 +28,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
-
+FRONTEND_URL = os.getenv("FRONTEND_URL",)
+VITE_API_URL = os.getenv("VITE_API_URL") #backend?
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -48,6 +49,7 @@ REST_FRAMEWORK = {
 
 # Uses example email, testing
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+LOGIN_URL = f"{FRONTEND_URL}/login"
 
 # IRT might have to do this part, they probably dont want to give us access to their email server
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -94,7 +96,7 @@ ROOT_URLCONF = 'myproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        #'DIRS': [BASE_DIR / "templates"], for testing, templates/registrion/password_reset_do.. not func
+        'DIRS': [BASE_DIR / "templates"], # for testing, templates/registrion/password_reset_do.. not func
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
