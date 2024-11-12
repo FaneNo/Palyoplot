@@ -5,10 +5,12 @@ import "../cssPages/historyTable.css";
 
 function DataTable() {
   const [data, setData] = useState([]);
+  const [images, setImages] = useState([])
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
+    fetchImageData();
   }, []);
 
   const fetchData = async () => {
@@ -17,6 +19,22 @@ function DataTable() {
       setData(response.data);
     } catch (error) {
       console.error("Error fetching data", error);
+    }
+  };
+
+  const fetchImageData = async () => {
+    const token = localStorage.getItem("accessToken");
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/get-uploaded-images/", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      setImages(data);
+    } catch(error) {
+      console.error("Error fetching images:", error);
     }
   };
 
@@ -81,47 +99,109 @@ function DataTable() {
     }
   };
 
+  // return (
+  //   <table className="table">
+  //     <thead>
+  //       <tr>
+  //         <th className="id-column">ID</th>
+  //         <th className="date-column">Date Created</th>
+  //         <th className="csv-column">File</th>
+  //         <th className="graph-column">Graph</th>
+  //         <th className="delete-column">Delete</th>
+  //       </tr>
+  //     </thead>
+  //     <tbody>
+  //       {data.map((row) => (
+  //         <tr key={row.id}>
+  //           <td className="id-column">{row.display_id}</td>
+  //           <td className="date-column">
+  //             {new Date(row.upload_date).toLocaleString()}
+  //           </td>
+  //           <td className="csv-column">
+  //             <span className="csv-link">{row.file_name}</span>
+  //           </td>
+  //           <td className="graph-column">
+  //             <button
+  //               className="graph-btn"
+  //               onClick={() => handleGraphClick(row.id)}
+  //             >
+  //               Graph Now
+  //             </button>
+  //           </td>
+  //           <td className="delete-column">
+  //             <button
+  //               className="delete-btn"
+  //               onClick={() => handleDelete(row.id)}
+  //             >
+  //               ❌
+  //             </button>
+  //           </td>
+  //         </tr>
+  //       ))}
+  //     </tbody>
+  //   </table>
+  // );
+
   return (
-    <table className="table">
-      <thead>
-        <tr>
-          <th className="id-column">ID</th>
-          <th className="date-column">Date Created</th>
-          <th className="csv-column">File</th>
-          <th className="graph-column">Graph</th>
-          <th className="delete-column">Delete</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((row) => (
-          <tr key={row.id}>
-            <td className="id-column">{row.display_id}</td>
-            <td className="date-column">
-              {new Date(row.upload_date).toLocaleString()}
-            </td>
-            <td className="csv-column">
-              <span className="csv-link">{row.file_name}</span>
-            </td>
-            <td className="graph-column">
-              <button
-                className="graph-btn"
-                onClick={() => handleGraphClick(row.id)}
-              >
-                Graph Now
-              </button>
-            </td>
-            <td className="delete-column">
-              <button
-                className="delete-btn"
-                onClick={() => handleDelete(row.id)}
-              >
-                ❌
-              </button>
-            </td>
+    <div>
+      <h2>Uploaded Files</h2>
+      {/* Table for CSV Data */}
+      <table className="table">
+        <thead>
+          <tr>
+            <th className="id-column">ID</th>
+            <th className="date-column">Date Created</th>
+            <th className="csv-column">File</th>
+            <th className="graph-column">Graph</th>
+            <th className="delete-column">Delete</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {data.map((row) => (
+            <tr key={row.id}>
+              <td className="id-column">{row.display_id}</td>
+              <td className="date-column">
+                {new Date(row.upload_date).toLocaleString()}
+              </td>
+              <td className="csv-column">
+                <span className="csv-link">{row.file_name}</span>
+              </td>
+              <td className="graph-column">
+                <button className="graph-btn" onClick={() => handleGraphClick(row.id)}>
+                  Graph Now
+                </button>
+              </td>
+              <td className="delete-column">
+                <button className="delete-btn" onClick={() => handleDelete(row.id)}>
+                  ❌
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Section for Uploaded Images */}
+      <h2>Uploaded Graph Images</h2>
+      <div className="image-gallery">
+        {images.length > 0 ? (
+          images.map((img) => (
+            <div key={img.id} className="image-container">
+              <img
+                src={`http://127.0.0.1:8000/media/${img.image_data}`}
+                alt="Graph"
+                className="uploaded-image"
+              />
+              <a href={`http://127.0.0.1:8000/media/${img.image_data}`} download>
+                Download
+              </a>
+            </div>
+          ))
+        ) : (
+          <p>No images uploaded yet.</p>
+        )}
+      </div>
+    </div>
   );
 }
 
