@@ -47,12 +47,15 @@ REST_FRAMEWORK = {
 }
 
 # Uses example email, testing
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.example.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'your-email@example.com'
-EMAIL_HOST_PASSWORD = 'your-email-password'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# IRT might have to do this part, they probably dont want to give us access to their email server
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_HOST = 'smtp.example.com'
+#EMAIL_PORT = 587
+#EMAIL_USE_TLS = True
+#EMAIL_HOST_USER = 'your-email@example.com'
+#EMAIL_HOST_PASSWORD = 'your-email-password'
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
@@ -91,7 +94,7 @@ ROOT_URLCONF = 'myproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates"],
+        #'DIRS': [BASE_DIR / "templates"], for testing, templates/registrion/password_reset_do.. not func
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
