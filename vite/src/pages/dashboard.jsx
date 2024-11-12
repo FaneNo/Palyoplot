@@ -40,8 +40,8 @@ function TaxaSelection({
 
       // Swap taxa positions
       [taxaList[index], taxaList[targetIndex]] = [
-        taxaList[targetIndex], 
-        taxaList[index]
+        taxaList[targetIndex],
+        taxaList[index],
       ];
       newOrder[lifeFormId] = taxaList;
       return newOrder;
@@ -164,19 +164,22 @@ function LifeFormColorAssignment({
   lifeFormGroups,
   setLifeFormGroups,
   setTaxaLifeFormAssignments,
+  lifeFormCounter,
+  setLifeFormCounter,
 }) {
   const [newLifeFormName, setNewLifeFormName] = useState("");
   const [newLifeFormColor, setNewLifeFormColor] = useState("#000000");
 
   const handleAddLifeForm = () => {
     const newLifeForm = {
-      life_id: `lf${lifeFormGroups.length + 1}`,
+      life_id: `lf${lifeFormCounter + 1}`,
       life_name: newLifeFormName,
       color: newLifeFormColor,
     };
     setLifeFormGroups([...lifeFormGroups, newLifeForm]);
     setNewLifeFormName("");
     setNewLifeFormColor("#000000");
+    setLifeFormCounter(lifeFormCounter + 1);
   };
 
   const handleRemoveLifeForm = (index) => {
@@ -272,24 +275,23 @@ function LifeFormColorAssignment({
       </table>
       <h4>Add New Life Form</h4>
       <div className={styles.addLifeForm}>
-  <input
-    type="text"
-    value={newLifeFormName}
-    onChange={(e) => setNewLifeFormName(e.target.value)}
-    placeholder="Life Form Name"
-    className={styles.lifeFormInput}
-  />
-  <input
-    type="color"
-    value={newLifeFormColor}
-    onChange={(e) => setNewLifeFormColor(e.target.value)}
-    className={styles.colorPicker}
-  />
-  <button onClick={handleAddLifeForm} className={styles.addLifeFormButton}>
-    Add Life Form
-  </button>
-</div>
-
+        <input
+          type="text"
+          value={newLifeFormName}
+          onChange={(e) => setNewLifeFormName(e.target.value)}
+          placeholder="Life Form Name"
+          className={styles.lifeFormInput}
+        />
+        <input
+          type="color"
+          value={newLifeFormColor}
+          onChange={(e) => setNewLifeFormColor(e.target.value)}
+          className={styles.colorPicker}
+        />
+        <button onClick={handleAddLifeForm} className={styles.addLifeFormButton}>
+          Add Life Form
+        </button>
+      </div>
     </div>
   );
 }
@@ -348,14 +350,11 @@ function TaxaLifeFormAssignment({
   );
 }
 
-
 const excludedColumns = [];
 
 function Dashboard() {
   const location = useLocation();
   const autoGraphData = location.state?.autoGraphData;
-
-  // const excludedColumns = ["age", "adj_depth", "core_depth"];
 
   // State variables
   const [csvDataSets, setCsvDataSets] = useState([]);
@@ -407,8 +406,11 @@ function Dashboard() {
   // New State for Authentication Token
   const [authToken, setAuthToken] = useState(localStorage.getItem("accessToken"));
 
-  // New State variable to keep track of taxa roder within life form
+  // New State variable to keep track of taxa order within life form
   const [taxaOrder, setTaxaOrder] = useState({});
+
+  // State variable to keep track of life form counter
+  const [lifeFormCounter, setLifeFormCounter] = useState(3);
 
   // Function to handle the main data CSV selection
   const handleFileChange = (event) => {
@@ -531,7 +533,6 @@ function Dashboard() {
     }
   };
 
-
   // Handle auto-graphing
   useEffect(() => {
     if (autoGraphData) {
@@ -616,7 +617,6 @@ function Dashboard() {
       return newAssignments;
     });
   }, [availableTaxa, excludedColumns]);
-  
 
   // Prepare data for plotting
   useEffect(() => {
@@ -678,7 +678,7 @@ function Dashboard() {
 
     // Filter csvDataSets to only include selected taxa
     const filteredCsvDataSets = csvDataSets.filter((dataset) =>
-    selectedTaxa.includes(dataset.speciesName)
+      selectedTaxa.includes(dataset.speciesName)
     );
 
     const plotData = [];
@@ -1280,7 +1280,7 @@ function Dashboard() {
                       useResizeHandler={true}
                       style={{ width: "100%" }}
                     />
-  
+
                     <div className={styles.uploadButtonWrapper}>
                       {/* File Upload Buttons */}
                       <div className={styles.horizontalButtons}>
@@ -1316,12 +1316,12 @@ function Dashboard() {
                           Upload Graph Image
                         </button>
                       </div>
-  
+
                       {/* Graphing Tools Title */}
                       <h2 className={styles.graphingToolsTitle}>
                         Graphing Tools
                       </h2>
-  
+
                       {/* Toolbar Buttons */}
                       <div className={styles.assignmentButtons}>
                         {availableTaxa.length > 0 && (
@@ -1340,9 +1340,7 @@ function Dashboard() {
                             </button>
                             <button
                               onClick={() =>
-                                setShowLifeFormAssignment(
-                                  !showLifeFormAssignment
-                                )
+                                setShowLifeFormAssignment(!showLifeFormAssignment)
                               }
                               className={`${styles.customFileButton} ${
                                 showLifeFormAssignment ? styles.hideButton : ""
@@ -1368,7 +1366,7 @@ function Dashboard() {
                         )}
                       </div>
                     </div>
-  
+
                     {/* Taxa Selection Component */}
                     {showTaxaSelection && (
                       <div className={styles.taxaSelectionSection}>
@@ -1388,16 +1386,18 @@ function Dashboard() {
                         />
                       </div>
                     )}
-  
+
                     {/* Life Form Color and Name Assignment Component */}
                     {showLifeFormAssignment && (
                       <LifeFormColorAssignment
                         lifeFormGroups={lifeFormGroups}
                         setLifeFormGroups={setLifeFormGroups}
                         setTaxaLifeFormAssignments={setTaxaLifeFormAssignments}
+                        lifeFormCounter={lifeFormCounter}
+                        setLifeFormCounter={setLifeFormCounter}
                       />
                     )}
-  
+
                     {/* Taxa Life Form Assignment Component */}
                     {showTaxaAssignment && availableTaxa.length > 0 && (
                       <TaxaLifeFormAssignment
@@ -1410,7 +1410,7 @@ function Dashboard() {
                         excludedColumns={excludedColumns}
                       />
                     )}
-  
+
                     {/* Controls Section */}
                     <div className={styles.controlsContainer}>
                       {/* Left Column: Y-Axis Settings */}
@@ -1445,14 +1445,16 @@ function Dashboard() {
                             placeholder="Enter Y-axis label"
                           />
                         </div>
-  
+
                         <div className={styles.controlGroup}>
                           <label className={styles.labelText}>
                             Second Y-Axis Column
                           </label>
                           <select
                             value={secondYAxisColumn}
-                            onChange={(e) => setSecondYAxisColumn(e.target.value)}
+                            onChange={(e) =>
+                              setSecondYAxisColumn(e.target.value)
+                            }
                             className={styles.graphInput}
                           >
                             <option value="">Select Column</option>
@@ -1463,7 +1465,7 @@ function Dashboard() {
                             ))}
                           </select>
                         </div>
-  
+
                         {secondYAxisColumn && (
                           <div className={styles.controlGroup}>
                             <label className={styles.labelText}>
@@ -1480,21 +1482,22 @@ function Dashboard() {
                             />
                           </div>
                         )}
-  
-  <div className={styles.reverseYAxisContainer}>
-  <label className={styles.labelText}>Reverse Y-Axis</label>
-  <input
-    type="checkbox"
-    checked={reverseYAxis}
-    onChange={(e) => setReverseYAxis(e.target.checked)}
-    className={styles.reverseYAxisCheckbox}
-  />
-</div>
 
-
-
+                        <div className={styles.reverseYAxisContainer}>
+                          <label className={styles.labelText}>
+                            Reverse Y-Axis
+                          </label>
+                          <input
+                            type="checkbox"
+                            checked={reverseYAxis}
+                            onChange={(e) =>
+                              setReverseYAxis(e.target.checked)
+                            }
+                            className={styles.reverseYAxisCheckbox}
+                          />
+                        </div>
                       </div>
-  
+
                       {/* Right Column: X-Axis and Plot Settings */}
                       <div className={styles.controlsColumnRight}>
                         <div className={styles.controlGroup}>
@@ -1509,7 +1512,7 @@ function Dashboard() {
                             placeholder="Enter Graph Title"
                           />
                         </div>
-  
+
                         <div className={styles.controlGroup}>
                           <label className={styles.labelText}>
                             X-Axis Label
@@ -1522,7 +1525,7 @@ function Dashboard() {
                             placeholder="Enter X-axis label"
                           />
                         </div>
-  
+
                         <div className={styles.controlGroup}>
                           <label className={styles.labelText}>Plot Type</label>
                           <select
@@ -1535,9 +1538,11 @@ function Dashboard() {
                             <option value="area">Area</option>
                           </select>
                         </div>
-  
+
                         <div className={styles.controlGroup}>
-                          <label className={styles.labelText}>Orientation </label>
+                          <label className={styles.labelText}>
+                            Orientation
+                          </label>
                           <select
                             value={orientation}
                             onChange={(e) => setOrientation(e.target.value)}
@@ -1549,7 +1554,7 @@ function Dashboard() {
                         </div>
                       </div>
                     </div>
-  
+
                     {/* Download Button */}
                     <div className={styles.downloadButtonWrapper}>
                       <button
@@ -1559,7 +1564,8 @@ function Dashboard() {
                         Download Graph
                       </button>
                     </div>
-  
+
+                    {/* Alert Message */}
                     {availableTaxa.length === 0 && (
                       <div className={styles.alertMessage}>
                         Please upload the Data CSV file to proceed.
@@ -1571,24 +1577,71 @@ function Dashboard() {
             </div>
           </div>
         </div>
-  
-        {/* Modals */}
+
+        {/* Download Modal */}
         {modalOpen && (
           <div className={styles.modal}>
-            <div className={styles.modalContent}>{/* Modal Content */}</div>
+            <div className={styles.modalContent}>
+              <h2>Download Graph</h2>
+              <div className={styles.resolutionWrapper}>
+                <div className={styles.imageFormatWrapper}>
+                  <div className={styles.labelText}>Select Image Format:</div>
+                  <select
+                    value={imageFormat}
+                    onChange={(e) => setImageFormat(e.target.value)}
+                    className={styles.graphTypeDropdown}
+                  >
+                    <option value="png">PNG</option>
+                    <option value="jpeg">JPEG</option>
+                  </select>
+                </div>
+                <div className={styles.labelText}>Select Resolution:</div>
+                <select
+                  value={resolution}
+                  onChange={(e) => setResolution(e.target.value)}
+                  className={styles.graphTypeDropdown}
+                >
+                  <option value="Medium">Medium (1600x1200)</option>
+                  <option value="Large">Large (1920x1080)</option>
+                </select>
+              </div>
+              <button
+                onClick={downloadGraph}
+                className={styles.modalDownloadButton}
+              >
+                Confirm Download
+              </button>
+              <button
+                onClick={() => setModalOpen(false)}
+                className={styles.modalCloseButton}
+              >
+                Close
+              </button>
+            </div>
           </div>
         )}
-  
+
+        {/* Warning Modal */}
         {showWarning && (
           <div className={styles.warningModal}>
-            <div className={styles.warningModalContent}>{/* Warning Modal */}</div>
+            <div className={styles.warningModalContent}>
+              <h2>No Data Available</h2>
+              <p>
+                Please upload the required CSV file and generate a graph before
+                downloading.
+              </p>
+              <button
+                onClick={handleCloseWarning}
+                className={styles.warningCloseButton}
+              >
+                Close
+              </button>
+            </div>
           </div>
         )}
       </div>
     </>
   );
-  
-  
-} 
+}
 
 export default Dashboard;
