@@ -106,49 +106,6 @@ function DataTable() {
     }
   };
 
-  // return (
-  //   <table className="table">
-  //     <thead>
-  //       <tr>
-  //         <th className="id-column">ID</th>
-  //         <th className="date-column">Date Created</th>
-  //         <th className="csv-column">File</th>
-  //         <th className="graph-column">Graph</th>
-  //         <th className="delete-column">Delete</th>
-  //       </tr>
-  //     </thead>
-  //     <tbody>
-  //       {data.map((row) => (
-  //         <tr key={row.id}>
-  //           <td className="id-column">{row.display_id}</td>
-  //           <td className="date-column">
-  //             {new Date(row.upload_date).toLocaleString()}
-  //           </td>
-  //           <td className="csv-column">
-  //             <span className="csv-link">{row.file_name}</span>
-  //           </td>
-  //           <td className="graph-column">
-  //             <button
-  //               className="graph-btn"
-  //               onClick={() => handleGraphClick(row.id)}
-  //             >
-  //               Graph Now
-  //             </button>
-  //           </td>
-  //           <td className="delete-column">
-  //             <button
-  //               className="delete-btn"
-  //               onClick={() => handleDelete(row.id)}
-  //             >
-  //               ❌
-  //             </button>
-  //           </td>
-  //         </tr>
-  //       ))}
-  //     </tbody>
-  //   </table>
-  // );
-
   return (
     <div>
       <h2>Uploaded Files</h2>
@@ -196,7 +153,6 @@ function DataTable() {
             <div key={img.id} className="image-container">
               <img
                 src={`http://127.0.0.1:8000${img.image_data}`}
-                //src={img.image_data}
                 alt="Graph"
                 className="uploaded-image"
                 

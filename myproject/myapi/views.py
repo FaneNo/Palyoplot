@@ -142,8 +142,6 @@ def get_uploaded_images(request):
         return Response({"error": "Unauthorized"}, status=401)
     
     images = Dataset.objects.filter(user=request.user)
-    # serializer = ImageSerializer(images, many=True)
-    # return Response(serializer.data)
     image_list = [
         {"id": img.id, "image_data": img.image_data.url} for img in images
     ]
