@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from rest_framework import generics
-from .serializers import UserSerializer, CSVFileSer
+from .serializers import UserSerializer, CSVFileSer, ImageSerializer
 from .models import CSVFile, Dataset
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -133,6 +133,20 @@ def upload_graph_image(request):
     dataset.save()
 
     return Response({"message": "Image uploaded successfully"})
+
+# Fetch uploaded images for user
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_uploaded_images(request):
+    user = request.user
+    if not request.user.is_authenticated:
+        return Response({"error": "Unauthorized"}, status=401)
+    
+    images = Dataset.objects.filter(user=request.user)
+    image_list = [
+        {"id": img.id, "image_data": img.image_data.url} for img in images
+    ]
+    return Response(image_list)
 
 
 @api_view(['POST'])

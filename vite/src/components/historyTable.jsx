@@ -2,15 +2,18 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 import "../cssPages/historyTable.css";
+import { ACCESS_TOKEN } from "../token";
 
 const DataTable = () => {
   const [data, setData] = useState([]);
+  const [images, setImages] = useState([])
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
+    fetchImageData();
   }, []);
 
   const fetchData = async () => {
@@ -26,6 +29,34 @@ const DataTable = () => {
     }
   };
 
+  const fetchImageData = async () => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/get-uploaded-images/", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if (response.status === 401) {
+        console.error("Unauthorized: Invalid token");
+        return;
+      }
+
+      const data = await response.json();
+      setImages(data);
+    } catch(error) {
+      console.error("Error fetching images:", error);
+    }
+  };
+
+  const handleDownload = (id) => {
+    console.log(`Download data for id: ${id}`);
+    navigate("/dashboard");
+  };
+  
+  //get the data to graph
   const handleGraphClick = async (id) => {
     try {
       const response = await api.get(`/api/graph-data/${id}/`);
@@ -95,6 +126,8 @@ const DataTable = () => {
 
   return (
     <div className="history-table-container">
+      {/* Table for CSV Data */}
+      <h2>Uploaded CSV Files</h2>
       <table className="history-table">
         <thead>
           <tr>
@@ -111,26 +144,65 @@ const DataTable = () => {
               <td>{row.display_id}</td>
               <td>{new Date(row.upload_date).toLocaleString()}</td>
               <td>
-                <span 
+                <span
                   className="file-link"
                   onClick={() => handleGraphClick(row.id)}
                 >
                   {row.file_name}
                 </span>
               </td>
-              <td className="graph-column">
-                {/* Graph column left intentionally empty */}
+              <td>
+                <button className="graph-btn" onClick={() => handleGraphClick(row.id)}>
+                  Graph Now
+                </button>
               </td>
               <td>
-                <button
-                  className="delete-button"
-                  onClick={() => handleDelete(row.id)}
-                >
+                <button className="delete-btn" onClick={() => handleDelete(row.id)}>
                   ❌
                 </button>
               </td>
             </tr>
           ))}
+        </tbody>
+      </table>
+
+      {/* Section for Uploaded Images */}
+      <h2>Uploaded Graph Images</h2>
+      <table className="history-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Image</th>
+            <th>Download</th>
+          </tr>
+        </thead>
+        <tbody>
+          {images.length > 0 ? (
+            images.map((img) => (
+              <tr key={img.id}>
+                <td>{img.id}</td>
+                <td>
+                  <img
+                    src={`http://127.0.0.1:8000${img.image_data}`}
+                    alt="Graph"
+                    className="uploaded-image"
+                  />
+                </td>
+                <td>
+                  <a
+                    href={`http://127.0.0.1:8000${img.image_data}`}
+                    download
+                  >
+                    Download
+                  </a>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="3">No images uploaded yet.</td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
