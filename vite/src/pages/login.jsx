@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import { useNavigate,Navigate } from "react-router-dom"; // Import useNavigate
+import React, { useState, useContext } from "react";
+import { useNavigate, } from "react-router-dom"; // Import useNavigate
 import styles from "../cssPages/loginPage.module.css";
-import { ACCESS_TOKEN,REFRESH_TOKEN } from "../token";
 import api from "../api";
+import { AuthContext } from "../contexts/authContext";
+
 
 
 function Login() {
@@ -10,30 +11,28 @@ function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate(); // Create a navigate function
+  const { login } = useContext(AuthContext);
 
   const handleSubmit = async (event) => {
     setLoading(true);
     event.preventDefault();
-    console.log({
-      username,
-      password,
-    });
-   
+
     try {
-      const res = await api.post("/api/token/", {username, password})
-      localStorage.setItem(ACCESS_TOKEN, res.data.access);
-      localStorage.setItem(REFRESH_TOKEN, res.data.access);
+      const res = await api.post("/api/token/", { username, password });
+      const accessToken = res.data.access;
+      const refreshToken = res.data.refresh;
+  
+      login(accessToken, refreshToken); // Use login function from AuthContext
+  
       navigate("/");
     } catch (error) {
-      alert(error)
-    } finally{
-      setLoading(false)
+      alert(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <>
-   
     <div className={styles.loginBackground}>
       <div className={styles.loginContainer}>
         <form onSubmit={handleSubmit} className={styles.loginForm}>
@@ -61,8 +60,8 @@ function Login() {
             />
           </div>
           <div className={styles.formGroup}>
-            <button type="submit" className={styles.loginButton}>
-              Login
+            <button type="submit" className={styles.loginButton} disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
             </button>
             <button
               type="button"
@@ -73,19 +72,17 @@ function Login() {
             </button>
           </div>
           <div className={styles.formGroup}>
-              <button
-                type="button"
-                className={styles.registerButton}
-                onClick={() => window.location.href = "http://127.0.0.1:8000/password-reset/"}
-              >
-                Forgot Password?
-              </button>
-            </div>
+  <a
+    href={`${import.meta.env.VITE_API_URL}/password-reset`}
+    className={styles.forgotPasswordLink}
+  >
+    Forgot Password?
+  </a>
+</div>
+
         </form>
       </div>
     </div>
-    
-    </>
   );
 }
 

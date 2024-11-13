@@ -40,8 +40,8 @@ function TaxaSelection({
 
       // Swap taxa positions
       [taxaList[index], taxaList[targetIndex]] = [
-        taxaList[targetIndex], 
-        taxaList[index]
+        taxaList[targetIndex],
+        taxaList[index],
       ];
       newOrder[lifeFormId] = taxaList;
       return newOrder;
@@ -164,19 +164,22 @@ function LifeFormColorAssignment({
   lifeFormGroups,
   setLifeFormGroups,
   setTaxaLifeFormAssignments,
+  lifeFormCounter,
+  setLifeFormCounter,
 }) {
   const [newLifeFormName, setNewLifeFormName] = useState("");
   const [newLifeFormColor, setNewLifeFormColor] = useState("#000000");
 
   const handleAddLifeForm = () => {
     const newLifeForm = {
-      life_id: `lf${lifeFormGroups.length + 1}`,
+      life_id: `lf${lifeFormCounter + 1}`,
       life_name: newLifeFormName,
       color: newLifeFormColor,
     };
     setLifeFormGroups([...lifeFormGroups, newLifeForm]);
     setNewLifeFormName("");
     setNewLifeFormColor("#000000");
+    setLifeFormCounter(lifeFormCounter + 1);
   };
 
   const handleRemoveLifeForm = (index) => {
@@ -277,13 +280,17 @@ function LifeFormColorAssignment({
           value={newLifeFormName}
           onChange={(e) => setNewLifeFormName(e.target.value)}
           placeholder="Life Form Name"
+          className={styles.lifeFormInput}
         />
         <input
           type="color"
           value={newLifeFormColor}
           onChange={(e) => setNewLifeFormColor(e.target.value)}
+          className={styles.colorPicker}
         />
-        <button onClick={handleAddLifeForm}>Add Life Form</button>
+        <button onClick={handleAddLifeForm} className={styles.addLifeFormButton}>
+          Add Life Form
+        </button>
       </div>
     </div>
   );
@@ -304,47 +311,50 @@ function TaxaLifeFormAssignment({
   };
 
   return (
-    <div className={styles.taxaLifeFormAssignment}>
-      <h3>Assign Taxa to Life Forms</h3>
-      <table className={styles.taxaLifeFormTable}>
-        <thead>
-          <tr>
-            <th>Taxa Name</th>
-            <th>Life Form</th>
-          </tr>
-        </thead>
-        <tbody>
-          {taxaNames.map((taxaName) => (
-            <tr key={taxaName}>
-              <td>{taxaName}</td>
-              <td>
-                <select
-                  value={taxaLifeFormAssignments[taxaName] || ""}
-                  onChange={(e) =>
-                    handleAssignmentChange(taxaName, e.target.value)
-                  }
-                >
-                  <option value="">Unassigned</option>
-                  {lifeFormGroups.map((group) => (
-                    <option key={group.life_id} value={group.life_id}>
-                      {group.life_name}
-                    </option>
-                  ))}
-                </select>
-              </td>
+    <div className={styles.taxaLifeFormAssignmentWrapper}>
+      <div className={styles.taxaLifeFormAssignment}>
+        <h3 className={styles.taxaTitle}>Assign Taxa to Life Forms</h3>
+        <table className={styles.taxaLifeFormTable}>
+          <thead>
+            <tr>
+              <th className={styles.headerTaxa}>Taxa Name</th>
+              <th className={styles.headerLifeForm}>Life Form</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {taxaNames.map((taxaName) => (
+              <tr key={taxaName}>
+                <td>{taxaName}</td>
+                <td>
+                  <select
+                    value={taxaLifeFormAssignments[taxaName] || ""}
+                    onChange={(e) =>
+                      handleAssignmentChange(taxaName, e.target.value)
+                    }
+                    className={styles.lifeFormSelect}
+                  >
+                    <option value="">Unassigned</option>
+                    {lifeFormGroups.map((group) => (
+                      <option key={group.life_id} value={group.life_id}>
+                        {group.life_name}
+                      </option>
+                    ))}
+                  </select>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
 
+const excludedColumns = [];
+
 function Dashboard() {
   const location = useLocation();
   const autoGraphData = location.state?.autoGraphData;
-
-  const excludedColumns = ["age", "adj_depth", "core_depth"];
 
   // State variables
   const [csvDataSets, setCsvDataSets] = useState([]);
@@ -396,8 +406,11 @@ function Dashboard() {
   // New State for Authentication Token
   const [authToken, setAuthToken] = useState(localStorage.getItem("accessToken"));
 
-  // New State variable to keep track of taxa roder within life form
+  // New State variable to keep track of taxa order within life form
   const [taxaOrder, setTaxaOrder] = useState({});
+
+  // State variable to keep track of life form counter
+  const [lifeFormCounter, setLifeFormCounter] = useState(3);
 
   // Function to handle the main data CSV selection
   const handleFileChange = (event) => {
@@ -520,7 +533,6 @@ function Dashboard() {
     }
   };
 
-
   // Handle auto-graphing
   useEffect(() => {
     if (autoGraphData) {
@@ -605,7 +617,6 @@ function Dashboard() {
       return newAssignments;
     });
   }, [availableTaxa, excludedColumns]);
-  
 
   // Prepare data for plotting
   useEffect(() => {
@@ -667,7 +678,7 @@ function Dashboard() {
 
     // Filter csvDataSets to only include selected taxa
     const filteredCsvDataSets = csvDataSets.filter((dataset) =>
-    selectedTaxa.includes(dataset.speciesName)
+      selectedTaxa.includes(dataset.speciesName)
     );
 
     const plotData = [];
@@ -1033,6 +1044,7 @@ function Dashboard() {
       showticklabels: true, // Ensure ticks and labels are shown
       tickvals: yaxisTickvals1,
       ticktext: yaxisTicktext1,
+      zeroline: false, // Remove the black line at y=0
     };
 
     // Configure secondary y-axis if present
@@ -1057,6 +1069,7 @@ function Dashboard() {
         },
         range: yAxisRange2,
         autorange: false,
+        zeroline: false, // Remove the black line at y=0
       };
 
       // Adjust left margin to accommodate the second y-axis
@@ -1269,8 +1282,8 @@ function Dashboard() {
                     />
 
                     <div className={styles.uploadButtonWrapper}>
+                      {/* File Upload Buttons */}
                       <div className={styles.horizontalButtons}>
-                        {/* CSV File Upload */}
                         <input
                           type="file"
                           id="csvFileUpload"
@@ -1295,19 +1308,68 @@ function Dashboard() {
                         >
                           Upload CSV File
                         </button>
-
-                        {/* Upload Image */}
                         <button
                           onClick={handleSaveImage}
                           className={styles.customFileButton}
                           disabled={!file}
                         >
                           Upload Graph Image
-                          </button>
+                        </button>
                       </div>
 
-                      {/* TaxaSelection Component */}
-                      {showTaxaSelection && (
+                      {/* Graphing Tools Title */}
+                      <h2 className={styles.graphingToolsTitle}>
+                        Graphing Tools
+                      </h2>
+
+                      {/* Toolbar Buttons */}
+                      <div className={styles.assignmentButtons}>
+                        {availableTaxa.length > 0 && (
+                          <>
+                            <button
+                              onClick={() =>
+                                setShowTaxaSelection(!showTaxaSelection)
+                              }
+                              className={`${styles.customFileButton} ${
+                                showTaxaSelection ? styles.hideButton : ""
+                              }`}
+                            >
+                              {showTaxaSelection
+                                ? "Hide Taxa Selection"
+                                : "Edit Taxa Selection"}
+                            </button>
+                            <button
+                              onClick={() =>
+                                setShowLifeFormAssignment(!showLifeFormAssignment)
+                              }
+                              className={`${styles.customFileButton} ${
+                                showLifeFormAssignment ? styles.hideButton : ""
+                              }`}
+                            >
+                              {showLifeFormAssignment
+                                ? "Hide Life Forms"
+                                : "Edit Life Forms"}
+                            </button>
+                            <button
+                              onClick={() =>
+                                setShowTaxaAssignment(!showTaxaAssignment)
+                              }
+                              className={`${styles.customFileButton} ${
+                                showTaxaAssignment ? styles.hideButton : ""
+                              }`}
+                            >
+                              {showTaxaAssignment
+                                ? "Hide Taxa Assignments"
+                                : "Assign Taxa to Life Forms"}
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Taxa Selection Component */}
+                    {showTaxaSelection && (
+                      <div className={styles.taxaSelectionSection}>
                         <TaxaSelection
                           availableTaxa={availableTaxa}
                           selectedTaxa={selectedTaxa}
@@ -1322,247 +1384,185 @@ function Dashboard() {
                           setTaxaOrder={setTaxaOrder}
                           excludedColumns={excludedColumns}
                         />
-                      )}
+                      </div>
+                    )}
 
-                      {/* Buttons to Show/Hide Assignments */}
-                      <div className={styles.assignmentButtons}>
-                        {availableTaxa.length > 0 && (
-                          <>
-                            <button
-                              onClick={() =>
-                                setShowTaxaSelection(!showTaxaSelection)
-                              }
-                              className={styles.customFileButton}
-                            >
-                              {showTaxaSelection
-                                ? "Hide Taxa Selection"
-                                : "Edit Taxa Selection"}
-                            </button>
-                            <button
-                              onClick={() =>
-                                setShowLifeFormAssignment(!showLifeFormAssignment)
-                              }
-                              className={styles.customFileButton}
-                            >
-                              {showLifeFormAssignment
-                                ? "Hide Life Forms"
-                                : "Edit Life Forms"}
-                            </button>
-                            {/* New Button to Show/Hide TaxaLifeFormAssignment */}
-                            <button
-                              onClick={() =>
-                                setShowTaxaAssignment(!showTaxaAssignment)
-                              }
-                              className={styles.customFileButton}
-                            >
-                              {showTaxaAssignment
-                                ? "Hide Taxa Assignments"
-                                : "Assign Taxa to Life Forms"}
-                            </button>
-                          </>
+                    {/* Life Form Color and Name Assignment Component */}
+                    {showLifeFormAssignment && (
+                      <LifeFormColorAssignment
+                        lifeFormGroups={lifeFormGroups}
+                        setLifeFormGroups={setLifeFormGroups}
+                        setTaxaLifeFormAssignments={setTaxaLifeFormAssignments}
+                        lifeFormCounter={lifeFormCounter}
+                        setLifeFormCounter={setLifeFormCounter}
+                      />
+                    )}
+
+                    {/* Taxa Life Form Assignment Component */}
+                    {showTaxaAssignment && availableTaxa.length > 0 && (
+                      <TaxaLifeFormAssignment
+                        taxaNames={availableTaxa.filter(
+                          (col) => !excludedColumns.includes(col)
                         )}
+                        lifeFormGroups={lifeFormGroups}
+                        taxaLifeFormAssignments={taxaLifeFormAssignments}
+                        setTaxaLifeFormAssignments={setTaxaLifeFormAssignments}
+                        excludedColumns={excludedColumns}
+                      />
+                    )}
+
+                    {/* Controls Section */}
+                    <div className={styles.controlsContainer}>
+                      {/* Left Column: Y-Axis Settings */}
+                      <div className={styles.controlsColumnLeft}>
+                        <div className={styles.controlGroup}>
+                          <label className={styles.labelText}>
+                            Select Y-Axis Column
+                          </label>
+                          <select
+                            value={yAxisColumn}
+                            onChange={(e) => setYAxisColumn(e.target.value)}
+                            className={styles.graphInput}
+                          >
+                            <option value="">Select Column</option>
+                            {availableTaxa.map((col) => (
+                              <option key={col} value={col}>
+                                {col}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div className={styles.controlGroup}>
+                          <label className={styles.labelText}>
+                            Y-Axis Label
+                          </label>
+                          <input
+                            type="text"
+                            value={yAxisLabel}
+                            onChange={(e) => setYAxisLabel(e.target.value)}
+                            className={styles.graphInput}
+                            placeholder="Enter Y-axis label"
+                          />
+                        </div>
+
+                        <div className={styles.controlGroup}>
+                          <label className={styles.labelText}>
+                            Second Y-Axis Column
+                          </label>
+                          <select
+                            value={secondYAxisColumn}
+                            onChange={(e) =>
+                              setSecondYAxisColumn(e.target.value)
+                            }
+                            className={styles.graphInput}
+                          >
+                            <option value="">Select Column</option>
+                            {availableTaxa.map((col) => (
+                              <option key={col} value={col}>
+                                {col}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        {secondYAxisColumn && (
+                          <div className={styles.controlGroup}>
+                            <label className={styles.labelText}>
+                              Second Y-Axis Label
+                            </label>
+                            <input
+                              type="text"
+                              value={secondYAxisLabel}
+                              onChange={(e) =>
+                                setSecondYAxisLabel(e.target.value)
+                              }
+                              className={styles.graphInput}
+                              placeholder="Enter Second Y-axis label"
+                            />
+                          </div>
+                        )}
+
+                        <div className={styles.reverseYAxisContainer}>
+                          <label className={styles.labelText}>
+                            Reverse Y-Axis
+                          </label>
+                          <input
+                            type="checkbox"
+                            checked={reverseYAxis}
+                            onChange={(e) =>
+                              setReverseYAxis(e.target.checked)
+                            }
+                            className={styles.reverseYAxisCheckbox}
+                          />
+                        </div>
                       </div>
 
-                      {/* Taxa Life Form Assignment Component */}
-                      {showTaxaAssignment && availableTaxa.length > 0 && (
-                        <TaxaLifeFormAssignment
-                          taxaNames={availableTaxa.filter(
-                            (col) => !excludedColumns.includes(col)
-                          )}
-                          lifeFormGroups={lifeFormGroups}
-                          taxaLifeFormAssignments={taxaLifeFormAssignments}
-                          setTaxaLifeFormAssignments={setTaxaLifeFormAssignments}
-                          excludedColumns={excludedColumns}
-                        />
-                      )}
+                      {/* Right Column: X-Axis and Plot Settings */}
+                      <div className={styles.controlsColumnRight}>
+                        <div className={styles.controlGroup}>
+                          <label className={styles.labelText}>
+                            Graph Title
+                          </label>
+                          <input
+                            type="text"
+                            value={graphTitle}
+                            onChange={(e) => setGraphTitle(e.target.value)}
+                            className={styles.graphInput}
+                            placeholder="Enter Graph Title"
+                          />
+                        </div>
 
-                      {/* Life Form Color and Name Assignment Component */}
-                      {showLifeFormAssignment && (
-                        <LifeFormColorAssignment
-                          lifeFormGroups={lifeFormGroups}
-                          setLifeFormGroups={setLifeFormGroups}
-                          setTaxaLifeFormAssignments={setTaxaLifeFormAssignments}
-                        />
-                      )}
+                        <div className={styles.controlGroup}>
+                          <label className={styles.labelText}>
+                            X-Axis Label
+                          </label>
+                          <input
+                            type="text"
+                            value={xAxisLabel}
+                            onChange={(e) => setXAxisLabel(e.target.value)}
+                            className={styles.graphInput}
+                            placeholder="Enter X-axis label"
+                          />
+                        </div>
 
-                      {/* Controls */}
-                      <div className={styles.verticalControls}>
-                        {/* Y-Axis Column Selection */}
-                        {availableTaxa.length > 0 && (
-                          <>
-                            <div className={styles.labelText}>
-                              Select Y-Axis Column:
-                            </div>
-                            <div className={styles.inputWrapper}>
-                              <select
-                                value={yAxisColumn}
-                                onChange={(e) => {
-                                  /*
-                                  const excludedColumns = [
-                                    e.target.value,
-                                    secondYAxisColumn,
-                                    "adj_depth",
-                                    "core_depth",
-                                  ];
-                                  */
-                                  setYAxisColumn(e.target.value);
-                                  /*
-                                  setSelectedTaxa(
-                                    availableTaxa.filter(
-                                      (col) => !excludedColumns.includes(col)
-                                    )
-                                  );
-                                  */
-                                }}
-                                className={styles.graphInput}
-                              >
-                                <option value="">Select Column</option>
-                                {rawData.length > 0 &&
-                                  Object.keys(rawData[0]).map((col) => (
-                                    <option key={col} value={col}>
-                                      {col}
-                                    </option>
-                                  ))}
-                              </select>
-                            </div>
+                        <div className={styles.controlGroup}>
+                          <label className={styles.labelText}>Plot Type</label>
+                          <select
+                            value={plotType}
+                            onChange={(e) => setPlotType(e.target.value)}
+                            className={styles.graphInput}
+                          >
+                            <option value="bar">Bar</option>
+                            <option value="line">Line</option>
+                            <option value="area">Area</option>
+                          </select>
+                        </div>
 
-                            {/* Y-Axis Label Input */}
-                            <div className={styles.labelText}>Y-Axis Label:</div>
-                            <div className={styles.inputWrapper}>
-                              <input
-                                type="text"
-                                value={yAxisLabel}
-                                onChange={(e) => setYAxisLabel(e.target.value)}
-                                className={styles.graphInput}
-                                placeholder="Enter Y-axis label"
-                              />
-                            </div>
-
-                            {/* Second Y-Axis Column Selection */}
-                            <div className={styles.labelText}>
-                              Select Second Y-Axis Column (Optional):
-                            </div>
-                            <div className={styles.inputWrapper}>
-                              <select
-                                value={secondYAxisColumn}
-                                onChange={(e) => {
-                                  const excludedColumns = [
-                                    yAxisColumn,
-                                    e.target.value,
-                                    "adj_depth",
-                                    "core_depth",
-                                  ];
-                                  setSecondYAxisColumn(e.target.value);
-                                  // Since the values should be the same, we do not need to update selectedTaxa here
-                                }}
-                                className={styles.graphInput}
-                              >
-                                <option value="">Select Column</option>
-                                {availableTaxa.map((col) => (
-                                  <option key={col} value={col}>
-                                    {col}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-
-                            {/* Second Y-Axis Label Input */}
-                            {secondYAxisColumn && (
-                              <>
-                                <div className={styles.labelText}>
-                                  Second Y-Axis Label:
-                                </div>
-                                <div className={styles.inputWrapper}>
-                                  <input
-                                    type="text"
-                                    value={secondYAxisLabel}
-                                    onChange={(e) =>
-                                      setSecondYAxisLabel(e.target.value)
-                                    }
-                                    className={styles.graphInput}
-                                    placeholder="Enter Second Y-axis label"
-                                  />
-                                </div>
-                              </>
-                            )}
-
-                            {/* Graph Title Input */}
-                            <div className={styles.labelText}>Graph Title:</div>
-                            <div className={styles.inputWrapper}>
-                              <input
-                                type="text"
-                                value={graphTitle}
-                                onChange={(e) => setGraphTitle(e.target.value)}
-                                className={styles.graphInput}
-                                placeholder="Enter graph title"
-                              />
-                            </div>
-
-                            {/* X-Axis Label Input */}
-                            <div className={styles.labelText}>X-Axis Label:</div>
-                            <div className={styles.inputWrapper}>
-                              <input
-                                type="text"
-                                value={xAxisLabel}
-                                onChange={(e) => setXAxisLabel(e.target.value)}
-                                className={styles.graphInput}
-                                placeholder="Enter X-axis label"
-                              />
-                            </div>
-
-                            {/* Plot Type Selection */}
-                            <div className={styles.labelText}>Plot Type:</div>
-                            <div className={styles.inputWrapper}>
-                              <select
-                                value={plotType}
-                                onChange={(e) => setPlotType(e.target.value)}
-                                className={styles.graphInput}
-                              >
-                                <option value="bar">Bar</option>
-                                <option value="line">Line</option>
-                                <option value="area">Area</option>
-                              </select>
-                            </div>
-
-                            {/* Orientation Selection */}
-                            <div className={styles.labelText}>Orientation:</div>
-                            <div className={styles.inputWrapper}>
-                              <select
-                                value={orientation}
-                                onChange={(e) => setOrientation(e.target.value)}
-                                className={styles.graphInput}
-                              >
-                                <option value="h">Horizontal</option>
-                                <option value="v">Vertical</option>
-                              </select>
-                            </div>
-
-                            {/* Reverse Y-Axis Checkbox */}
-                            <div className={styles.labelText}>
-                              Reverse Y-Axis:
-                            </div>
-                            <div className={styles.inputWrapper}>
-                              <input
-                                type="checkbox"
-                                checked={reverseYAxis}
-                                onChange={(e) =>
-                                  setReverseYAxis(e.target.checked)
-                                }
-                              />
-                            </div>
-
-                            {/* Download Button */}
-                            <div className={styles.downloadButtonWrapper}>
-                              <button
-                                onClick={handleDownloadButtonClick}
-                                className={styles.downloadButton}
-                              >
-                                Download Graph
-                              </button>
-                            </div>
-                          </>
-                        )}
+                        <div className={styles.controlGroup}>
+                          <label className={styles.labelText}>
+                            Orientation
+                          </label>
+                          <select
+                            value={orientation}
+                            onChange={(e) => setOrientation(e.target.value)}
+                            className={styles.graphInput}
+                          >
+                            <option value="h">Horizontal</option>
+                            <option value="v">Vertical</option>
+                          </select>
+                        </div>
                       </div>
+                    </div>
+
+                    {/* Download Button */}
+                    <div className={styles.downloadButtonWrapper}>
+                      <button
+                        onClick={handleDownloadButtonClick}
+                        className={styles.downloadButton}
+                      >
+                        Download Graph
+                      </button>
                     </div>
 
                     {/* Alert Message */}
@@ -1645,4 +1645,3 @@ function Dashboard() {
 }
 
 export default Dashboard;
-

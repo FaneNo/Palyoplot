@@ -11,6 +11,7 @@ urlpatterns = [
     path('graph-data/<int:file_id>/', views.get_graph_data, name='get_graph_data'),
     path('upload-graph-image/', views.upload_graph_image, name='upload_graph_image'),
     path('get-uploaded-images/', views.get_uploaded_images, name='get_uploaded_images'),
+    path('update-password/', views.update_password, name='update_password'),
 ]
 
 if settings.DEBUG:

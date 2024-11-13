@@ -1,67 +1,164 @@
-.imageRight {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin: 20px;
-    padding: 20px;
+/* aboutPage.module.css */
+
+/* Reset margins and paddings on all elements */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.imageSample {
-    height: auto;
-    max-width: 50%;
-    margin-bottom: 20px;
-  }
-
-.leftColumn {
-    flex: 70;
-    text-align: left;
-    margin-left: 50px;
-}
-
-.leftColumn p {
-    margin-bottom: 20px;
-    margin-right: 100px;
-}
-
-ul {
-    margin-bottom: 20px;
-}
-
-.rightColumn {
-    flex: 30;
-    text-align: left;
-    margin-right: 50px;
-    padding: 20px;
-}
-
+/* Body styling */
 .aboutPageBody {
     background-color: #f7f0ea;
-}
-
-.aboutDescripBox {
     display: flex;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: stretch;
+    min-height: calc(100vh - 60px); /* Adjust based on your nav bar height */
+    width: 100%;
 }
 
-.aboutDescripLeft {
+/* Container for the description box */
+.aboutDescripBox {
     flex: 1;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap; /* Prevents wrapping */
+    width: 100%;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Left column styling */
+.leftColumn {
+    flex: 0 0 80%;
+    max-width: 80%;
+    min-width: 0;
     text-align: center;
 }
 
-.aboutText {
-    text-align: left;
-    margin-left: 50px;
+/* Right column styling */
+.rightColumn {
+    flex: 0 0 20%;
+    max-width: 20%;
+    min-width: 0;
+    padding: 20px;
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f1e8dd;
+    border-radius: 8px;
 }
 
-.underImageText {
-    text-align: left;
-    margin-bottom: 20px;
-    margin-right: 50px;
-}
-
+/* Title styling remains unchanged */
 .aboutTitle {
-    text-align: left;
-    margin-top: 20px;
-    margin-left: 50px;
-    margin-bottom: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin: 20px 0;
+    text-align: center; /* Center title as well */
 }
+
+/* Centered heading styling for sections */
+.leftColumn h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin: 20px 0;
+}
+
+/* Text styling for paragraphs */
+.aboutText {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #34495e;
+    margin-bottom: 20px;
+    max-width: 800px; /* Limit text width for better readability */
+    text-align: center; /* Center text content */
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 10px;
+}
+
+/* List styling */
+.leftColumn ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto 20px auto;
+    text-align: left;
+    display: inline-block;
+}
+
+/* List item styling */
+.leftColumn ul li {
+    margin-bottom: 10px;
+    padding-left: 15px;
+    text-indent: -15px;
+}
+
+/* Profile image styling */
+.imageRight {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.imageSample {
+    width: 100%;
+    max-width: 250px;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    object-fit: contain;
+}
+
+/* Text under the image */
+.underImageText {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #34495e;
+    margin-bottom: 20px;
+    text-align: center;
+    padding: 0 10px;
+}
+
+/* Responsive styling for smaller screens */
+@media (max-width: 1024px) {
+    .aboutDescripBox {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .leftColumn,
+    .rightColumn {
+        width: 100%;
+        max-width: none;
+        padding: 10px;
+        flex: none;
+        margin-left: 0; /* Reset margin for mobile */
+    }
+
+    .aboutTitle {
+        font-size: 24px;
+        margin: 15px 0;
+    }
+
+/* Adjust the text alignment and width for easier reading */
+.aboutText {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #34495e;
+    margin-bottom: 20px;
+    padding: 0 10px;
+    max-width: 800px; /* Limit the width of the text */
+    text-align: center; /* Center the text horizontally */
+    margin-left: auto; /* Center the text block */
+    margin-right: auto; /* Center the text block */
+}
+
+    .imageSample {
+        max-width: 200px;
+    }
+}
+

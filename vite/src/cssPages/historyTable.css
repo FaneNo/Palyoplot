@@ -1,78 +1,149 @@
-.table {
-  width: 60%;
-  border-collapse: collapse;
+.history-table-container {
+  width: 100%;
+  overflow-x: auto;
+  position: relative;
+  top: -25rem; /* Moves the container upwards without affecting padding/margin */
 }
 
-.table th, .table td {
-  border: 1px solid black;
-  padding: 2px 8px; /* Reduced padding for more compact table */
-  text-align: center; /* Centers all content */
+
+/* Main content styles */
+.mainContent {
+  margin-top: 0.5rem; /* Reduce the gap between this container and the top */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center the content horizontally */
 }
 
-.table th {
+/* Wrapper for the main content */
+.contentWrapper {
+  width: 100%;
+  max-width: 1200px; /* Optional: Limit the maximum width */
+  margin-top: 0.5rem; /* Reduce spacing from the top of the wrapper */
+  padding-top: 0; /* Ensure no extra padding on top */
+}
+
+/* Table container styles */
+.history-table {
+  min-width: 100%;
+  background-color: #ececec;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  margin-top: 0; /* Controls the table's vertical position inside the container */
+}
+
+/* Header styles */
+.history-table thead {
   background-color: #3A5A40;
+}
+
+.history-table th {
+  padding: 0.75rem 1.5rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
   color: white;
 }
 
-/* Compact Date Created and ID columns */
-.table .id-column {
-  width: 5px; 
+/* Body styles */
+.history-table tbody {
+  border-top-width: 1px;
 }
 
-.table .date-column {
-  width: 40px; 
-
+.history-table tbody tr {
+  border-bottom-width: 1px;
+  border-color: #e5e7eb;
 }
 
-.table .csv-column {
-  width: 40px; 
+.history-table tbody tr:hover {
+  background-color: #f9fafb;
 }
 
-.table .graph-column {
-  width: 10px; 
+.history-table td {
+  padding: 1rem 1.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
 }
 
-.table .graph-btn {
-  background-color: #2c6fbb;
-  border: none; 
-  color: white; 
-  font-size: 15px; /* Smaller font for compactness */
-  cursor: pointer; 
+/* Column specific styles */
+.history-table .graph-column {
+  width: 15%;
+  text-align: center;
 }
 
-.table .graph-btn:hover {
-  background-color: #3A5A40;
-  color: black; 
-}
-
-.csv-link {
-  color: #2c6fbb;
-  text-decoration: underline;
-}
-
-.csv-link:hover {
-  color: #1a4b72;
-}
-
-.delete-btn {
-  color: white;
-  border: none;
-  padding: 5px;
-  font-size: 16px;
+/* File link styles */
+.file-link {
+  color: #2563eb;
   cursor: pointer;
 }
 
-.delete-btn:hover {
-  background-color: darkred;
+.file-link:hover {
+  color: #1d4ed8;
 }
 
-.table .graph-column, .table .delete-column {
-  width: 80px;
+/* Delete button styles */
+.delete-button {
+  color: #dc2626;
+  font-weight: 500;
+  border-radius: 9999px;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  border: none;
+  background: none;
+  cursor: pointer;
 }
 
-.table .graph-btn, .table .delete-btn {
-  padding: 5px 10px;
-  text-align: center;
+.delete-button:hover {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Loading state */
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 16rem;
+  font-size: 1.125rem;
+}
+
+/* Error state */
+.error-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 16rem;
+  color: #dc2626;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 16rem;
+  font-size: 1.125rem;
+}
+
+/* Responsive styles for small screens */
+@media (max-width: 768px) {
+  .history-table th,
+  .history-table td {
+    font-size: 0.75rem; /* Reduce font size for smaller screens */
+    padding: 0.5rem; /* Reduce padding */
+  }
+
+  .file-link {
+    font-size: 0.75rem; /* Smaller font for file links */
+  }
+
+  .delete-button {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
 }
 
 .image-gallery {

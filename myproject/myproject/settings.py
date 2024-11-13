@@ -14,6 +14,7 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv;
 import os
+import sys # having trouble logging into mariadb root, this works for now hopefully
 # from myapi.database import database
 
 load_dotenv()
@@ -26,11 +27,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ej*g0&$b9&g4vv=0qz0#cr(1diq=8i3-&sze8!a@rp741gpy8g'
+
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+FRONTEND_URL = os.getenv("FRONTEND_URL",)
+VITE_API_URL = os.getenv("VITE_API_URL") #backend?
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+if not SECRET_KEY and not DEBUG:
+    raise ValueError("SECRET_KEY environment variable is not set!")
 
 ALLOWED_HOSTS = ["*"]
 
@@ -44,12 +49,16 @@ REST_FRAMEWORK = {
 }
 
 # Uses example email, testing
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.example.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'your-email@example.com'
-EMAIL_HOST_PASSWORD = 'your-email-password'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+LOGIN_URL = f"{FRONTEND_URL}/login"
+
+# IRT might have to do this part, they probably dont want to give us access to their email server
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_HOST = 'smtp.example.com'
+#EMAIL_PORT = 587
+#EMAIL_USE_TLS = True
+#EMAIL_HOST_USER = 'your-email@example.com'
+#EMAIL_HOST_PASSWORD = 'your-email-password'
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
@@ -88,7 +97,7 @@ ROOT_URLCONF = 'myproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates"],
+        'DIRS': [BASE_DIR / "templates"], # for testing, templates/registrion/password_reset_do.. not func
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -124,6 +133,12 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',
+    }
 
 
 # Password validation
@@ -180,7 +195,9 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
     "http://localhost:5173",
 ]
+
 CORS_ALLOW_CREDENTIALS = True
+
 
 
 

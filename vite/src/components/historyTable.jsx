@@ -1,12 +1,14 @@
-import api from "../api";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../api";
 import "../cssPages/historyTable.css";
 import { ACCESS_TOKEN } from "../token";
 
-function DataTable() {
+const DataTable = () => {
   const [data, setData] = useState([]);
   const [images, setImages] = useState([])
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,10 +18,14 @@ function DataTable() {
 
   const fetchData = async () => {
     try {
+      setIsLoading(true);
       const response = await api.get("/api/user-csv-files/");
       setData(response.data);
     } catch (error) {
       console.error("Error fetching data", error);
+      setError("Failed to load data");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -55,7 +61,6 @@ function DataTable() {
     try {
       const response = await api.get(`/api/graph-data/${id}/`);
       
-      // Parse the CSV string into structured data
       const rows = response.data.data.split('\n');
       const headers = rows[0].replace(/"/g, '').split(',').filter(Boolean);
       
@@ -69,7 +74,6 @@ function DataTable() {
         parsedData.push(row);
       }
   
-      // Navigate to dashboard with the data
       navigate("/dashboard", { 
         state: { 
           autoGraphData: {
@@ -82,60 +86,77 @@ function DataTable() {
       });
     } catch (error) {
       console.error("Error fetching graph data", error);
+      setError("Failed to load graph data");
     }
   };
 
-  //delete file function
   const handleDelete = async (id) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this file?"
-    );
-    if (confirmed) {
-      try {
-        await api.delete(`/api/csv_files/${id}/`);
-
-        // Fetch the updated data from the server
-        await fetchData();
-
-        console.log(`Deleted entry with id: ${id}`);
-      } catch (error) {
-        console.error("Error deleting file", error);
-      }
-    } else {
-      console.log("File deletion canceled.");
+    try {
+      await api.delete(`/api/csv_files/${id}/`);
+      await fetchData(); 
+    } catch (error) {
+      console.error("Error deleting file", error);
+      setError("Failed to delete file");
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="loading-state">
+        Loading...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="error-state">
+        {error}
+      </div>
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <div className="empty-state">
+        No files found. Upload a CSV file to get started.
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <h2>Uploaded Files</h2>
+    <div className="history-table-container">
       {/* Table for CSV Data */}
-      <table className="table">
+      <h2>Uploaded CSV Files</h2>
+      <table className="history-table">
         <thead>
           <tr>
-            <th className="id-column">ID</th>
-            <th className="date-column">Date Created</th>
-            <th className="csv-column">File</th>
-            <th className="graph-column">Graph</th>
-            <th className="delete-column">Delete</th>
+            <th>ID</th>
+            <th>Date Created</th>
+            <th>File</th>
+            <th>Graph</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {data.map((row) => (
             <tr key={row.id}>
-              <td className="id-column">{row.display_id}</td>
-              <td className="date-column">
-                {new Date(row.upload_date).toLocaleString()}
+              <td>{row.display_id}</td>
+              <td>{new Date(row.upload_date).toLocaleString()}</td>
+              <td>
+                <span
+                  className="file-link"
+                  onClick={() => handleGraphClick(row.id)}
+                >
+                  {row.file_name}
+                </span>
               </td>
-              <td className="csv-column">
-                <span className="csv-link">{row.file_name}</span>
-              </td>
-              <td className="graph-column">
+              <td>
                 <button className="graph-btn" onClick={() => handleGraphClick(row.id)}>
                   Graph Now
                 </button>
               </td>
-              <td className="delete-column">
+              <td>
                 <button className="delete-btn" onClick={() => handleDelete(row.id)}>
                   ❌
                 </button>
@@ -147,28 +168,48 @@ function DataTable() {
 
       {/* Section for Uploaded Images */}
       <h2>Uploaded Graph Images</h2>
-      <div className="image-gallery">
-        {images.length > 0 ? (
-          images.map((img) => (
-            <div key={img.id} className="image-container">
-              <img
-                src={`http://127.0.0.1:8000${img.image_data}`}
-                alt="Graph"
-                className="uploaded-image"
-                
-              />
-              <a href={`http://127.0.0.1:8000${img.image_data}`} download
-              style={{ display: "block", margin: "10px" }}>
-                Download
-              </a>
-            </div>
-          ))
-        ) : (
-          <p>No images uploaded yet.</p>
-        )}
-      </div>
+      <table className="history-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Image</th>
+            <th>Download</th>
+          </tr>
+        </thead>
+        <tbody>
+          {images.length > 0 ? (
+            images.map((img) => (
+              <tr key={img.id}>
+                <td>{img.id}</td>
+                <td>
+                  <img
+                    src={`http://127.0.0.1:8000${img.image_data}`}
+                    alt="Graph"
+                    className="uploaded-image"
+                  />
+                </td>
+                <td>
+                  <a
+                    href={`http://127.0.0.1:8000${img.image_data}`}
+                    download
+                  >
+                    Download
+                  </a>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="3">No images uploaded yet.</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
-}
+};
 
 export default DataTable;
+
+
+

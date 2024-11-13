@@ -1,13 +1,14 @@
 import csv
 import mariadb
 from mariadb import ConnectionPool
+import os
 
 connection_pool = ConnectionPool(
-    pool_name="mypool",
-    pool_size=5,
-    user="csc190191",
-    password="123",
-    database="palyoplot"   
+    pool_name=os.getenv('pool_name'),
+    pool_size=os.getenv('pool_size'),
+    user=os.getenv('user'),
+    password=os.getenv('password'),
+    database=os.getenv('database'), 
 )
 
 def get_connection():

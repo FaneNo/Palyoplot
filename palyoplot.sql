@@ -84,6 +84,7 @@ CREATE TABLE `auth_permission` (
   UNIQUE KEY `auth_permission_content_type_id_codename_01ab375a_uniq` (`content_type_id`,`codename`),
   CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -149,7 +150,7 @@ CREATE TABLE `auth_user` (
   `date_joined` datetime(6) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -286,7 +287,7 @@ CREATE TABLE `csv_data` (
   KEY `column_id` (`column_id`),
   CONSTRAINT `csv_data_ibfk_1` FOREIGN KEY (`file_id`) REFERENCES `csv_files` (`id`),
   CONSTRAINT `csv_data_ibfk_2` FOREIGN KEY (`column_id`) REFERENCES `csv_columns` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=837 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7041 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1213,7 +1214,7 @@ CREATE TABLE `django_admin_log` (
   KEY `django_admin_log_user_id_c564eba6_fk_auth_user_id` (`user_id`),
   CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`),
   CONSTRAINT `django_admin_log_user_id_c564eba6_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1222,6 +1223,7 @@ CREATE TABLE `django_admin_log` (
 
 LOCK TABLES `django_admin_log` WRITE;
 /*!40000 ALTER TABLE `django_admin_log` DISABLE KEYS */;
+INSERT INTO `django_admin_log` VALUES (1,'2024-11-07 09:12:05.744224','8','testuser_vrfrgxge',3,'',4,1),(2,'2024-11-07 09:12:11.105114','5','testuser_takaklpu',3,'',4,1),(3,'2024-11-07 09:12:14.847285','7','testuser_lf95hyyu',3,'',4,1),(4,'2024-11-07 09:12:18.926402','4','testuser_kepccchi',3,'',4,1),(5,'2024-11-07 09:12:22.895238','3','testuser_emmm79ue',3,'',4,1),(6,'2024-11-07 09:12:26.756310','6','testuser_2avztp4f',3,'',4,1),(7,'2024-11-07 09:12:30.075831','10','testuser_10nee302',3,'',4,1),(8,'2024-11-07 09:12:33.231552','9','testuser_0nu69vyl',3,'',4,1),(9,'2024-11-07 09:32:21.753462','12','testuser_letfrjn5',3,'',4,1),(10,'2024-11-07 09:32:25.611064','11','testuser_e7ywzw7v',3,'',4,1),(11,'2024-11-07 09:32:30.137270','13','testuser_2x3xwj4q',3,'',4,1),(12,'2024-11-07 09:32:33.521449','14','testuser_16bfyma8',3,'',4,1),(13,'2024-11-07 09:55:42.763571','16','testuser_xlplm8bd',3,'',4,1),(14,'2024-11-07 09:55:47.200042','17','testuser_nljg1eo3',3,'',4,1),(15,'2024-11-07 09:55:51.042002','18','testuser_erqsq89s',3,'',4,1),(16,'2024-11-07 09:55:54.671342','15','testuser_0o6vwbmg',3,'',4,1);
 /*!40000 ALTER TABLE `django_admin_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1238,6 +1240,7 @@ CREATE TABLE `django_content_type` (
   `model` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1333,25 +1336,30 @@ INSERT INTO `django_session` VALUES
 UNLOCK TABLES;
 
 --
--- Table structure for table `graph_images`
+-- Table structure for table `myapi_dataset`
 --
 
-DROP TABLE IF EXISTS `graph_images`;
+DROP TABLE IF EXISTS `myapi_dataset`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `graph_images` (
-  `image_id` int(11) NOT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `image_data` blob DEFAULT NULL,
-  `metadata` longtext DEFAULT NULL,
-  PRIMARY KEY (`image_id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `graph_images_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
+CREATE TABLE `myapi_dataset` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `filename` longtext NOT NULL,
+  `dataset_type` varchar(50) NOT NULL,
+  `csv_data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`csv_data`)),
+  `visualization_pref` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`visualization_pref`)),
+  `created_at` datetime(6) NOT NULL,
+  `updated_at` datetime(6) NOT NULL,
+  `image_data` varchar(100) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `myapi_dataset_user_id_35204292_fk_auth_user_id` (`user_id`),
+  CONSTRAINT `myapi_dataset_user_id_35204292_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `graph_images`
+-- Dumping data for table `myapi_dataset`
 --
 
 LOCK TABLES `graph_images` WRITE;
@@ -1468,7 +1476,7 @@ CREATE TABLE `visualization_preferences` (
   CONSTRAINT `visualization_preferences_ibfk_1` FOREIGN KEY (`file_id`) REFERENCES `csv_files` (`id`),
   CONSTRAINT `visualization_preferences_ibfk_2` FOREIGN KEY (`x_axis_column_id`) REFERENCES `csv_columns` (`id`),
   CONSTRAINT `visualization_preferences_ibfk_3` FOREIGN KEY (`y_axis_column_id`) REFERENCES `csv_columns` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
