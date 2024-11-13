@@ -2,7 +2,7 @@
   width: 100%;
   overflow-x: auto;
   position: relative;
-  top: -25rem; /* Moves the container upwards without affecting padding/margin */
+  top: 0; /* Moves the container upwards without affecting padding/margin */
 }
 
 
@@ -163,5 +163,10 @@
   height: 200px;
   margin: 10px;
   object-fit: cover;
+}
+
+/* Add spacing between the two tables */
+.history-table + .history-table {
+  margin-top: 20px; /* Adjust as needed */
 }
 
