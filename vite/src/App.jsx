@@ -52,7 +52,7 @@ function App() {
             }
           />
           <Route path="/login" element={<Login />} />
-          <Route path="/password-reset" element={() => window.location.href = "http://127.0.0.1:8000/password-reset/"} />
+          <Route path="/password-reset" element={() => window.location.href = `${import.meta.env.VITE_API_URL}/password-reset`} />
           <Route path="/logout" element={<Logout />} />
           <Route 
             path="/profile"
