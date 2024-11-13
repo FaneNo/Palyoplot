@@ -135,13 +135,19 @@ def upload_graph_image(request):
 
 # Fetch uploaded images for user
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def get_uploaded_images(request):
+    user = request.user
     if not request.user.is_authenticated:
         return Response({"error": "Unauthorized"}, status=401)
     
     images = Dataset.objects.filter(user=request.user)
-    serializer = ImageSerializer(images, many=True)
-    return Response(serializer.data)
+    # serializer = ImageSerializer(images, many=True)
+    # return Response(serializer.data)
+    image_list = [
+        {"id": img.id, "image_data": img.image_data.url} for img in images
+    ]
+    return Response(image_list)
 
 
 #enable us to create new user

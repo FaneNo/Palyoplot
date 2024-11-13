@@ -19,6 +19,8 @@ from django.urls import path, include
 from myapi.views import CreateUserView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView #allow us to obtain refresh token for user to sign in
 from django.contrib.auth import views as auth_views
+from django.conf import settings
+from django.conf.urls.static import static
 
 #this is not for delete/save or any function about the graph
 #do it in the myapi urls.py instead
@@ -35,4 +37,11 @@ urlpatterns = [
     path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+
 ]
+
+# Serve media files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+

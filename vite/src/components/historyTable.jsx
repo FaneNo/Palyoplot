@@ -2,6 +2,7 @@ import api from "../api";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../cssPages/historyTable.css";
+import { ACCESS_TOKEN } from "../token";
 
 function DataTable() {
   const [data, setData] = useState([]);
@@ -23,7 +24,7 @@ function DataTable() {
   };
 
   const fetchImageData = async () => {
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem(ACCESS_TOKEN);
     try {
       const response = await fetch("http://127.0.0.1:8000/api/get-uploaded-images/", {
         method: "GET",
@@ -31,6 +32,12 @@ function DataTable() {
           "Authorization": `Bearer ${token}`
         }
       });
+
+      if (response.status === 401) {
+        console.error("Unauthorized: Invalid token");
+        return;
+      }
+
       const data = await response.json();
       setImages(data);
     } catch(error) {
@@ -188,11 +195,14 @@ function DataTable() {
           images.map((img) => (
             <div key={img.id} className="image-container">
               <img
-                src={`http://127.0.0.1:8000/media/${img.image_data}`}
+                src={`http://127.0.0.1:8000${img.image_data}`}
+                //src={img.image_data}
                 alt="Graph"
                 className="uploaded-image"
+                
               />
-              <a href={`http://127.0.0.1:8000/media/${img.image_data}`} download>
+              <a href={`http://127.0.0.1:8000${img.image_data}`} download
+              style={{ display: "block", margin: "10px" }}>
                 Download
               </a>
             </div>
