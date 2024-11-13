@@ -73,7 +73,7 @@ function Login() {
           </div>
           <div className={styles.formGroup}>
   <a
-    href="http://127.0.0.1:8000/password-reset/"
+    href={`${import.meta.env.VITE_API_URL}/password-reset`}
     className={styles.forgotPasswordLink}
   >
     Forgot Password?

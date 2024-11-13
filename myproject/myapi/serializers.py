@@ -26,3 +26,8 @@ class DatasetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dataset
         fields = ["id","display_id", "filename", "dataset_type", "csv_data", "visualization_pref", "created_at", "updated_at"]
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Dataset
+        fields = ["id", "image_data"]

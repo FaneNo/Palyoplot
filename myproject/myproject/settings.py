@@ -15,6 +15,7 @@ from datetime import timedelta
 from dotenv import load_dotenv;
 from decouple import config;
 import os
+import sys # having trouble logging into mariadb root, this works for now hopefully
 # from myapi.database import database
 
 load_dotenv()
@@ -29,7 +30,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
-
+FRONTEND_URL = os.getenv("FRONTEND_URL",)
+VITE_API_URL = os.getenv("VITE_API_URL") #backend?
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -48,12 +50,16 @@ REST_FRAMEWORK = {
 }
 
 # Uses example email, testing
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.example.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'your-email@example.com'
-EMAIL_HOST_PASSWORD = 'your-email-password'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+LOGIN_URL = f"{FRONTEND_URL}/login"
+
+# IRT might have to do this part, they probably dont want to give us access to their email server
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_HOST = 'smtp.example.com'
+#EMAIL_PORT = 587
+#EMAIL_USE_TLS = True
+#EMAIL_HOST_USER = 'your-email@example.com'
+#EMAIL_HOST_PASSWORD = 'your-email-password'
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
@@ -92,7 +98,7 @@ ROOT_URLCONF = 'myproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, "templates")],
+        'DIRS': [BASE_DIR / "templates"], # for testing, templates/registrion/password_reset_do.. not func
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -128,6 +134,12 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',
+    }
 
 
 # Password validation
@@ -175,7 +187,8 @@ STATICFILES_DIRS = [
 # Media files
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = BASE_DIR / 'media'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
