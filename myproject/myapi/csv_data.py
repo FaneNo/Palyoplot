@@ -2,10 +2,12 @@ import csv
 import mariadb
 from mariadb import ConnectionPool
 import os
+from django.db import models, transaction # Add this line
+from myapi.models import CSVFile, CsvColumn, CsvData, VisualizationPreferences  # Ensure related models are imported
 
 connection_pool = ConnectionPool(
     pool_name=os.getenv('pool_name'),
-    pool_size=os.getenv('pool_size'),
+    pool_size=int(os.getenv('pool_size')),  # Ensure pool_size is an integer
     user=os.getenv('user'),
     password=os.getenv('password'),
     database=os.getenv('database'), 
@@ -14,64 +16,58 @@ connection_pool = ConnectionPool(
 def get_connection():
     return connection_pool.get_connection()
 
-
- 
-
 def insert_csv_data(user_id, file_name, csv_data, visualization_prefs):
-    connection = get_connection()
-    try:
-        with connection.cursor() as cursor:
-            # Get the maximum display_id
-            cursor.execute("SELECT COALESCE(MAX(display_id), 0) FROM csv_files")
-            max_display_id = cursor.fetchone()[0]
-            
-            # Insert a record into the csv_files table with display_id
-            sql_insert_file = "INSERT INTO csv_files (user_id, file_name, row_count, display_id) VALUES (?, ?, ?, ?)"
-            row_count = len(csv_data.splitlines()) - 1  # Exclude header row
-            cursor.execute(sql_insert_file, (user_id, file_name, row_count, max_display_id + 1))
-            
-            # Retrieve the file_id of the newly inserted record
-            file_id = cursor.lastrowid
-            
-            # Insert records into the csv_columns table for each column in the CSV
-            csv_reader = csv.reader(csv_data.splitlines())
-            header = next(csv_reader)  # Read the header row
-            column_ids = []
-            for column_order, column_name in enumerate(header, start=1):
-                sql_insert_column = "INSERT INTO csv_columns (file_id, column_name, column_order) VALUES (?, ?, ?)"
-                cursor.execute(sql_insert_column, (file_id, column_name, column_order))
-                column_ids.append(cursor.lastrowid)
-            
-            # Insert data into the csv_data table
-            for row_number, row in enumerate(csv_reader, start=1):
-                for column_order, value in enumerate(row, start=1):
-                    column_id = column_ids[column_order - 1]
-                    sql_insert_data = "INSERT INTO csv_data (file_id, row_number, column_id, value) VALUES (?, ?, ?, ?)"
-                    cursor.execute(sql_insert_data, (file_id, row_number, column_id, value))
-            
-            #Insert a record into the visualization_preferences table
-            sql_insert_viz_prefs = """
-                INSERT INTO visualization_preferences 
-                (file_id, graph_type, color, x_axis_column_id, y_axis_column_id,title, additional_options) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            """
-            cursor.execute(sql_insert_viz_prefs, (
-                file_id, 
-                visualization_prefs['graph_type'], 
-                visualization_prefs['color'], 
-                column_ids[visualization_prefs['x_axis_column_index']], 
-                column_ids[visualization_prefs['y_axis_column_index']],
-                visualization_prefs['title'], 
-                visualization_prefs['additional_options']
-            ))
-    
+    csv_lines = csv_data.splitlines()
+    csv_reader = csv.reader(csv_lines)
+    header = next(csv_reader)  # Read the header row
+    row_count = len(csv_lines) - 1  # Exclude header row
 
-        connection.commit()
-    
-    finally:
-        connection.close()
+    with transaction.atomic():
+        # Get the maximum display_id
+        max_display_id = CSVFile.objects.aggregate(max_id=models.Max('display_id'))['max_id'] or 0
 
-    return file_id, max_display_id + 1  
+        # Create CSVFile instance
+        csv_file = CSVFile.objects.create(
+            user_id=user_id,
+            file_name=file_name,
+            row_count=row_count,
+            display_id=max_display_id + 1
+            # upload_date is automatically set via auto_now_add
+        )
+
+        # Insert records into the CsvColumn table
+        column_ids = []
+        for column_order, column_name in enumerate(header, start=1):
+            column = CsvColumn.objects.create(
+                file_id=csv_file.id,
+                column_name=column_name,
+                column_order=column_order
+            )
+            column_ids.append(column.id)
+
+        # Insert data into the CsvData table
+        for row_number, row in enumerate(csv_reader, start=1):
+            for column_order, value in enumerate(row, start=1):
+                column_id = column_ids[column_order - 1]
+                CsvData.objects.create(
+                    file_id=csv_file.id,
+                    row_number=row_number,
+                    column_id=column_id,
+                    value=value
+                )
+
+        # Insert a record into the VisualizationPreferences table
+        VisualizationPreferences.objects.create(
+            file_id=csv_file.id,
+            graph_type=visualization_prefs['graph_type'],
+            color=visualization_prefs.get('color', ''),
+            x_axis_column_id=column_ids[visualization_prefs['x_axis_column_index']],
+            y_axis_column_id=column_ids[visualization_prefs['y_axis_column_index']],
+            title=visualization_prefs.get('title', ''),
+            additional_options=visualization_prefs.get('additional_options', {})
+        )
+
+    return csv_file.id, csv_file.display_id
 
 
 def export_to_csv(file_id, output_file):
