@@ -51,32 +51,64 @@ const DataTable = () => {
     }
   };
 
-  const handleDownloadCSV = async (csvId, fileName) => {
+  // const handleDownloadCSV = (fileId) => {
+  //   const downloadURL = `/api/csv_files/${fileId}/download/`;
+  
+  //   // Open the download URL
+  //   window.location.href = downloadURL;
+  
+  //   // Optional: Log to console or provide user feedback
+  //   console.log(`Triggered download for CSV with ID: ${fileId}`);
+  // };
+  
+  const handleDownloadCSV = async (id) => {
     try {
-      const response = await api.get(`/api/csv_files/${csvId}/download/`, {
-        responseType: "blob",
-      });
-      const blob = new Blob([response.data], { type: "text/csv" });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = fileName || "data.csv";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+        const token = localStorage.getItem(ACCESS_TOKEN);
+        const response = await fetch(`/api/csv_files/${id}/download/`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", `file_${id}.csv`); // Default filename
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } else {
+            console.error("Failed to download CSV:", response.statusText);
+        }
     } catch (error) {
-      console.error("Error downloading CSV file:", error);
+        console.error("Error downloading CSV:", error);
     }
-  };
+};
 
   const handleDeleteImage = async (imageId) => {
     try {
-      await api.delete(`/api/images/${imageId}/`);
-      fetchImageData(); // Refresh images after deletion
+        const token = localStorage.getItem(ACCESS_TOKEN);
+        const response = await fetch(`http://127.0.0.1:8000/api/images/${imageId}/`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to delete the image.");
+        }
+
+        alert("Image deleted successfully.");
+        // Refresh images data after deletion
+        fetchImageData();
     } catch (error) {
-      console.error("Error deleting image:", error);
+        console.error("Error deleting image:", error);
     }
-  };
+};
 
   const handleImageDownload = async (imageUrl, fileName) => {
     try {
@@ -151,7 +183,7 @@ const DataTable = () => {
               <td>
                 <button
                   className="download-btn"
-                  onClick={() => handleDownloadCSV(row.id, row.file_name)}
+                  onClick={() => handleDownloadCSV(row.id)}
                 >
                   Download CSV
                 </button>

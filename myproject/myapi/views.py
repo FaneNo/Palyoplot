@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
-from django.http import FileResponse, Http404, JsonResponse
+from django.http import FileResponse, Http404, JsonResponse, HttpResponse
 from django.conf import settings
 from rest_framework import generics
 from .serializers import UserSerializer, CSVFileSer, ImageSerializer
@@ -150,21 +150,52 @@ def get_uploaded_images(request):
     ]
     return Response(image_list)
 
-def download_csv(request, file_name):
-    file_path = os.path.join(settings.MEDIA_ROOT, "csv_files", file_name)
-    if not os.path.exists(file_path):
-        raise Http404("File not found.")
-    return FileResponse(open(file_path, "rb"), as_attachment=True, filename=file_name)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def download_csv(request, file_id):
+    """
+    Handles downloading the CSV by dynamically reconstructing it from the database using file_id.
+    """
+    try:
+        # Validate and fetch the CSV file entry
+        csv_file = CSVFile.objects.get(id=file_id, user=request.user)
 
+        # Fetch CSV data dynamically using the existing `graph_data` function
+        csv_data = graph_data(file_id)
+        if not csv_data:
+            return HttpResponse("Error retrieving CSV data", status=404)
+
+        # Prepare the response
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = f'attachment; filename="{csv_file.file_name}"'
+        response.write(csv_data)  # Write the dynamically generated CSV content
+        return response
+
+    except CSVFile.DoesNotExist:
+        return HttpResponse("CSV file not found", status=404)
+    except Exception as e:
+        return HttpResponse(f"Error: {str(e)}", status=500)
+
+
+# Delete a graph image
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def delete_image(request, image_id):
-    if request.method == "DELETE":
-        image = get_object_or_404(Dataset, id=image_id)
+    try:
+        # Retrieve the image by ID and ensure it belongs to the user
+        image = Dataset.objects.get(id=image_id, user=request.user)
+
         # Delete the file from storage
-        if image.image_file:  # Assuming `image_file` is the field storing the file path
-            image.image_file.delete(save=False)
+        if image.image_data:  # Assuming `image_data` is the field storing the file path
+            image.image_data.delete(save=False)
+        
+        # Delete the image record from the database
         image.delete()
-        return JsonResponse({"message": "Image deleted successfully."})
-    return JsonResponse({"error": "Invalid request method."}, status=405)
+        return Response({"message": "Image deleted successfully."}, status=200)
+    except Dataset.DoesNotExist:
+        return Response({"error": "Image not found."}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
 
 
 @api_view(['POST'])

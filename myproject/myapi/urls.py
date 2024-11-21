@@ -12,7 +12,7 @@ urlpatterns = [
     path('upload-graph-image/', views.upload_graph_image, name='upload_graph_image'),
     path('get-uploaded-images/', views.get_uploaded_images, name='get_uploaded_images'),
     path('update-password/', views.update_password, name='update_password'),
-    path("csv_files/<str:file_name>/download/", views.download_csv, name="download_csv"),
+    path("csv_files/<int:file_id>/download/", views.download_csv, name="download_csv"),
     path("images/<int:image_id>/", views.delete_image, name="delete_image"),
 ]
 
