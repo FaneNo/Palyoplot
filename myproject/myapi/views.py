@@ -1,10 +1,12 @@
 import base64
 import datetime
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
+from django.http import FileResponse, Http404, JsonResponse
+from django.conf import settings
 from rest_framework import generics
 from .serializers import UserSerializer, CSVFileSer, ImageSerializer
 from .models import CSVFile, Dataset
@@ -147,6 +149,22 @@ def get_uploaded_images(request):
         {"id": img.id, "image_data": img.image_data.url} for img in images
     ]
     return Response(image_list)
+
+def download_csv(request, file_name):
+    file_path = os.path.join(settings.MEDIA_ROOT, "csv_files", file_name)
+    if not os.path.exists(file_path):
+        raise Http404("File not found.")
+    return FileResponse(open(file_path, "rb"), as_attachment=True, filename=file_name)
+
+def delete_image(request, image_id):
+    if request.method == "DELETE":
+        image = get_object_or_404(Dataset, id=image_id)
+        # Delete the file from storage
+        if image.image_file:  # Assuming `image_file` is the field storing the file path
+            image.image_file.delete(save=False)
+        image.delete()
+        return JsonResponse({"message": "Image deleted successfully."})
+    return JsonResponse({"error": "Invalid request method."}, status=405)
 
 
 @api_view(['POST'])

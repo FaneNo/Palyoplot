@@ -51,42 +51,46 @@ const DataTable = () => {
     }
   };
 
-  const handleDownload = (id) => {
-    console.log(`Download data for id: ${id}`);
-    navigate("/dashboard");
-  };
-  
-  //get the data to graph
-  const handleGraphClick = async (id) => {
+  const handleDownloadCSV = async (csvId, fileName) => {
     try {
-      const response = await api.get(`/api/graph-data/${id}/`);
-      
-      const rows = response.data.data.split('\n');
-      const headers = rows[0].replace(/"/g, '').split(',').filter(Boolean);
-      
-      const parsedData = [];
-      for (let i = 1; i < rows.length; i++) {
-        const values = rows[i].split(',');
-        const row = {};
-        headers.forEach((header, index) => {
-          row[header] = values[index];
-        });
-        parsedData.push(row);
-      }
-  
-      navigate("/dashboard", { 
-        state: { 
-          autoGraphData: {
-            data: parsedData,
-            headers: headers,
-            fileName: response.data.file_name,
-            displayId: response.data.display_id
-          }
-        } 
+      const response = await api.get(`/api/csv_files/${csvId}/download/`, {
+        responseType: "blob",
       });
+      const blob = new Blob([response.data], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName || "data.csv";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     } catch (error) {
-      console.error("Error fetching graph data", error);
-      setError("Failed to load graph data");
+      console.error("Error downloading CSV file:", error);
+    }
+  };
+
+  const handleDeleteImage = async (imageId) => {
+    try {
+      await api.delete(`/api/images/${imageId}/`);
+      fetchImageData(); // Refresh images after deletion
+    } catch (error) {
+      console.error("Error deleting image:", error);
+    }
+  };
+
+  const handleImageDownload = async (imageUrl, fileName) => {
+    try {
+      const response = await fetch(imageUrl, { method: "GET" });
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName || "graph_image.png";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error downloading image:", error);
     }
   };
 
@@ -134,7 +138,7 @@ const DataTable = () => {
             <th>ID</th>
             <th>Date Created</th>
             <th>File</th>
-            <th>Graph</th>
+            <th>Download</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -143,21 +147,20 @@ const DataTable = () => {
             <tr key={row.id}>
               <td>{row.display_id}</td>
               <td>{new Date(row.upload_date).toLocaleString()}</td>
+              <td>{row.file_name}</td>
               <td>
-                <span
-                  className="file-link"
-                  onClick={() => handleGraphClick(row.id)}
+                <button
+                  className="download-btn"
+                  onClick={() => handleDownloadCSV(row.id, row.file_name)}
                 >
-                  {row.file_name}
-                </span>
-              </td>
-              <td>
-                <button className="graph-btn" onClick={() => handleGraphClick(row.id)}>
-                  Graph Now
+                  Download CSV
                 </button>
               </td>
               <td>
-                <button className="delete-btn" onClick={() => handleDelete(row.id)}>
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDelete(row.id)}
+                >
                   ❌
                 </button>
               </td>
@@ -174,6 +177,7 @@ const DataTable = () => {
             <th>ID</th>
             <th>Image</th>
             <th>Download</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -189,18 +193,31 @@ const DataTable = () => {
                   />
                 </td>
                 <td>
-                  <a
-                    href={`http://127.0.0.1:8000${img.image_data}`}
-                    download
+                  <button
+                    className="download-btn"
+                    onClick={() =>
+                      handleImageDownload(
+                        `http://127.0.0.1:8000${img.image_data}`,
+                        `graph_${img.id}.png`
+                      )
+                    }
                   >
                     Download
-                  </a>
+                  </button>
+                </td>
+                <td>
+                  <button
+                    className="delete-btn"
+                    onClick={() => handleDeleteImage(img.id)}
+                  >
+                    ❌
+                  </button>
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="3">No images uploaded yet.</td>
+              <td colSpan="4">No images uploaded yet.</td>
             </tr>
           )}
         </tbody>
