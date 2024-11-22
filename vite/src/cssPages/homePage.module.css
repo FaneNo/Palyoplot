@@ -40,7 +40,7 @@
   display: flex;
   flex-wrap: wrap;
   width: 100%;
-  align-items: center; /* Changed to center for vertical alignment */
+  align-items: center; /* Vertically centers the items */
   justify-content: center;
   gap: 40px;
   padding: 40px 0;
@@ -60,7 +60,7 @@
   font-size: 18px;
   line-height: 1.6;
   margin-top: 10px;
-  text-align: left; /* Changed from center to left */
+  text-align: left;
 }
 
 /* Image Column */
@@ -68,16 +68,26 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center; /* Centers images vertically */
   flex: 1;
   max-width: 50%;
   min-width: 300px;
   padding-left: 20px;
-  margin-top: 25px;
+  /* Remove margin-top to align vertically */
 }
 
 /* Additional spacing for images in Step 6 */
 .step6Images {
   gap: 30px; /* Increase gap between images */
+  flex-direction: column; /* Ensure images stack vertically */
+}
+
+/* Styling for Step 2 Images - display images side by side */
+.step2Images {
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* Adjust gap between images as needed */
 }
 
 /* Image Styling */
@@ -89,6 +99,11 @@
   object-fit: contain;
   border-radius: 8px;
   margin-bottom: 0; /* Remove bottom margin since gap is used */
+}
+
+/* Adjust image width for Step 2 */
+.step2Images .imageSample {
+  width: 45%; /* Adjust as necessary */
 }
 
 /* Bullet Points Section */

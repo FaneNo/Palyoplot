@@ -3,11 +3,13 @@ import styles from "../cssPages/homePage.module.css";
 
 import step1Image from "../assets/dashboard.png";
 import step2Image from "../assets/step2.png";
+import step2RegisterImage from "../assets/step2_register.png";
 import step3Image from "../assets/step3.png";
 import step4Image from "../assets/compatibleFile.png";
 import step5Image from "../assets/step5.png";
 import step6UploadImage from "../assets/step6_upload.png";
 import step6DownloadImage from "../assets/step6_download.png";
+import step7Image from "../assets/step7.png";
 
 const Step = ({ title, description, images, stepNumber }) => (
   <div className={styles.columnsContainer}>
@@ -15,7 +17,11 @@ const Step = ({ title, description, images, stepNumber }) => (
       <h2 className={styles.BulletHeading}>{title}</h2>
       <p>{description}</p>
     </div>
-    <div className={`${styles.tutorialimageColumn} ${stepNumber === 6 ? styles.step6Images : ''}`}>
+    <div
+      className={`${styles.tutorialimageColumn} ${
+        stepNumber === 6 ? styles.step6Images : ""
+      } ${stepNumber === 2 ? styles.step2Images : ""}`}
+    >
       {images.map((image, idx) => (
         <img
           key={idx}
@@ -38,7 +44,7 @@ const steps = [
     title: "Step 2: Log In",
     description:
       "On the Dashboard page, log in with your username and password if you already have an account. If not, click 'Register' to create one.",
-    images: [step2Image],
+    images: [step2Image, step2RegisterImage],
   },
   {
     title: "Step 3: Loading CSV",
@@ -48,7 +54,8 @@ const steps = [
   },
   {
     title: "Step 4: Choosing Compatible File",
-    description: "Select and upload a compatible CSV file from your computer.",
+    description:
+      "Select and upload a compatible CSV file from your computer.",
     images: [step4Image],
   },
   {
@@ -62,6 +69,12 @@ const steps = [
     description:
       "After finishing your graph, you have the option to upload your graph image or CSV file to your Palyoplot account using the 'Upload CSV File' and 'Upload Graph Image' buttons located under the graph. You can view these uploads in the 'History' tab, which can be found on the left side of the page. You can also download your graph to your computer using the 'Download Graph' button at the bottom of the page.",
     images: [step6UploadImage, step6DownloadImage],
+  },
+  {
+    title: "Step 7: History Page",
+    description:
+      "Navigate to the History page by clicking the 'History' tab. Here, you can download your uploaded data sets and graph images. This page also allows you to delete your data from the database.",
+    images: [step7Image],
   },
 ];
 
