@@ -149,10 +149,10 @@ const handleDownloadCSV = async (id) => {
     );
   }
 
-  if (data.length === 0) {
+  if (data.length === 0 && images.length === 0) {
     return (
       <div className="empty-state">
-        No files found. Upload a CSV file to get started.
+        No files or images found. Upload a CSV file or graph image to get started.
       </div>
     );
   }
