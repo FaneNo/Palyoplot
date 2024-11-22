@@ -119,17 +119,6 @@ def upload_graph_image(request):
 
     if not image_file:
         return Response({"error": "No image file provided"}, status=400)
-    
-    # print("Received image data: ", image_data[50])
-    
-    # Decode base64 image
-    # try: 
-    #    format, imgstr = image_data.split(';base64')
-    #    image_bytes = base64.b64decode(imgstr)
-    #    print("Successfully decoded base64 image data")
-    # except (ValueError, TypeError) as e:
-    #    print("Error decoding base64 image data: ", e)
-    # return Response({"error": "Invalid image data format"}, status=400)
 
     # Save image data to Dataset model
     dataset = Dataset.objects.create(user=request.user, image_data=image_file)
@@ -150,32 +139,6 @@ def get_uploaded_images(request):
         {"id": img.id, "image_data": img.image_data.url} for img in images
     ]
     return Response(image_list)
-
-# @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
-# def download_csv(request, file_id):
-#     """
-#     Handles downloading the CSV by dynamically reconstructing it from the database using file_id.
-#     """
-#     try:
-#         # Validate and fetch the CSV file entry
-#         csv_file = CSVFile.objects.get(id=file_id, user=request.user)
-
-#         # Fetch CSV data dynamically using the existing `graph_data` function
-#         csv_data = graph_data(file_id)
-#         if not csv_data:
-#             return HttpResponse("Error retrieving CSV data", status=404)
-
-#         # Prepare the response
-#         response = HttpResponse(content_type="text/csv")
-#         response["Content-Disposition"] = f'attachment; filename="{csv_file.file_name}"'
-#         response.write(csv_data)  # Write the dynamically generated CSV content
-#         return response
-
-#     except CSVFile.DoesNotExist:
-#         return HttpResponse("CSV file not found", status=404)
-#     except Exception as e:
-#         return HttpResponse(f"Error: {str(e)}", status=500)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
