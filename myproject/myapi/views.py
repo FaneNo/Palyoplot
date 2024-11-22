@@ -1,10 +1,12 @@
 import base64
 import datetime
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
+from django.http import FileResponse, Http404, JsonResponse, HttpResponse
+from django.conf import settings
 from rest_framework import generics
 from .serializers import UserSerializer, CSVFileSer, ImageSerializer
 from .models import CSVFile, Dataset
@@ -15,8 +17,9 @@ from django.contrib.auth.hashers import check_password
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import os
-from .csv_data import insert_csv_data, delete_csv, graph_data
+from .csv_data import insert_csv_data, delete_csv, graph_data, export_to_csv
 from rest_framework import status
+import tempfile
 
 # Create your views here.
 @api_view(['GET'])
@@ -116,17 +119,6 @@ def upload_graph_image(request):
 
     if not image_file:
         return Response({"error": "No image file provided"}, status=400)
-    
-    # print("Received image data: ", image_data[50])
-    
-    # Decode base64 image
-    # try: 
-    #    format, imgstr = image_data.split(';base64')
-    #    image_bytes = base64.b64decode(imgstr)
-    #    print("Successfully decoded base64 image data")
-    # except (ValueError, TypeError) as e:
-    #    print("Error decoding base64 image data: ", e)
-    # return Response({"error": "Invalid image data format"}, status=400)
 
     # Save image data to Dataset model
     dataset = Dataset.objects.create(user=request.user, image_data=image_file)
@@ -147,6 +139,45 @@ def get_uploaded_images(request):
         {"id": img.id, "image_data": img.image_data.url} for img in images
     ]
     return Response(image_list)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def download_csv(request, file_id):
+    try:
+        # Create a temporary file to store the CSV
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".csv")
+        temp_file.close()  # Close the file so it can be written to
+
+        # Export the CSV content
+        export_to_csv(file_id, temp_file.name)
+
+        # Serve the file as a response
+        file_name = f"file_{file_id}.csv"
+        return FileResponse(open(temp_file.name, 'rb'), as_attachment=True, filename=file_name)
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+
+# Delete a graph image
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_image(request, image_id):
+    try:
+        # Retrieve the image by ID and ensure it belongs to the user
+        image = Dataset.objects.get(id=image_id, user=request.user)
+
+        # Delete the file from storage
+        if image.image_data:  # Assuming `image_data` is the field storing the file path
+            image.image_data.delete(save=False)
+        
+        # Delete the image record from the database
+        image.delete()
+        return Response({"message": "Image deleted successfully."}, status=200)
+    except Dataset.DoesNotExist:
+        return Response({"error": "Image not found."}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
 
 
 @api_view(['POST'])

@@ -491,7 +491,7 @@ function Dashboard() {
 
     try {
       // Capture image in base64
-      const image = await Plotly.toImage(graphElement, { format: "png", width: 800, height: 600});
+      const image = await Plotly.toImage(graphElement, { format: "png", width: 1920, height: 1080});
       const response = await fetch(image);
       const imageBlob = await response.blob();
 
