@@ -17,8 +17,9 @@ from django.contrib.auth.hashers import check_password
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import os
-from .csv_data import insert_csv_data, delete_csv, graph_data
+from .csv_data import insert_csv_data, delete_csv, graph_data, export_to_csv
 from rest_framework import status
+import tempfile
 
 # Create your views here.
 @api_view(['GET'])
@@ -150,31 +151,49 @@ def get_uploaded_images(request):
     ]
     return Response(image_list)
 
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def download_csv(request, file_id):
+#     """
+#     Handles downloading the CSV by dynamically reconstructing it from the database using file_id.
+#     """
+#     try:
+#         # Validate and fetch the CSV file entry
+#         csv_file = CSVFile.objects.get(id=file_id, user=request.user)
+
+#         # Fetch CSV data dynamically using the existing `graph_data` function
+#         csv_data = graph_data(file_id)
+#         if not csv_data:
+#             return HttpResponse("Error retrieving CSV data", status=404)
+
+#         # Prepare the response
+#         response = HttpResponse(content_type="text/csv")
+#         response["Content-Disposition"] = f'attachment; filename="{csv_file.file_name}"'
+#         response.write(csv_data)  # Write the dynamically generated CSV content
+#         return response
+
+#     except CSVFile.DoesNotExist:
+#         return HttpResponse("CSV file not found", status=404)
+#     except Exception as e:
+#         return HttpResponse(f"Error: {str(e)}", status=500)
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def download_csv(request, file_id):
-    """
-    Handles downloading the CSV by dynamically reconstructing it from the database using file_id.
-    """
     try:
-        # Validate and fetch the CSV file entry
-        csv_file = CSVFile.objects.get(id=file_id, user=request.user)
+        # Create a temporary file to store the CSV
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".csv")
+        temp_file.close()  # Close the file so it can be written to
 
-        # Fetch CSV data dynamically using the existing `graph_data` function
-        csv_data = graph_data(file_id)
-        if not csv_data:
-            return HttpResponse("Error retrieving CSV data", status=404)
+        # Export the CSV content
+        export_to_csv(file_id, temp_file.name)
 
-        # Prepare the response
-        response = HttpResponse(content_type="text/csv")
-        response["Content-Disposition"] = f'attachment; filename="{csv_file.file_name}"'
-        response.write(csv_data)  # Write the dynamically generated CSV content
-        return response
+        # Serve the file as a response
+        file_name = f"file_{file_id}.csv"
+        return FileResponse(open(temp_file.name, 'rb'), as_attachment=True, filename=file_name)
 
-    except CSVFile.DoesNotExist:
-        return HttpResponse("CSV file not found", status=404)
     except Exception as e:
-        return HttpResponse(f"Error: {str(e)}", status=500)
+        return Response({'error': str(e)}, status=500)
 
 
 # Delete a graph image

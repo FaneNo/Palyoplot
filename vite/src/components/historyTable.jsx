@@ -61,32 +61,65 @@ const DataTable = () => {
   //   console.log(`Triggered download for CSV with ID: ${fileId}`);
   // };
   
-  const handleDownloadCSV = async (id) => {
-    try {
-        const token = localStorage.getItem(ACCESS_TOKEN);
-        const response = await fetch(`/api/csv_files/${id}/download/`, {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-        });
+//   const handleDownloadCSV = async (id) => {
+//     try {
+//         const token = localStorage.getItem(ACCESS_TOKEN);
+//         const response = await fetch(`/api/csv_files/${id}/download/`, {
+//             method: "GET",
+//             headers: {
+//               Authorization: `Bearer ${token}`,
+//             },
+//         });
 
-        if (response.ok) {
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = url;
-            link.setAttribute("download", `file_${id}.csv`); // Default filename
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-        } else {
-            console.error("Failed to download CSV:", response.statusText);
-        }
-    } catch (error) {
-        console.error("Error downloading CSV:", error);
-    }
+//         if (response.ok) {
+//             const blob = await response.blob();
+//             const url = window.URL.createObjectURL(blob);
+//             const link = document.createElement("a");
+//             link.href = url;
+//             link.setAttribute("download", `file_${id}.csv`); // Default filename
+//             document.body.appendChild(link);
+//             link.click();
+//             link.remove();
+//         } else {
+//             console.error("Failed to download CSV:", response.statusText);
+//         }
+//     } catch (error) {
+//         console.error("Error downloading CSV:", error);
+//     }
+// };
+
+const handleDownloadCSV = async (id) => {
+  const token = localStorage.getItem(ACCESS_TOKEN);
+
+  try {
+      const response = await fetch(`http://127.0.0.1:8000/api/csv_files/${id}/download/`, {
+          method: 'GET',
+          headers: {
+              'Authorization': `Bearer ${token}`,
+          },
+      });
+
+      if (!response.ok) {
+          throw new Error('Failed to download file');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      // Create an anchor element and trigger a download
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `file_${id}.csv`; // Default filename
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+  } catch (error) {
+      console.error(error);
+      alert('Failed to download CSV file');
+  }
 };
+
 
   const handleDeleteImage = async (imageId) => {
     try {

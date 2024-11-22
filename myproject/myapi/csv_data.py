@@ -115,25 +115,25 @@ def export_to_csv(file_id, output_file):
                     data[row_number] = {}
                 data[row_number][column_name] = value
 
-            # Get visualization preferences
-            cursor.execute("""
-                SELECT 
-                    graph_type,
-                    color,
-                    x_axis_column_id,
-                    y_axis_column_id,
-                    title,
-                    additional_options
-                FROM 
-                    visualization_preferences
-                WHERE 
-                    file_id = ?;
-            """, (file_id,))
-            vis_prefs = cursor.fetchall()
+            # # Get visualization preferences
+            # cursor.execute("""
+            #     SELECT 
+            #         graph_type,
+            #         color,
+            #         x_axis_column_id,
+            #         y_axis_column_id,
+            #         title,
+            #         additional_options
+            #     FROM 
+            #         visualization_preferences
+            #     WHERE 
+            #         file_id = ?;
+            # """, (file_id,))
+            # vis_prefs = cursor.fetchall()
 
-            # Add visualization preferences as additional columns
-            vis_columns = ['Graph Type', 'Color', 'X Axis Column ID', 'Y Axis Column ID', 'Title', 'Additional Options']
-            columns.extend(vis_columns)
+            # # Add visualization preferences as additional columns
+            # vis_columns = ['Graph Type', 'Color', 'X Axis Column ID', 'Y Axis Column ID', 'Title', 'Additional Options']
+            # columns.extend(vis_columns)
             
             
             # Add file information to the CSV
@@ -146,11 +146,11 @@ def export_to_csv(file_id, output_file):
                 
                 # Write file information and data rows
                 for row_number in sorted(data.keys()):
-                    row_data = [display_id, file_name] + [data[row_number].get(col, '') for col in columns[len(file_info):-len(vis_columns)]]
-                    if vis_prefs:
-                        row_data.extend(vis_prefs[0])
-                    else:
-                        row_data.extend([''] * len(vis_columns))
+                    row_data = [display_id, file_name] + [data[row_number].get(col, '') for col in columns[len(file_info):]]
+                    # if vis_prefs:
+                    #     row_data.extend(vis_prefs[0])
+                    # else:
+                    #     row_data.extend([''] * len(vis_columns))
                     writer.writerow(row_data)
     finally:
         connection.close()
