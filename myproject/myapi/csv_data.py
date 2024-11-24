@@ -2,18 +2,56 @@ import csv
 import mariadb
 from mariadb import ConnectionPool
 import os
-from django.db import models, transaction # Add this line
-from myapi.models import CSVFile, CsvColumn, CsvData, VisualizationPreferences  # Ensure related models are imported
+from django.db import models, transaction
+from myapi.models import CSVFile, CsvColumn, CsvData, VisualizationPreferences
+from dotenv import load_dotenv
+from pathlib import Path
 
-connection_pool = ConnectionPool(
-    pool_name=os.getenv('pool_name'),
-    pool_size=int(os.getenv('pool_size')),  # Ensure pool_size is an integer
-    user=os.getenv('user'),
-    password=os.getenv('password'),
-    database=os.getenv('database'), 
-)
+# Define BASE_DIR
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Determine the environment
+ENVIRONMENT = os.getenv('DJANGO_ENVIRONMENT', 'development')
+
+# Load the appropriate .env file
+if ENVIRONMENT == 'development':
+    load_dotenv(os.path.join(BASE_DIR, '.env.development'))
+elif ENVIRONMENT == 'production':
+    load_dotenv(os.path.join(BASE_DIR, '.env.production'))
+else:
+    # Default to .env if it exists
+    load_dotenv(os.path.join(BASE_DIR, '.env'))
+    
+# Determine if running inside Docker
+RUNNING_IN_DOCKER = os.getenv('RUNNING_IN_DOCKER', 'False') == 'True'
+
+# Adjust DB_HOST based on environment
+if RUNNING_IN_DOCKER:
+    DB_HOST = 'db'
+else:
+    DB_HOST = os.getenv('DB_HOST', 'localhost')
+
+# Database connection parameters with defaults
+db_config = {
+    'pool_name': os.getenv('POOL_NAME', 'mypool'),
+    'pool_size': int(os.getenv('POOL_SIZE', '5')),
+    'user': os.getenv('DB_USER', 'csc190191'),
+    'password': os.getenv('DB_PASSWORD', '123'),
+    'host': os.getenv('DB_HOST', 'localhost'),
+    'port': int(os.getenv('DB_PORT', '3306')),
+    'database': os.getenv('DB_NAME', 'palyoplot'),
+}
+
+# Create the connection pool
+try:
+    connection_pool = ConnectionPool(**db_config)
+except mariadb.Error as e:
+    print(f"Error creating connection pool: {e}")
+    connection_pool = None  # Handle the error as needed
 
 def get_connection():
+    if connection_pool is None:
+        raise ConnectionError("Connection pool is not initialized.")
     return connection_pool.get_connection()
 
 def insert_csv_data(user_id, file_name, csv_data, visualization_prefs):
@@ -69,14 +107,16 @@ def insert_csv_data(user_id, file_name, csv_data, visualization_prefs):
 
     return csv_file.id, csv_file.display_id
 
-
 def export_to_csv(file_id, output_file):
     connection = get_connection()
     try:
         with connection.cursor() as cursor:
             # Fetch file information including display_id
             cursor.execute("SELECT display_id, file_name FROM csv_files WHERE id = ?", (file_id,))
-            display_id, file_name = cursor.fetchone()
+            result = cursor.fetchone()
+            if not result:
+                raise ValueError(f"No file found with id {file_id}")
+            display_id, file_name = result
 
             # Fetch column names for the header
             cursor.execute("""
@@ -117,85 +157,23 @@ def export_to_csv(file_id, output_file):
             
             # Add file information to the CSV
             file_info = ['File ID', 'File Name']
-            columns = file_info + columns
+            all_columns = file_info + columns
             with open(output_file, mode='w', newline='') as file:
                 writer = csv.writer(file)
                 # Write the header
-                writer.writerow(columns)
+                writer.writerow(all_columns)
                 
                 # Write file information and data rows
                 for row_number in sorted(data.keys()):
-                    row_data = [display_id, file_name] + [data[row_number].get(col, '') for col in columns[len(file_info):]]
+                    row_data = [display_id, file_name] + [data[row_number].get(col, '') for col in columns]
                     writer.writerow(row_data)
     finally:
         connection.close()
         
-#export without csv
-def export_to_csv_no_csv(file_id, output_file):
-    connection = get_connection()
-    try:
-        with connection.cursor() as cursor:
-            # Fetch file information including display_id
-            cursor.execute("SELECT display_id, file_name FROM csv_files WHERE id = ?", (file_id,))
-            display_id, file_name = cursor.fetchone()
-
-            # Fetch column names for the header
-            cursor.execute("""
-                SELECT 
-                    column_name
-                FROM 
-                    csv_columns
-                WHERE 
-                    file_id = ?
-                ORDER BY 
-                    column_order;
-            """, (file_id,))
-            columns = [col[0] for col in cursor.fetchall()]
-            
-            cursor.execute("""
-                SELECT 
-                    cd.row_number,
-                    cc.column_name,
-                    cd.value
-                FROM 
-                    csv_data cd
-                JOIN 
-                    csv_columns cc ON cd.column_id = cc.id
-                WHERE
-                    cd.file_id = ?
-                ORDER BY 
-                    cd.row_number, cc.column_order;
-            """, (file_id,))
-            rows = cursor.fetchall()
-
-            # Organize data into rows
-            data = {}
-            for row in rows:
-                row_number, column_name, value = row
-                if row_number not in data:
-                    data[row_number] = {}
-                data[row_number][column_name] = value
-
-            # Add file information to the CSV
-            file_info = ['File ID', 'File Name']
-            columns = file_info + columns
-            with open(output_file, mode='w', newline='') as file:
-                writer = csv.writer(file)
-                # Write the header
-                writer.writerow(columns)
-                
-                # Write file information and data rows
-                for row_number in sorted(data.keys()):
-                    row_data = [display_id, file_name] + [data[row_number].get(col, '') for col in columns[len(file_info):]]
-                    writer.writerow(row_data)
-    finally:
-        connection.close()
-
 def delete_csv(file_id):
     connection = get_connection()
     cursor = connection.cursor()
     try:
-        
         connection.begin()
         
         # Get the display_id of the file to be deleted
@@ -225,9 +203,8 @@ def delete_csv(file_id):
             WHERE display_id > ?
         """, (deleted_display_id,))
         
-        
         connection.commit()
-        print(f"Successfully deleted CSV file with ID {file_id} and resequenced display IDs {deleted_display_id}")
+        print(f"Successfully deleted CSV file with ID {file_id} and resequenced display IDs.")
         
     except mariadb.Error as e:
         print(f"Error deleting data: {e}")
@@ -235,15 +212,16 @@ def delete_csv(file_id):
     finally:
         connection.close()
 
-
-        
 def graph_data(file_id):
     connection = get_connection()
     try:
         with connection.cursor() as cursor:
             # Fetch file information including display_id
             cursor.execute("SELECT display_id, file_name FROM csv_files WHERE id = ?", (file_id,))
-            display_id, file_name = cursor.fetchone()
+            result = cursor.fetchone()
+            if not result:
+                raise ValueError(f"No file found with id {file_id}")
+            display_id, file_name = result
             
             # Fetch column names for the header
             cursor.execute("""
@@ -309,4 +287,3 @@ def graph_data(file_id):
         return None
     finally:
         connection.close()
-        

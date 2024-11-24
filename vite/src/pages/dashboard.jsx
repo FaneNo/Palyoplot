@@ -1,15 +1,17 @@
+// Import necessary modules and components
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import Papa from "papaparse";
-import DashboardNav from "../components/dashboardNav";
-import styles from "../cssPages/dashboardPage.module.css";
-import Plot from "react-plotly.js";
-import Plotly from "plotly.js-dist-min";
-import api from "../api";
+import Papa from "papaparse"; // Library for parsing CSV files
+import DashboardNav from "../components/dashboardNav"; // Custom navigation component
+import styles from "../cssPages/dashboardPage.module.css"; // CSS module for styling
+import Plot from "react-plotly.js"; // Plotly React component
+import Plotly from "plotly.js-dist-min"; // Plotly library
+import api from "../api"; // Custom API instance for making HTTP requests
 
-import { useLocation } from "react-router-dom";
-import { ACCESS_TOKEN } from "../token";
+import { useLocation } from "react-router-dom"; // Hook for accessing route information
+import { ACCESS_TOKEN } from "../token"; // Token key for authentication
 
-// Updated TaxaSelection component without Y-axis assignment per taxa
+// Component for selecting taxa (species) to include in the plot,
+// reordering them within their life forms, and setting font styles
 function TaxaSelection({
   selectedTaxa,
   setSelectedTaxa,
@@ -23,7 +25,7 @@ function TaxaSelection({
   setTaxaOrder,
   excludedColumns,
 }) {
-  // Function to move taxa within their life form
+  // Function to move taxa up or down within their life form
   const moveTaxa = (taxaName, direction) => {
     const lifeFormId = taxaLifeFormAssignments[taxaName];
     if (!lifeFormId) return;
@@ -48,16 +50,18 @@ function TaxaSelection({
     });
   };
 
+  // Function to handle inclusion/exclusion of taxa
   const handleTaxaChange = (taxaName) => {
     if (selectedTaxa.includes(taxaName)) {
       // Remove taxa from selectedTaxa
       setSelectedTaxa(selectedTaxa.filter((t) => t !== taxaName));
     } else {
-      // Add taxa back to selectedTaxa
+      // Add taxa to selectedTaxa
       setSelectedTaxa([...selectedTaxa, taxaName]);
     }
   };
 
+  // Function to set font style (italic or normal) for taxa labels
   const handleFontStyleChange = (taxaName, fontstyle) => {
     setTaxaFontStyles((prevStyles) => ({
       ...prevStyles,
@@ -65,13 +69,14 @@ function TaxaSelection({
     }));
   };
 
-  // Group all taxa by life form, including those not currently selected
+  // Prepare a list of all taxa grouped by their life forms,
+  // excluding any columns specified in excludedColumns
   const allTaxa = Object.keys(taxaLifeFormAssignments).filter(
     (taxa) => !excludedColumns.includes(taxa)
   );
   const taxaByLifeForm = {};
 
-  // Group selected taxa by life form
+  // Group selected taxa by their life form
   allTaxa.forEach((taxaName) => {
     const lifeFormId = taxaLifeFormAssignments[taxaName] || "unassigned";
     if (!taxaByLifeForm[lifeFormId]) {
@@ -90,7 +95,9 @@ function TaxaSelection({
 
   return (
     <div className={styles.taxaSelection}>
-      <h3>Include/Exclude Taxa, Reorder within Life Forms, and Set Font Style</h3>
+      <h3>
+        Include/Exclude Taxa, Reorder within Life Forms, and Set Font Style
+      </h3>
       {Object.keys(taxaByLifeForm).map((lifeFormId) => {
         const lifeFormName =
           lifeFormGroups.find((group) => group.life_id === lifeFormId)
@@ -159,7 +166,8 @@ function TaxaSelection({
   );
 }
 
-// Define LifeFormColorAssignment component within the same file
+// Component for managing life forms (categories of taxa)
+// Allows adding, removing, renaming, and reordering life forms
 function LifeFormColorAssignment({
   lifeFormGroups,
   setLifeFormGroups,
@@ -167,9 +175,11 @@ function LifeFormColorAssignment({
   lifeFormCounter,
   setLifeFormCounter,
 }) {
+  // State variables for new life form inputs
   const [newLifeFormName, setNewLifeFormName] = useState("");
   const [newLifeFormColor, setNewLifeFormColor] = useState("#000000");
 
+  // Function to add a new life form
   const handleAddLifeForm = () => {
     const newLifeForm = {
       life_id: `lf${lifeFormCounter + 1}`,
@@ -182,24 +192,27 @@ function LifeFormColorAssignment({
     setLifeFormCounter(lifeFormCounter + 1);
   };
 
+  // Function to remove a life form
   const handleRemoveLifeForm = (index) => {
     const updatedGroups = lifeFormGroups.filter((_, i) => i !== index);
     setLifeFormGroups(updatedGroups);
   };
 
+  // Function to change the name of a life form
   const handleNameChange = (index, newName) => {
     const updatedGroups = [...lifeFormGroups];
     updatedGroups[index].life_name = newName;
     setLifeFormGroups(updatedGroups);
   };
 
+  // Function to change the color of a life form
   const handleColorChange = (index, newColor) => {
     const updatedGroups = [...lifeFormGroups];
     updatedGroups[index].color = newColor;
     setLifeFormGroups(updatedGroups);
   };
 
-  // Function to move life forms up and down
+  // Function to move life forms up or down in the list
   const moveLifeForm = (index, direction) => {
     setLifeFormGroups((prevGroups) => {
       const newGroups = [...prevGroups];
@@ -296,13 +309,14 @@ function LifeFormColorAssignment({
   );
 }
 
-// Define TaxaLifeFormAssignment component within the same file
+// Component for assigning taxa to life forms
 function TaxaLifeFormAssignment({
   taxaNames,
   lifeFormGroups,
   taxaLifeFormAssignments,
   setTaxaLifeFormAssignments,
 }) {
+  // Function to handle the assignment of a taxa to a life form
   const handleAssignmentChange = (taxaName, lifeFormId) => {
     setTaxaLifeFormAssignments((prevAssignments) => ({
       ...prevAssignments,
@@ -350,49 +364,52 @@ function TaxaLifeFormAssignment({
   );
 }
 
+// List of columns to exclude from certain operations
 const excludedColumns = [];
 
+// Main Dashboard component
 function Dashboard() {
   const location = useLocation();
   const autoGraphData = location.state?.autoGraphData;
 
   // State variables
-  const [csvDataSets, setCsvDataSets] = useState([]);
-  const [rawData, setRawData] = useState([]);
+  const [csvDataSets, setCsvDataSets] = useState([]); // Processed data for plotting
+  const [rawData, setRawData] = useState([]); // Raw CSV data
   const [lifeFormGroups, setLifeFormGroups] = useState([
+    // Initial life form groups with default colors
     { life_id: "lf1", life_name: "Trees", color: "#FF0000" },
     { life_id: "lf2", life_name: "Shrubs", color: "#00FF00" },
     { life_id: "lf3", life_name: "Herbs", color: "#0000FF" },
   ]);
-  const [taxaLifeFormAssignments, setTaxaLifeFormAssignments] = useState({});
-  const [graphTitle, setGraphTitle] = useState("Pollen Percentage Diagram");
-  const [yAxisLabel, setYAxisLabel] = useState("Y-Axis");
-  const [secondYAxisLabel, setSecondYAxisLabel] = useState("Second Y-Axis");
+  const [taxaLifeFormAssignments, setTaxaLifeFormAssignments] = useState({}); // Mapping of taxa to life forms
+  const [graphTitle, setGraphTitle] = useState("Pollen Percentage Diagram"); // Graph title
+  const [yAxisLabel, setYAxisLabel] = useState("Y-Axis"); // Label for primary Y-axis
+  const [secondYAxisLabel, setSecondYAxisLabel] = useState("Second Y-Axis"); // Label for secondary Y-axis
 
-  // Add xAxisLabel state variable
+  // Label for X-axis
   const [xAxisLabel, setXAxisLabel] = useState("Values");
 
-  const [plotType, setPlotType] = useState("area");
-  const [orientation, setOrientation] = useState("h");
+  const [plotType, setPlotType] = useState("area"); // Type of plot (bar, line, area)
+  const [orientation, setOrientation] = useState("h"); // Orientation of the plot (horizontal or vertical)
 
-  // Add state variable for reversing y-axis
+  // State variable for reversing Y-axis
   const [reverseYAxis, setReverseYAxis] = useState(false);
 
-  // Download functionality state variables
-  const [modalOpen, setModalOpen] = useState(false);
-  const [resolution, setResolution] = useState("Medium");
-  const [imageFormat, setImageFormat] = useState("png");
-  const graphRef = useRef();
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [showWarning, setShowWarning] = useState(false);
+  // State variables for download functionality
+  const [modalOpen, setModalOpen] = useState(false); // Modal visibility
+  const [resolution, setResolution] = useState("Medium"); // Image resolution
+  const [imageFormat, setImageFormat] = useState("png"); // Image format
+  const graphRef = useRef(); // Reference to the Plotly graph
+  const [isDownloading, setIsDownloading] = useState(false); // Download state
+  const [showWarning, setShowWarning] = useState(false); // Warning visibility
 
-  // Taxa selection state variables
-  const [availableTaxa, setAvailableTaxa] = useState([]);
-  const [selectedTaxa, setSelectedTaxa] = useState([]);
-  const [yAxisColumn, setYAxisColumn] = useState("");
-  const [secondYAxisColumn, setSecondYAxisColumn] = useState("");
+  // State variables for taxa selection
+  const [availableTaxa, setAvailableTaxa] = useState([]); // All taxa available from the CSV
+  const [selectedTaxa, setSelectedTaxa] = useState([]); // Taxa selected for plotting
+  const [yAxisColumn, setYAxisColumn] = useState(""); // Column selected for primary Y-axis
+  const [secondYAxisColumn, setSecondYAxisColumn] = useState(""); // Column selected for secondary Y-axis
 
-  // State variables to control the visibility of the Assignment components
+  // State variables to control the visibility of assignment components
   const [showLifeFormAssignment, setShowLifeFormAssignment] = useState(false);
   const [showTaxaAssignment, setShowTaxaAssignment] = useState(false);
 
@@ -403,16 +420,18 @@ function Dashboard() {
   const [showTaxaSelection, setShowTaxaSelection] = useState(false);
   const [taxaFontStyles, setTaxaFontStyles] = useState({});
 
-  // New State for Authentication Token
-  const [authToken, setAuthToken] = useState(localStorage.getItem("accessToken"));
+  // State variable for authentication token (not used in this code snippet)
+  const [authToken, setAuthToken] = useState(
+    localStorage.getItem("accessToken")
+  );
 
-  // New State variable to keep track of taxa order within life form
+  // State variable to keep track of taxa order within life forms
   const [taxaOrder, setTaxaOrder] = useState({});
 
-  // State variable to keep track of life form counter
+  // State variable to keep track of life form counter (used for generating unique IDs)
   const [lifeFormCounter, setLifeFormCounter] = useState(3);
 
-  // Function to handle the main data CSV selection
+  // Function to handle the selection of a CSV file
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     if (!selectedFile) return;
@@ -423,7 +442,7 @@ function Dashboard() {
     parseCSVFile(selectedFile);
   };
 
-  // Parse CSV file on the frontend
+  // Function to parse the CSV file using PapaParse
   const parseCSVFile = (file) => {
     console.log("Parsing CSV file:", file.name);
     Papa.parse(file, {
@@ -450,7 +469,7 @@ function Dashboard() {
         const initialSelectedTaxa = filteredHeaders;
         setSelectedTaxa(initialSelectedTaxa);
 
-        // Reset selected taxa and y-axis column
+        // Reset selected taxa and Y-axis columns
         setYAxisColumn("");
         setSecondYAxisColumn("");
         setTaxaLifeFormAssignments({});
@@ -462,11 +481,11 @@ function Dashboard() {
     });
   };
 
-  // Function to handle the main data CSV upload to backend
+  // Function to upload the selected CSV file to the backend
   const handleFileUpload = () => {
     if (!file) return;
 
-    // Send the file to the backend
+    // Create a FormData object to send the file
     const formData = new FormData();
     formData.append("csv_file", file);
 
@@ -478,26 +497,29 @@ function Dashboard() {
       })
       .then((response) => {
         console.log("File uploaded successfully", response.data);
-        // You can handle any backend response data here if needed
+        alert("CSV file saved successfully"); // Success alert
       })
       .catch((error) => {
         console.error("Error uploading file", error);
+        alert("Failed to save CSV file"); // Error alert
       });
   };
 
-  // Function to handle uploading graph image to backend
+  // Function to capture and save the graph image to the backend
   const handleSaveImage = async () => {
     const graphElement = graphRef.current?.el;
 
     try {
-      // Capture image in base64
-      const image = await Plotly.toImage(graphElement, { format: "png", width: 1920, height: 1080});
+      // Capture image in base64 format
+      const image = await Plotly.toImage(graphElement, {
+        format: "png",
+        width: 1920,
+        height: 1080,
+      });
       const response = await fetch(image);
       const imageBlob = await response.blob();
 
-      //console.log("Captured base64 image data: ", imageBase64);
-
-      // Call function to upload image to database
+      // Upload image to the database
       await uploadImageToDatabase(imageBlob);
       alert("Graph image saved successfully");
     } catch (error) {
@@ -506,24 +528,25 @@ function Dashboard() {
     }
   };
 
-  // Function to send image to backend
+  // Function to send the image blob to the backend
   const uploadImageToDatabase = async (imageBlob) => {
-
     const formData = new FormData();
     formData.append("image", imageBlob, "graph.png");
-    // const token = localStorage.getItem("accessToken");
 
+    // Retrieve the authentication token
     const token = localStorage.getItem(ACCESS_TOKEN);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/upload-graph-image/", {
-        method: "POST",
-        headers: {
-          "Authorization" : `Bearer ${token}`,
-        },
-        //credentials: "include",
-        body: formData,
-      });
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/upload-graph-image/",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to upload image");
@@ -533,12 +556,14 @@ function Dashboard() {
     }
   };
 
-  // Handle auto-graphing
+  // Effect hook to handle auto-graphing when data is passed via location state
   useEffect(() => {
     if (autoGraphData) {
-      // Set the y-axis column to the first numeric column
+      // Automatically set the Y-axis column to the first numeric column
       const numericColumn = autoGraphData.headers.find((header) => {
-        return autoGraphData.data.some((row) => !isNaN(parseFloat(row[header])));
+        return autoGraphData.data.some(
+          (row) => !isNaN(parseFloat(row[header]))
+        );
       });
 
       if (numericColumn) {
@@ -556,8 +581,9 @@ function Dashboard() {
           (header) => {
             return (
               !excludedColumns.includes(header) &&
-              !excludedColumns.includes(header) &&
-              autoGraphData.data.some((row) => !isNaN(parseFloat(row[header])))
+              autoGraphData.data.some(
+                (row) => !isNaN(parseFloat(row[header]))
+              )
             );
           }
         );
@@ -567,7 +593,7 @@ function Dashboard() {
         // Set raw data
         setRawData(autoGraphData.data);
 
-        // Set availableTaxa
+        // Set available taxa
         setAvailableTaxa(autoGraphData.headers);
 
         // Set default graph title using file name
@@ -578,7 +604,7 @@ function Dashboard() {
     }
   }, [autoGraphData, secondYAxisColumn]);
 
-  // Update taxaOrder when selectedTaxa or taxaLifeFormAssignments change
+  // Effect hook to update taxa order when selected taxa or assignments change
   useEffect(() => {
     setTaxaOrder((prevOrder) => {
       const newOrder = { ...prevOrder };
@@ -606,26 +632,33 @@ function Dashboard() {
     });
   }, [taxaLifeFormAssignments]);
 
+  // Effect hook to initialize taxa life form assignments
   useEffect(() => {
     setTaxaLifeFormAssignments((prevAssignments) => {
       const newAssignments = { ...prevAssignments };
       availableTaxa.forEach((taxa) => {
         if (!excludedColumns.includes(taxa) && !newAssignments[taxa]) {
-          newAssignments[taxa] = ""; // Default life form ID (unassigned)
+          newAssignments[taxa] = ""; // Default to unassigned
         }
       });
       return newAssignments;
     });
   }, [availableTaxa, excludedColumns]);
 
-  // Prepare data for plotting
+  // Effect hook to prepare data for plotting when dependencies change
   useEffect(() => {
-    if (rawData.length === 0 || selectedTaxa.length === 0 || !yAxisColumn || !taxaLifeFormAssignments) return;
+    if (
+      rawData.length === 0 ||
+      selectedTaxa.length === 0 ||
+      !yAxisColumn ||
+      !taxaLifeFormAssignments
+    )
+      return;
 
     const newSpeciesData = selectedTaxa.map((taxaName) => {
       const x = rawData.map((row) => parseFloat(row[taxaName]) || 0);
 
-      // Get yData for y-axis
+      // Get Y-axis data
       const yData = rawData.map((row) => parseFloat(row[yAxisColumn]) || 0);
 
       const lifeId = taxaLifeFormAssignments[taxaName] || "unassigned";
@@ -650,7 +683,7 @@ function Dashboard() {
     taxaLifeFormAssignments,
   ]);
 
-  // Prepare data for plotting using useMemo
+  // Memoized function to prepare plot data, recalculates only when dependencies change
   const memoizedPlotData = useMemo(() => {
     return preparePlotData();
   }, [
@@ -671,12 +704,14 @@ function Dashboard() {
     selectedTaxa,
   ]);
 
+  // Destructure plotData and layout from memoizedPlotData
   const { plotData, layout } = memoizedPlotData;
 
+  // Function to prepare data and layout for plotting
   function preparePlotData() {
     if (csvDataSets.length === 0) return { plotData: [], layout: {} };
 
-    // Filter csvDataSets to only include selected taxa
+    // Filter csvDataSets to include only selected taxa
     const filteredCsvDataSets = csvDataSets.filter((dataset) =>
       selectedTaxa.includes(dataset.speciesName)
     );
@@ -699,7 +734,7 @@ function Dashboard() {
 
     lifeFormNameMap["unassigned"] = "Unassigned";
 
-    // Adjust layout margins for overall x-axis label
+    // Adjust layout margins for overall X-axis label
     const layout = {
       title: graphTitle,
       showlegend: false,
@@ -729,22 +764,22 @@ function Dashboard() {
     const threshold = 5; // Threshold below which exaggeration is applied
     const desiredMaxValue = 20; // Value to scale up to
 
-    // Set fixed tick interval for x-axes
+    // Set fixed tick interval for X-axes
     const tickInterval = 10;
 
     // Arrays to store data ranges and adjusted max values
     const dataRanges = [];
     const adjustedMaxValues = [];
 
-    // Get yData for y-axis from the first dataset (since yData is common across datasets)
+    // Get Y-axis data from the first dataset (common across datasets)
     const yData = csvDataSets[0].yData;
 
-    // Get yData2 for second y-axis if specified
+    // Get Y-axis data for second Y-axis if specified
     const yData2 = secondYAxisColumn
       ? rawData.map((row) => parseFloat(row[secondYAxisColumn]) || 0)
       : null;
 
-    // Compute y-axis range and ticks for primary y-axis
+    // Compute Y-axis range and ticks for primary Y-axis
     const yDataMin1 = Math.min(...yData);
     const yDataMax1 = Math.max(...yData);
 
@@ -752,15 +787,15 @@ function Dashboard() {
     const yRange1 = yDataMax1 - yDataMin1 || 1; // Prevent division by zero
     const dtick1 = getNiceTickInterval(yRange1);
 
-    // Adjust yAxisMin and yAxisMax to be multiples of dtick1
-    const yAxisMin1 = yDataMin1; // Start from actual data minimum
-    const yAxisMax1 = yDataMax1; // End at actual data maximum
+    // Adjust Y-axis range
+    const yAxisMin1 = yDataMin1;
+    const yAxisMax1 = yDataMax1;
 
     const yAxisRange1 = reverseYAxis
       ? [yAxisMax1, yAxisMin1]
       : [yAxisMin1, yAxisMax1];
 
-    // Generate y-axis tick values for primary y-axis
+    // Generate Y-axis tick values and labels
     let yaxisTickvals1 = [];
     let currentTick = Math.ceil(yDataMin1 / dtick1) * dtick1;
     if (currentTick > yDataMin1) {
@@ -771,33 +806,32 @@ function Dashboard() {
       currentTick += dtick1;
     }
 
-    // Generate tick labels for primary y-axis
     let yaxisTicktext1 = yaxisTickvals1.map((val) => val.toString());
 
-    // Reverse tickvals and ticktext if reverseYAxis is true
+    // Reverse ticks if reverseYAxis is true
     if (reverseYAxis) {
       yaxisTickvals1 = yaxisTickvals1.reverse();
       yaxisTicktext1 = yaxisTicktext1.reverse();
     }
 
-    // Compute y-axis range and ticks for secondary y-axis if present
+    // Compute Y-axis range and ticks for secondary Y-axis if present
     let yAxisRange2, yaxisTickvals2, yaxisTicktext2, dtick2;
     if (secondYAxisColumn && yData2) {
       const yDataMin2 = Math.min(...yData2);
       const yDataMax2 = Math.max(...yData2);
 
       // Use getNiceTickInterval to compute dtick2
-      const yRange2 = yDataMax2 - yDataMin2 || 1; // Prevent division by zero
+      const yRange2 = yDataMax2 - yDataMin2 || 1;
       dtick2 = getNiceTickInterval(yRange2);
 
-      const yAxisMin2 = yDataMin2; // Start from actual data minimum
-      const yAxisMax2 = yDataMax2; // End at actual data maximum
+      const yAxisMin2 = yDataMin2;
+      const yAxisMax2 = yDataMax2;
 
       yAxisRange2 = reverseYAxis
         ? [yAxisMax2, yAxisMin2]
         : [yAxisMin2, yAxisMax2];
 
-      // Generate y-axis tick values for secondary y-axis
+      // Generate Y-axis tick values and labels
       yaxisTickvals2 = [];
       let currentTick2 = Math.ceil(yDataMin2 / dtick2) * dtick2;
       if (currentTick2 > yDataMin2) {
@@ -808,17 +842,15 @@ function Dashboard() {
         currentTick2 += dtick2;
       }
 
-      // Generate tick labels for secondary y-axis
       yaxisTicktext2 = yaxisTickvals2.map((val) => val.toString());
 
-      // Reverse tickvals and ticktext if reverseYAxis is true
       if (reverseYAxis) {
         yaxisTickvals2 = yaxisTickvals2.reverse();
         yaxisTicktext2 = yaxisTicktext2.reverse();
       }
     }
 
-    // Sort csvDataSets by lifeformOrder and speciesName
+    // Sort datasets by life form order and taxa name
     const sortedDataSets = [];
 
     // Loop over life forms in the order defined by the user
@@ -842,11 +874,11 @@ function Dashboard() {
     );
     sortedDataSets.push(...unassignedTaxa);
 
-    // Initialize lifeformGroupsData
+    // Initialize lifeformGroupsData for annotations
     const lifeformGroupsData = {};
 
-    // Define subplotSpacing
-    const subplotSpacing = 0.02; // 2% spacing between subplots
+    // Define spacing between subplots
+    const subplotSpacing = 0.02; // 2% spacing
 
     sortedDataSets.forEach((dataset, index) => {
       if (dataset.x.length === 0 || dataset.yData.length === 0) {
@@ -913,7 +945,7 @@ function Dashboard() {
       const yDataToUse = dataset.yData;
 
       const lifeId = dataset.lifeId || "unassigned";
-      const color = lifeFormColorMap[lifeId] || "#808080"; // Default to gray if color not specified
+      const color = lifeFormColorMap[lifeId] || "#808080"; // Default color
 
       // Determine the correct plot type and fill property
       let traceType = plotType;
@@ -929,10 +961,11 @@ function Dashboard() {
         hoverTemplate = `%{x}, %{y}<br>${secondYAxisLabel}: %{customdata}<extra>${dataset.speciesName}</extra>`;
       }
 
+      // Add trace to plotData
       plotData.push({
         x: xData,
         y: yDataToUse,
-        customdata: yData2, // Add second y-axis data
+        customdata: yData2, // Add second Y-axis data
         xaxis: `x${subplotIndex}`,
         yaxis: "y", // Use primary Y-axis
         name: dataset.speciesName,
@@ -949,7 +982,7 @@ function Dashboard() {
         hovertemplate: hoverTemplate,
       });
 
-      // Add taxa name annotations with adjusted positions
+      // Add taxa name annotations
       annotations.push({
         text: dataset.speciesName,
         xref: `x${subplotIndex}`,
@@ -970,7 +1003,7 @@ function Dashboard() {
       }
       lifeformGroupsData[lifeId].push({ dataset, index, xStart, xEnd });
 
-      // Configure xaxis with fixed intervals
+      // Configure X-axis with fixed intervals
       layout[`xaxis${subplotIndex}`] = {
         domain: [xStart, xEnd],
         anchor: "free",
@@ -1021,7 +1054,7 @@ function Dashboard() {
       });
     });
 
-    // Configure primary y-axis
+    // Configure primary Y-axis
     layout["yaxis"] = {
       title: "", // We'll use annotations for labels
       autorange: false,
@@ -1047,7 +1080,7 @@ function Dashboard() {
       zeroline: false, // Remove the black line at y=0
     };
 
-    // Configure secondary y-axis if present
+    // Configure secondary Y-axis if present
     if (secondYAxisColumn && yData2) {
       layout["yaxis2"] = {
         title: "",
@@ -1072,10 +1105,10 @@ function Dashboard() {
         zeroline: false, // Remove the black line at y=0
       };
 
-      // Adjust left margin to accommodate the second y-axis
+      // Adjust left margin to accommodate the second Y-axis
       layout.margin.l += 50;
 
-      // Add an invisible trace to include hover data for the second y-axis
+      // Add an invisible trace to include hover data for the second Y-axis
       plotData.push({
         x: yData, // Use the yData as x-values to align correctly
         y: yData2,
@@ -1087,7 +1120,7 @@ function Dashboard() {
         hoverinfo: "skip", // We handle hoverinfo in the main traces
       });
 
-      // Define a hidden x-axis that spans the full domain
+      // Define a hidden X-axis that spans the full domain
       layout["xaxis0"] = {
         domain: [xLeftMargin, 1 - xRightMargin],
         showgrid: false,
@@ -1095,7 +1128,7 @@ function Dashboard() {
         showticklabels: false,
         zeroline: false,
         anchor: "free",
-        overlaying: `x${1}`, // Overlay on the first subplot's x-axis
+        overlaying: `x${1}`, // Overlay on the first subplot's X-axis
         position: 0,
       };
     }
@@ -1133,7 +1166,7 @@ function Dashboard() {
       });
     }
 
-    // Add overall x-axis label using xAxisLabel state variable
+    // Add overall X-axis label using xAxisLabel state variable
     annotations.push({
       text: xAxisLabel,
       xref: "paper",
@@ -1148,8 +1181,8 @@ function Dashboard() {
 
     layout.annotations = annotations;
 
-    // Adjust layout width dynamically
-    layout.width = 1500; // Or set to desired fixed width
+    // Adjust layout dimensions
+    layout.width = 1500; // Fixed width
     layout.height = 600; // Fixed height
     layout.autosize = false;
     layout.responsive = true;
@@ -1157,12 +1190,12 @@ function Dashboard() {
     return { plotData, layout };
   }
 
-  // Function to compute a "nice" tick interval
+  // Function to compute a "nice" tick interval for axes
   function getNiceTickInterval(range) {
     if (range === 0) {
-      return 1; // default tick interval
+      return 1; // Default tick interval
     }
-    const roughTick = range / 5; // aim for around 5 ticks
+    const roughTick = range / 5; // Aim for around 5 ticks
     const log10RoughTick = Math.log10(Math.abs(roughTick));
     const magnitude = Math.pow(10, Math.floor(log10RoughTick));
     const residual = roughTick / magnitude;
@@ -1183,7 +1216,7 @@ function Dashboard() {
     return niceTick;
   }
 
-  // Function to download the graph
+  // Function to download the graph as an image
   const downloadGraph = () => {
     if (isDownloading) {
       console.warn("Download already in progress. Please wait.");
@@ -1258,6 +1291,7 @@ function Dashboard() {
     }
   };
 
+  // Function to close the warning modal
   const handleCloseWarning = () => {
     setShowWarning(false);
   };
@@ -1297,7 +1331,7 @@ function Dashboard() {
                           }
                           className={styles.customFileButton}
                         >
-                          Select CSV File
+                          Upload CSV File
                         </button>
                         <button
                           onClick={handleFileUpload}
@@ -1306,14 +1340,14 @@ function Dashboard() {
                           }`}
                           disabled={!file}
                         >
-                          Upload CSV File
+                          Save CSV File
                         </button>
                         <button
                           onClick={handleSaveImage}
                           className={styles.customFileButton}
                           disabled={!file}
                         >
-                          Upload Graph Image
+                          Save Graph Image
                         </button>
                       </div>
 
@@ -1448,7 +1482,7 @@ function Dashboard() {
 
                         <div className={styles.controlGroup}>
                           <label className={styles.labelText}>
-                            Second Y-Axis Column
+                            2nd Y-Axis Column
                           </label>
                           <select
                             value={secondYAxisColumn}
@@ -1469,7 +1503,7 @@ function Dashboard() {
                         {secondYAxisColumn && (
                           <div className={styles.controlGroup}>
                             <label className={styles.labelText}>
-                              Second Y-Axis Label
+                              2nd Y-Axis Label
                             </label>
                             <input
                               type="text"
@@ -1490,9 +1524,7 @@ function Dashboard() {
                           <input
                             type="checkbox"
                             checked={reverseYAxis}
-                            onChange={(e) =>
-                              setReverseYAxis(e.target.checked)
-                            }
+                            onChange={(e) => setReverseYAxis(e.target.checked)}
                             className={styles.reverseYAxisCheckbox}
                           />
                         </div>

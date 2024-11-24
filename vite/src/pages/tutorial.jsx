@@ -10,6 +10,7 @@ import step5Image from "../assets/step5.png";
 import step6UploadImage from "../assets/step6_upload.png";
 import step6DownloadImage from "../assets/step6_download.png";
 import step7Image from "../assets/step7.png";
+import step8Image from "../assets/step8.png";
 
 const Step = ({ title, description, images, stepNumber }) => (
   <div className={styles.columnsContainer}>
@@ -71,10 +72,16 @@ const steps = [
     images: [step6UploadImage, step6DownloadImage],
   },
   {
-    title: "Step 7: History Page",
+    title: "Step 7: Alternatively Download with Built In Feature",
+    description:
+      "Alternatively, you can also press the camera icon within the graph to get an image that directly resembles the graph as it displays.",
+    images: [step7Image],
+  },
+  {
+    title: "Step 8: History Page",
     description:
       "Navigate to the History page by clicking the 'History' tab. Here, you can download your uploaded data sets and graph images. This page also allows you to delete your data from the database.",
-    images: [step7Image],
+    images: [step8Image],
   },
 ];
 

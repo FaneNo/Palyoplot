@@ -41,9 +41,7 @@ function Home() {
               <h2 className={styles.BulletHeading}>Why Choose Palyoplot?</h2>
               <ul className={styles.bulletPoints}>
                 <li>Customizable stratigraphic diagrams of proxy records 
-                  (including point, line, bar, and stacked graphs)</li>
-                <li>Reusable configuration files simplify processing 
-                  and standardize your lab’s look-and-feel</li>
+                  (including area, line, and bar graphs)</li>
                 <li>User-defined groups and ordered taxa</li>
                 <li>Customizable y and x-axis intervals</li>
               </ul>
@@ -57,7 +55,7 @@ function Home() {
               />
             </div>
           </div>
-          <h2 className={styles.BottomHeading}>Click Login or Register to Get Started</h2>
+          <h2 className={styles.BottomHeading}>View our Tutorial Page or Click Login/Register to Get Started</h2>
         </div>
       </div>
     </>
