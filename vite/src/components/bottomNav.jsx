@@ -39,7 +39,7 @@ function BottomNav() {
                 rel="noopener noreferrer"
                 className={`${styles.navLink}`}
               >
-                Github
+                GitHub
               </a>
             </li>
           </ul>

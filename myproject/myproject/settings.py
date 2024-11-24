@@ -12,33 +12,39 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
-from dotenv import load_dotenv;
+from dotenv import load_dotenv
 import os
-import sys # having trouble logging into mariadb root, this works for now hopefully
-# from myapi.database import database
-
-load_dotenv()
-# database()
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Get the environment from an environment variable or default to 'development'
+ENVIRONMENT = os.getenv('DJANGO_ENVIRONMENT', 'development')
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
+# Load the appropriate .env file
+if ENVIRONMENT == 'development':
+    load_dotenv(os.path.join(BASE_DIR, '.env.development'))
+elif ENVIRONMENT == 'production':
+    load_dotenv(os.path.join(BASE_DIR, '.env.production'))
+else:
+    load_dotenv(os.path.join(BASE_DIR, '.env'))
 
-
+# Secret Key and Debug Mode
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
-FRONTEND_URL = os.getenv("FRONTEND_URL",)
-VITE_API_URL = os.getenv("VITE_API_URL") #backend?
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 if not SECRET_KEY and not DEBUG:
     raise ValueError("SECRET_KEY environment variable is not set!")
 
-ALLOWED_HOSTS = ["*"]
+# Allowed Hosts
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
+# Frontend URL and API URL
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
+VITE_API_URL = os.getenv("VITE_API_URL", "http://localhost:8000")
+
+# Rest Framework Configuration
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -48,26 +54,17 @@ REST_FRAMEWORK = {
     ],
 }
 
-# Uses example email, testing
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Email Backend Configuration
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
 LOGIN_URL = f"{FRONTEND_URL}/login"
 
-# IRT might have to do this part, they probably dont want to give us access to their email server
-#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-#EMAIL_HOST = 'smtp.example.com'
-#EMAIL_PORT = 587
-#EMAIL_USE_TLS = True
-#EMAIL_HOST_USER = 'your-email@example.com'
-#EMAIL_HOST_PASSWORD = 'your-email-password'
-
+# Simple JWT Configuration
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
-
-# Application definition
-
+# Application Definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -77,27 +74,30 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'myapi',
+    'myapi',  # Your app
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Place above CommonMiddleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware'
 ]
-# CORS_ORIGIN_ALLOW_ALL = True
+
+# CORS Configuration
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:5173').split(',')
+CORS_ALLOW_CREDENTIALS = True
+
 ROOT_URLCONF = 'myproject.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates"], # for testing, templates/registrion/password_reset_do.. not func
+        'DIRS': [BASE_DIR / "templates"],  # For templates
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -112,25 +112,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'myproject.wsgi.application'
 
+# Determine if running inside Docker
+RUNNING_IN_DOCKER = os.getenv('RUNNING_IN_DOCKER', 'False') == 'True'
 
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+# Adjust DB_HOST based on environment
+if RUNNING_IN_DOCKER:
+    DB_HOST = 'db'
+else:
+    DB_HOST = os.getenv('DB_HOST', 'localhost')
 
+# Database Configuration
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': BASE_DIR / 'db.mysql',
-        # 'NAME': os.getenv('DB_NAME'),
-        # 'USER': os.getenv('DB_USER'),
-        # 'PASSWORD': os.getenv('DB_PASSWORD'),
-        # 'HOST': os.getenv('DB_HOST'),
-        # 'PORT': os.getenv('DB_PORT'),
-        
-        'NAME': 'palyoplot',
-        'USER': 'csc190191',
-        'PASSWORD': '123',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': os.getenv('DB_NAME', 'palyoplot'),
+        'USER': os.getenv('DB_USER', 'csc190191'),
+        'PASSWORD': os.getenv('DB_PASSWORD', '123'),
+        'HOST': DB_HOST,
+        'PORT': os.getenv('DB_PORT', '3306'),
     }
 }
 
@@ -140,10 +139,7 @@ if 'test' in sys.argv:
         'NAME': ':memory:',
     }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
-
+# Password Validators
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -159,47 +155,38 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.0/topics/i18n/
-
+# Internationalization Settings
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
-
-STATIC_URL = 'static/'
-
+# Static and Media Files
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# Media files
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
-
+# Default Primary Key Field Type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5173",
-    "http://localhost:5173",
-]
+# Security Settings
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_SSL_REDIRECT = not DEBUG
 
-CORS_ALLOW_CREDENTIALS = True
-
-
-
-
-
-
+# Logging Configuration (Optional)
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
