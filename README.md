@@ -101,7 +101,7 @@ The test suite performs end-to-end testing of key application features:
 - Check that your web application is running on the expected port (default: 5173)
 - Ensure Chrome browser is installed and updated
 - Verify the test CSV file is present and properly formatted
-  #### Note
+#### Note
 The test suite uses Selenium's headless mode by default. If you need to see the browser during testing, you can modify the chrome_options in the test file by removing the '--headless=new' argument.
 ### Developer Instructions
 
