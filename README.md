@@ -60,6 +60,49 @@ Palyoplot is a web-based application originally developed as an R package by Dr.
 ### Dependencies
 ### Deployment
 ### Testing
+#### Prerequisites
+Before running the test suite, you'll need to install the following dependencies:
+```bash
+pip install selenium webdriver-manager unittest-xml-reporting
+```
+#### Additional Requirements
+1. Chrome Browser: The tests use Chrome in headless mode
+2. Python 3.x installed
+3. A running instance of the Palyoplot web application (running on localhost:5173)
+4. Test data file: Ensure `test.csv` exists in the same directory as `test_suite.py`
+#### Running the Tests
+1. Navigate to the project's test directory:
+```bash
+cd path/to/project/tests
+```
+
+2. Execute the test suite:
+```bash
+python test_suite.py
+```
+#### What the Tests Cover
+The test suite performs end-to-end testing of key application features:
+
+1. Homepage Load (`test_homepage_load`): Verifies the homepage loads correctly
+2. Navigation (`test_navigation`): Tests navigation bar functionality
+3. Unauthorized Dashboard Access (`test_1_unauthorized_dashboard_access`): Checks redirect to login
+4. Registration (`test_2_register`): Tests user registration process
+5. Login and Dashboard (`test_3_login_and_dashboard`): Verifies login functionality and dashboard access
+6. CSV Upload (`test_4_csv_upload`): Tests CSV file upload functionality
+7. Delete History (`test_5_delete_history`): Tests deletion of uploaded files
+8. Password Change (`test_6_change_password`): Tests password change functionality
+#### Test Results
+- Test results will be displayed in the console
+- Failed tests will generate screenshots in the current directory with timestamp and failure type
+- Each test provides detailed output about what's being tested and any failures encountered
+#### Troubleshooting
+- If tests fail due to timing issues, you may need to adjust the wait times in the test file
+- Screenshots of failures are automatically saved with timestamps for debugging
+- Check that your web application is running on the expected port (default: 5173)
+- Ensure Chrome browser is installed and updated
+- Verify the test CSV file is present and properly formatted
+  #### Note
+The test suite uses Selenium's headless mode by default. If you need to see the browser during testing, you can modify the chrome_options in the test file by removing the '--headless=new' argument.
 ### Developer Instructions
 
 ### Sprint 5 (08/26/24 - 9/9/24)
