@@ -73,7 +73,7 @@ pip install selenium webdriver-manager unittest-xml-reporting
 #### Running the Tests
 1. Navigate to the project's test directory:
 ```bash
-cd path/to/project/tests
+cd path/to/Palyoplot/
 ```
 
 2. Execute the test suite:
